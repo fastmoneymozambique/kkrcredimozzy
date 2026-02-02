@@ -1,3 +1,5 @@
+--- START OF FILE register.html ---
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -197,6 +199,14 @@
                         0 0 0 6px rgba(106, 13, 173, 0.1); /* Uma 'aura' roxa sutil e espalhada */
             background-color: var(--white); /* Torna o fundo opaco ao focar para melhor contraste */
         }
+        
+        /* Input preenchido automaticamente por ref-link */
+        .input-group input[readonly] {
+            background-color: var(--card-bg-light); /* Cor de fundo diferente para indicar que foi preenchido */
+            cursor: default;
+            font-weight: 600;
+        }
+
 
         /* Botão primário */
         .btn-primary {
@@ -279,6 +289,7 @@
 
                 <div class="input-group">
                     <label for="referralCode">Código de Indicação</label>
+                    <!-- Adicionado 'readonly' e 'data-autofilled' para indicar preenchimento automático -->
                     <input type="text" id="referralCode" name="referralCode" placeholder="Se você foi indicado, digite o código aqui">
                 </div>
 
@@ -295,64 +306,105 @@
     <!-- Script para FingerprintJS e lógica do formulário EMBUTIDO AQUI -->
     <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
     <script>
-        // Lógica para gerar o visitorId com FingerprintJS
-        (async () => {
-            const fp = await FingerprintJS.load();
-            const result = await fp.get();
-            const visitorId = result.visitorId;
-            document.getElementById('visitorId').value = visitorId;
-            console.log('Visitor ID:', visitorId); // Para depuração
-        })();
+        // URL do Backend
+        const BACKEND_URL = 'https://backend-cjl7.onrender.com';
 
-        // Lógica básica de submissão do formulário (CLIENT-SIDE APENAS)
-        document.getElementById('registrationForm').addEventListener('submit', async (event) => {
-            event.preventDefault(); // Impede o envio padrão do formulário
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Lógica para gerar o visitorId com FingerprintJS
+            (async () => {
+                try {
+                    const fp = await FingerprintJS.load();
+                    const result = await fp.get();
+                    const visitorId = result.visitorId;
+                    document.getElementById('visitorId').value = visitorId;
+                    console.log('Visitor ID carregado:', visitorId);
+                } catch (e) {
+                    console.error('Falha ao carregar FingerprintJS:', e);
+                    // Fallback para um ID baseado em tempo se o FPJS falhar
+                    document.getElementById('visitorId').value = 'fallback_' + Date.now();
+                }
+            })();
+
+            // 2. Lógica para pré-preencher o código de indicação da URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+            const referralCodeInput = document.getElementById('referralCode');
+
+            if (refCode) {
+                // Preenche o campo
+                referralCodeInput.value = refCode;
+                // Define como somente leitura para evitar que o usuário mude o código do link
+                referralCodeInput.setAttribute('readonly', true);
+                // Opcional: Adiciona um título informativo
+                referralCodeInput.title = 'Preenchido automaticamente via link de convite.';
+            }
+
+            // 3. Configuração do Formulário de Registro
+            document.getElementById('registrationForm').addEventListener('submit', handleRegistration);
+        });
+
+
+        // Lógica de submissão do formulário
+        async function handleRegistration(event) {
+            event.preventDefault();
 
             const phoneNumber = document.getElementById('phoneNumber').value;
             const password = document.getElementById('password').value;
-            const referralCode = document.getElementById('referralCode').value;
+            const referralCode = document.getElementById('referralCode').value.trim();
             const visitorId = document.getElementById('visitorId').value;
             const errorMessage = document.getElementById('error-message');
+            const button = event.target.querySelector('button[type="submit"]');
 
-            errorMessage.textContent = ''; // Limpa mensagens de erro anteriores
+            errorMessage.textContent = ''; 
+            button.disabled = true;
+            button.textContent = 'Registrando...';
 
-            // AQUI VOCÊ FARIA A CHAMADA PARA O SEU BACKEND
-            console.log('Dados a serem enviados:', {
-                phoneNumber,
-                password,
-                visitorId,
-                invitedBy: referralCode // Nome do campo no backend
-            });
+            // Garante que o visitorId foi carregado (mesmo que seja fallback)
+            if (!visitorId || visitorId.includes('...')) {
+                errorMessage.textContent = 'Aguarde o carregamento do dispositivo (Visitor ID). Tente novamente em 2 segundos.';
+                button.disabled = false;
+                button.textContent = 'Registrar';
+                return;
+            }
 
             try {
-                // ATENÇÃO: Substitua 'http://localhost:5000' pela URL do seu backend em produção
-                const response = await fetch('https://backend-cjl7.onrender.com/api/register', { 
+                const payload = {
+                    phoneNumber,
+                    password,
+                    visitorId,
+                    // Envia invitedBy apenas se houver um código
+                    invitedBy: referralCode || undefined 
+                };
+                
+                console.log('Dados a serem enviados para registro:', payload);
+
+                const response = await fetch(`${BACKEND_URL}/api/register`, { 
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        phoneNumber,
-                        password,
-                        visitorId,
-                        // Inclui invitedBy apenas se houver um valor, caso contrário é undefined (o backend lida com 'sparse')
-                        invitedBy: referralCode ? referralCode : undefined 
-                    }),
+                    body: JSON.stringify(payload),
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert('Registro bem-sucedido! Redirecionando para o login...');
-                    window.location.href = 'login.html'; // Redireciona para a página de login
+                    // O backend retorna o token, mas para registro, geralmente redirecionamos para o login
+                    // ou dashboard. Como você está seguindo o fluxo Login -> Dashboard, redirecionamos para Login.
+                    alert('Registro bem-sucedido! Redirecionando para o Login.');
+                    window.location.href = 'login.html'; 
                 } else {
                     errorMessage.textContent = data.message || 'Erro no registro.';
                 }
             } catch (error) {
                 console.error('Erro na requisição de registro:', error);
-                errorMessage.textContent = 'Ocorreu um erro de rede. Verifique se o backend está rodando e tente novamente.';
+                errorMessage.textContent = 'Ocorreu um erro de rede ou o servidor está indisponível.';
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Registrar';
             }
-        });
+        }
     </script>
 </body>
 </html>
+--- END OF FILE register.html ---

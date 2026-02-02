@@ -1,3 +1,5 @@
+--- START OF FILE task.html ---
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -127,6 +129,7 @@
         .loading-message { color: var(--primary-purple); border: 1px solid var(--light-purple); background-color: rgba(106, 13, 173, 0.1); }
         .info-message { color: var(--info-blue); border: 1px solid var(--info-blue); background-color: rgba(52, 152, 219, 0.1); }
         .error-message { color: var(--error-red); border: 1px solid var(--error-red); background-color: rgba(231, 76, 60, 0.1); }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -151,7 +154,8 @@
                 <p class="last-credit-date" id="lastCreditDate" data-translate-key="lastCreditMessage">Próximo crédito após 00:00.</p>
             </section>
             
-            <p id="loadingMessage" class="message loading-message" data-translate-key="loadingTasks">Carregando seus investimentos...</p>
+            <!-- Mensagens de Feedback (Hidden por padrão) -->
+            <p id="loadingMessage" class="message loading-message hidden" data-translate-key="loadingTasks">Carregando seus investimentos...</p>
             <p id="errorMessage" class="message error-message hidden"></p>
 
             <!-- Lista de Tarefas (Investimentos Ativos) -->
@@ -253,18 +257,20 @@
             const token = localStorage.getItem('token');
             const taskListContainer = document.getElementById('taskList');
             const loadingMessage = document.getElementById('loadingMessage');
+            const errorMessage = document.getElementById('errorMessage');
             const noTasksMessage = document.getElementById('noTasksMessage');
             
             if (!token) {
-                setActionMessage('errorMessage', translations[currentLang].sessionExpired);
-                loadingMessage.classList.add('hidden');
+                setActionMessage('errorMessage', translations[currentLang].sessionExpired, 'error');
                 setTimeout(() => window.location.href = 'login.html', 2000);
                 return;
             }
 
-            loadingMessage.classList.remove('hidden');
-            noTasksMessage.classList.add('hidden');
+            // 1. Limpa e mostra o spinner
             taskListContainer.innerHTML = ''; 
+            loadingMessage.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            noTasksMessage.classList.add('hidden');
 
             try {
                 // Endpoint que retorna investimentos ativos e populados com o nome do plano
@@ -310,10 +316,12 @@
                     localStorage.removeItem('token');
                     setTimeout(() => window.location.href = 'login.html', 2000);
                 } else {
+                    // Exibe o retângulo de erro (vermelho)
                     setActionMessage('errorMessage', `${translations[currentLang].networkError}: ${error.message}`, 'error');
                     console.error("Erro ao buscar lucros diários:", error);
                 }
             } finally {
+                // 4. Esconde o spinner
                 loadingMessage.classList.add('hidden');
             }
         }
@@ -380,3 +388,4 @@
     </script>
 </body>
 </html>
+--- END OF FILE task.html ---
