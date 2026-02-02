@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercado de Ativos | KKR Credit</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00D094;
+            --dark: #0f172a;
+            --darker: #020617;
+            --card: #1e293b;
+            --text: #e2e8f0;
+            --danger: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            background-color: var(--darker);
+            color: var(--text);
+            padding-bottom: 40px;
+        }
+
+        /* Header com botão de voltar */
+        header {
+            background-color: var(--dark);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        h2 { font-size: 1.2rem; }
+
+        .container {
+            padding: 1.5rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Card do Ativo */
+        .asset-card {
+            background-color: var(--card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #334155;
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        .asset-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .asset-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .asset-badge {
+            background: rgba(0, 208, 148, 0.1);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Grid de detalhes */
+        .asset-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label { font-size: 0.8rem; color: #94a3b8; }
+        .detail-value { font-size: 1.1rem; font-weight: 600; }
+
+        /* Input de Valor */
+        .investment-input-group {
+            margin-bottom: 1rem;
+        }
+        
+        .investment-input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 5px;
+        }
+
+        .investment-input {
+            width: 100%;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-invest {
+            width: 100%;
+            background-color: var(--primary);
+            color: var(--darker);
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .btn-invest:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Loader */
+        #loader { text-align: center; margin-top: 50px; color: var(--primary); }
+        .error-msg { color: var(--danger); text-align: center; margin-top: 20px; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="back-btn" onclick="window.location.href='dashboard.html'">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <h2>Mercado de Ativos</h2>
+    </header>
+
+    <div class="container">
+        <div id="loader"><i class="fas fa-circle-notch fa-spin fa-2x"></i></div>
+        <div id="assetsList"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://gogos.onrender.com/api';
+        const token = localStorage.getItem('token');
+
+        if (!token) window.location.href = 'login.html';
+
+        // Formatação de Moeda
+        const formatMZN = (value) => {
+            return new Intl.NumberFormat('pt-MZ', { 
+                style: 'currency', 
+                currency: 'MZN',
+                minimumFractionDigits: 0 
+            }).format(value);
+        };
+
+        // 1. Carregar Planos (Ativos)
+        async function loadAssets() {
+            try {
+                // A rota pública é /plans, mas você pode usar a rota autenticada se preferir
+                // O controller getPlans é público no seu código, mas vamos usar fetch normal
+                const response = await fetch(`${API_BASE_URL}/plans`);
+                const plans = await response.json();
+
+                const list = document.getElementById('assetsList');
+                const loader = document.getElementById('loader');
+
+                loader.style.display = 'none';
+
+                if (plans.length === 0) {
+                    list.innerHTML = '<p class="error-msg">Nenhum ativo disponível no momento.</p>';
+                    return;
+                }
+
+                list.innerHTML = plans.map(plan => {
+                    // Calcula retorno estimado base (usando o valor mínimo)
+                    const dailyReturn = (plan.minAmount * plan.dailyPercent) / 100;
+                    const totalReturn = dailyReturn * plan.durationDays;
+
+                    return `
+                        <div class="asset-card">
+                            <div class="asset-header">
+                                <div class="asset-title">${plan.name}</div>
+                                <div class="asset-badge">${plan.durationDays} Dias</div>
+                            </div>
+
+                            <div class="asset-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Lucro Diário</span>
+                                    <span class="detail-value text-green">${plan.dailyPercent}%</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Mínimo</span>
+                                    <span class="detail-value">${formatMZN(plan.minAmount)}</span>
+                                </div>
+                            </div>
+
+                            <div class="investment-input-group">
+                                <label>Valor a Investir (Máx: ${formatMZN(plan.maxAmount)})</label>
+                                <input type="number" 
+                                    id="amount-${plan._id}" 
+                                    class="investment-input" 
+                                    value="${plan.minAmount}" 
+                                    min="${plan.minAmount}" 
+                                    max="${plan.maxAmount}">
+                            </div>
+
+                            <button class="btn-invest" onclick="invest('${plan._id}', ${plan.minAmount}, ${plan.maxAmount})">
+                                Comprar Ativo
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('assetsList').innerHTML = '<p class="error-msg">Erro ao carregar ativos.</p>';
+            }
+        }
+
+        // 2. Função de Investir
+        async function invest(planId, min, max) {
+            const inputAmount = document.getElementById(`amount-${planId}`).value;
+            const amount = parseFloat(inputAmount);
+
+            if (!amount || amount < min || amount > max) {
+                alert(`Por favor, insira um valor entre ${min} e ${max}`);
+                return;
+            }
+
+            if (!confirm(`Confirmar investimento de ${formatMZN(amount)}?`)) return;
+
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = 'Processando...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/invest`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ planId, amount })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Investimento realizado com sucesso!');
+                    window.location.href = 'dashboard.html'; // Volta pro painel para ver o saldo atualizado
+                } else {
+                    alert(data.message || 'Erro ao investir.');
+                    btn.disabled = false;
+                    btn.innerText = originalText;
+                }
+
+            } catch (error) {
+                alert('Erro de conexão.');
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        }
+
+        loadAssets();
+    </script>
+</body>
+</html>

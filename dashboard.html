@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="dashboardTitle">KKR Credit | Dashboard</title>
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome para ícones (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- CSS EMBUTIDO AQUI -->
+    <style>
+        /* Variáveis CSS para fácil modificação de cores */
+        :root {
+            --primary-purple: #6a0dad;
+            --light-purple: #9b59b6;
+            --hover-purple: #8e44ad;
+            --dark-background: #2c3e50;
+            --text-dark: #333;
+            --text-medium: #666;
+            --text-light: #555;
+            --border-light: #e0e0e0;
+            --white: #ffffff;
+            --card-bg-light: #f7faff;
+            --success-green: #2ecc71;
+            --warning-yellow: #f1c40f;
+            --icon-bg-green: #28a745;
+            --icon-bg-orange: #fd7e14;
+            --icon-bg-blue: #007bff;
+            --icon-bg-purple: #6f42c1;
+            --icon-bg-teal: #20c997;
+            --icon-bg-red: #dc3545;
+            --app-background: #e0e6ec;
+            --error-red: #e74c3c;
+        }
+
+        /* Reset básico e fontes */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--app-background);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Container principal do Dashboard */
+        .dashboard-wrapper {
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+            background-color: var(--card-bg-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Header (Logo + Idioma + Logout) */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .app-header .logo {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--primary-purple);
+        }
+        .app-header .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        /* Seletor de Idioma */
+        .lang-dropdown { position: relative; display: inline-block; cursor: pointer; z-index: 101; }
+        .lang-dropdown summary { list-style: none; display: flex; align-items: center; gap: 5px; padding: 5px 10px; border: 1px solid var(--border-light); border-radius: 20px; font-size: 0.9em; outline: none; transition: all 0.2s ease; }
+        .lang-dropdown summary::-webkit-details-marker { display: none; }
+        .lang-dropdown summary:hover { background-color: var(--card-bg-light); border-color: var(--light-purple); }
+        .lang-dropdown summary img { width: 20px; height: 15px; object-fit: cover; border-radius: 2px; }
+        .lang-dropdown .lang-options { position: absolute; top: 100%; right: 0; background-color: var(--white); border: 1px solid var(--border-light); border-radius: 10px; min-width: 120px; list-style: none; padding: 5px 0; margin-top: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .lang-dropdown .lang-options li { padding: 8px 15px; cursor: pointer; font-size: 0.9em; color: var(--text-dark); transition: background-color 0.2s ease; display: flex; align-items: center; gap: 8px; }
+        .lang-dropdown .lang-options li:hover { background-color: var(--app-background); color: var(--primary-purple); }
+        .lang-dropdown .lang-options li img { width: 18px; height: 12px; object-fit: cover; border-radius: 2px; }
+
+        /* Botão de Logout */
+        .logout-btn { background: none; border: none; color: var(--text-medium); font-size: 1.2em; cursor: pointer; transition: color 0.2s ease; padding: 5px; }
+        .logout-btn:hover { color: var(--error-red); }
+
+
+        /* Conteúdo principal do Dashboard */
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            padding-bottom: 80px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Card Principal (KKR Credit Arbitrage) */
+        .main-card {
+            background-color: var(--dark-background);
+            border-radius: 15px;
+            padding: 25px;
+            color: var(--white);
+            position: relative;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .main-card h3 { font-size: 1.6em; font-weight: 600; margin-bottom: 5px; }
+        .main-card p { font-size: 0.9em; color: rgba(255,255,255,0.7); margin-bottom: 8px; }
+
+        /* CORREÇÃO CRÍTICA DO CSS: Alinhamento para Label + Valor */
+        .main-card .detail-item { 
+            display: flex; /* Usa flexbox para alinhamento */
+            justify-content: space-between; /* Empurra os itens para as extremidades */
+            align-items: center; /* Centraliza verticalmente */
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: rgba(255,255,255,0.85); /* Cor do label */
+        }
+        
+        .main-card .detail-item strong { 
+            color: var(--white); /* Cor do valor (para se destacar) */
+            font-weight: 600; 
+            text-align: right; /* Garante que o texto do valor fique à direita */
+        }
+        /* FIM DA CORREÇÃO CRÍTICA */
+        
+        .main-card .earn-text { color: var(--success-green); font-weight: 600; display: block; margin-bottom: 10px; }
+        .main-card .safe-reliable-btn { background-color: rgba(255,255,255,0.15); color: var(--white); border: none; padding: 8px 15px; border-radius: 20px; font-size: 0.8em; cursor: pointer; transition: background-color 0.2s ease; display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; }
+        .main-card .safe-reliable-btn:hover { background-color: rgba(255,255,255,0.25); }
+        .main-card .large-icon { position: absolute; top: 25px; right: 25px; background-color: var(--primary-purple); color: var(--white); width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2.2em; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+
+        /* Grid de Ações */
+        .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+        .action-item { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 10px 5px; border-radius: 10px; background-color: var(--white); box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: transform 0.2s ease, box-shadow 0.2s ease; cursor: pointer; }
+        .action-item:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .action-item .icon-wrapper { width: 45px; height: 45px; border-radius: 12px; display: flex; justify-content: center; align-items: center; margin-bottom: 8px; font-size: 1.2em; color: var(--white); }
+        .icon-app { background-color: var(--icon-bg-green); } .icon-task { background-color: var(--icon-bg-orange); } .icon-invite { background-color: var(--icon-bg-blue); } .icon-team { background-color: var(--icon-bg-purple); } .icon-about { background-color: var(--icon-bg-teal); } .icon-holding { background-color: var(--icon-bg-red); } .icon-wallet { background-color: var(--icon-bg-blue); } .icon-support { background-color: var(--icon-bg-green); }
+        .action-item span { font-size: 0.8em; color: var(--text-medium); font-weight: 500; }
+
+        /* Banner "Invite friends, earn coins" */
+        .invite-banner { background-color: var(--warning-yellow); border-radius: 15px; padding: 20px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .invite-banner h4 { font-size: 1.1em; font-weight: 600; color: var(--text-dark); margin-bottom: 5px; }
+        .invite-banner p { font-size: 0.8em; color: var(--text-medium); margin-bottom: 15px; }
+        .invite-banner .invite-btn { background-color: #f39c12; color: var(--white); border: none; padding: 10px 20px; border-radius: 20px; font-size: 0.9em; cursor: pointer; transition: background-color 0.2s ease; font-weight: 500; }
+        .invite-banner .invite-btn:hover { background-color: #e67e22; }
+
+        /* Seção de Mercados */
+        .markets-section { margin-bottom: 20px; }
+        .markets-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .markets-header h4 { font-size: 1.2em; font-weight: 600; color: var(--text-dark); }
+        .markets-header .invest-btn { background-color: var(--primary-purple); color: var(--white); border: none; padding: 8px 15px; border-radius: 20px; font-size: 0.85em; cursor: pointer; transition: background-color 0.2s ease; }
+        .markets-header .invest-btn:hover { background-color: var(--hover-purple); }
+        .markets-table-container { background-color: var(--white); border-radius: 15px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .markets-table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+        .markets-table th, .markets-table td { padding: 10px 0; text-align: left; border-bottom: 1px solid var(--border-light); }
+        .markets-table th { color: var(--text-medium); font-weight: 500; }
+        .markets-table td { color: var(--text-dark); font-weight: 400; display: flex; align-items: center; gap: 8px; }
+        .markets-table td.coin-info img { width: 24px; height: 24px; border-radius: 50%; }
+        .markets-table tr:last-child td { border-bottom: none; }
+        .markets-table .price-change { font-weight: 600; }
+        .markets-table .price-change.positive { color: var(--success-green); }
+        .markets-table .price-change.negative { color: var(--error-red); }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            display: flex; justify-content: space-around; align-items: center; padding: 10px 0; background-color: var(--white); border-top: 1px solid var(--border-light); box-shadow: 0 -5px 15px rgba(0,0,0,0.05); width: 100%; max-width: 480px; position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 100;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; color: var(--text-medium); font-size: 0.7em; cursor: pointer; transition: color 0.2s ease; padding: 5px 0; flex: 1;
+        }
+        .nav-item i { font-size: 1.3em; margin-bottom: 3px; }
+        .nav-item.active { color: var(--primary-purple); font-weight: 600; }
+        .nav-item:hover { color: var(--primary-purple); }
+
+        /* Estilo para spinner de carregamento */
+        .loading-spinner { border: 4px solid rgba(0, 0, 0, 0.1); border-left-color: var(--primary-purple); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; display: block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none !important; }
+
+        /* Estilo de Mensagem de Erro na Dashboard */
+        .dashboard-error {
+            color: var(--error-red);
+            font-weight: 600;
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: rgba(231, 76, 60, 0.1);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">KKR Credit</div>
+            <div class="header-actions">
+                <!-- Seletor de Idioma -->
+                <details class="lang-dropdown">
+                    <summary>
+                        <img id="currentFlag" src="https://flagicons.lipis.dev/flags/4x3/pt.svg" alt="Bandeira de Portugal">
+                        <span id="currentLangText">PT</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </summary>
+                    <ul class="lang-options">
+                        <li data-lang="en" data-flag="gb"><img src="https://flagicons.lipis.dev/flags/4x3/gb.svg" alt="English Flag"> English</li>
+                        <li data-lang="pt" data-flag="pt"><img src="https://flagicons.lipis.dev/flags/4x3/pt.svg" alt="Portuguese Flag"> Português</li>
+                        <!-- Adicione mais idiomas aqui -->
+                    </ul>
+                </details>
+                <!-- Botão de Logout -->
+                <button class="logout-btn" onclick="logout()" data-translate-key="logoutButtonAlt">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Main Card (KKR Credit Arbitrage) -->
+            <section class="main-card">
+                <h3 data-translate-key="mainCardTitle">KKR Credit Arbitrage</h3>
+                <p class="earn-text" data-translate-key="earnMoreText">Ganhe mais Saldo KKR</p>
+                
+                <!-- Campos de dados do usuário -->
+                <p class="detail-item">
+                    <span data-translate-key="yourNumber">Seu Número:</span>
+                    <strong><span id="userPhoneNumber"></span></strong>
+                </p>
+                <p class="detail-item">
+                    <span data-translate-key="availableBalance">Saldo Disponível:</span>
+                    <strong><span id="userBalance"></span></strong>
+                </p>
+                <p class="detail-item">
+                    <span data-translate-key="activeInvestment">Investimento Ativo:</span>
+                    <strong><span id="activeInvestmentName" data-translate-key="noActiveInvestment"></span></strong>
+                </p>
+                
+                <p id="profileLoadMessage" class="dashboard-error hidden">Falha ao carregar os dados.</p>
+                <!-- Fim dos campos de dados do usuário -->
+
+                <button class="safe-reliable-btn" data-translate-key="safeAndReliable"><i class="fas fa-shield-alt"></i> Seguro e Confiável</button>
+                <div class="large-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+            </section>
+
+            <!-- Grid de Ações -->
+            <section class="action-grid">
+                <div class="action-item" onclick="navigateTo('app');">
+                    <div class="icon-wrapper icon-app"><i class="fas fa-download"></i></div>
+                    <span data-translate-key="actionApp">App</span>
+                </div>
+                <div class="action-item" onclick="navigateTo('task');">
+                    <div class="icon-wrapper icon-task"><i class="fas fa-tasks"></i></div>
+                    <span data-translate-key="actionTask">Tarefas</span>
+                </div>
+                <div class="action-item" onclick="navigateTo('invite');">
+                    <div class="icon-wrapper icon-invite"><i class="fas fa-link"></i></div>
+                    <span data-translate-key="actionInvite">Convidar</span>
+                </div>
+                <div class="action-item" onclick="navigateTo('team');">
+                    <div class="icon-wrapper icon-team"><i class="fas fa-users"></i></div>
+                    <span data-translate-key="actionTeam">Equipe</span>
+                </div>
+                <div class="action-item" onclick="navigateTo('about');">
+                    <div class="icon-wrapper icon-about"><i class="fas fa-info-circle"></i></div>
+                    <span data-translate-key="actionAbout">Sobre</span>
+                </div>
+                <div class="action-item" onclick="navigateTo('holding');">
+                    <div class="icon-wrapper icon-holding"><i class="fas fa-file-invoice"></i></div>
+                    <span data-translate-key="actionHolding">Holding</span>
+                </div>
+                <div class="action-item" onclick="navigateTo('wallet');">
+                    <div class="icon-wrapper icon-wallet"><i class="fas fa-wallet"></i></div>
+                    <span data-translate-key="actionWallet">Carteira</span>
+                </div>
+                <div class="action-item" onclick="navigateTo('support');">
+                    <div class="icon-wrapper icon-support"><i class="fas fa-headset"></i></div>
+                    <span data-translate-key="actionSupport">Suporte</span>
+                </div>
+            </section>
+
+            <!-- Banner "Invite friends, earn coins" (COM DADOS REAIS DO ADMIN) -->
+            <section class="invite-banner">
+                <h4 data-translate-key="inviteBannerTitle">Convide amigos, ganhe bônus!</h4>
+                <p data-translate-key="inviteBannerText">Desfrute de ganhos constantes de X% sobre os lucros de seus referidos.</p>
+                <button class="invite-btn" onclick="navigateTo('invite');" data-translate-key="inviteNowButton">Convidar Agora</button>
+            </section>
+
+            <!-- Seção de Mercados (dados reais CoinGecko) -->
+            <section class="markets-section">
+                <div class="markets-header">
+                    <h4 data-translate-key="marketsTitle">Mercados</h4>
+                    <button class="invest-btn" onclick="navigateTo('pool');" data-translate-key="investNowButton">Investir Agora</button>
+                </div>
+                <div class="markets-table-container">
+                    <div id="markets-loading" class="loading-spinner"></div>
+                    <p id="markets-error" class="error-message hidden" data-translate-key="marketsLoadingError">Erro ao carregar mercados.</p>
+                    <table id="markets-data" class="markets-table hidden">
+                        <thead>
+                            <tr>
+                                <th data-translate-key="marketHeaderAsset">Ativo</th>
+                                <th data-translate-key="marketHeaderPrice">Preço</th>
+                                <th data-translate-key="marketHeader24h">24h</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dados de mercado serão injetados aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+        </main> <!-- Fim do main-content -->
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="navigateTo('home');">
+                <i class="fas fa-home"></i>
+                <span data-translate-key="navHome">Home</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('pool');">
+                <i class="fas fa-coins"></i>
+                <span data-translate-key="navPool">Pool</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('income');">
+                <i class="fas fa-chart-line"></i>
+                <span data-translate-key="navIncome">Renda</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('wallet');">
+                <i class="fas fa-wallet"></i>
+                <span data-translate-key="navWallet">Carteira</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('profile');">
+                <i class="fas fa-user"></i>
+                <span data-translate-key="navProfile">Perfil</span>
+            </div>
+        </nav>
+
+    </div> <!-- Fim do dashboard-wrapper -->
+
+    <!-- Script para lógica do Dashboard (Versão Final de Atribuição Comprovada) -->
+    <script>
+        // *** PONTO CRÍTICO: VERIFIQUE ESTA URL! ***
+        const BACKEND_URL = 'https://backend-cjl7.onrender.com'; 
+        const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=5&page=1&sparkline=false';
+
+        // Objeto de traduções
+        const translations = {
+            en: {
+                dashboardTitle: 'KKR Credit | Dashboard', logoutButtonAlt: 'Logout', mainCardTitle: 'KKR Credit Arbitrage', earnMoreText: 'Earn more KKR Balance', yourNumber: 'Your Number:', availableBalance: 'Available Balance:', activeInvestment: 'Active Investment:', noActiveInvestment: 'None', safeAndReliable: 'Safe and Reliable', actionApp: 'App', actionTask: 'Task', actionInvite: 'Invite', actionTeam: 'Team', actionAbout: 'About', actionHolding: 'Holding', actionWallet: 'Wallet', actionSupport: 'Support', inviteBannerTitle: 'Invite friends, earn bonus!', inviteBannerText: 'Enjoy steady X% earnings on your referred users\' profits.', inviteNowButton: 'Invite Now', marketsTitle: 'Markets', investNowButton: 'Invest Now', marketHeaderAsset: 'Asset', marketHeaderPrice: 'Price', marketHeader24h: '24h', marketsLoading: 'Loading markets...', marketsLoadingError: 'Error loading markets. Please try again.', navHome: 'Home', navPool: 'Pool', navIncome: 'Income', navWallet: 'Wallet', navProfile: 'Profile', logoutConfirm: 'Are you sure you want to log out?', loggedOutSuccess: 'You have been successfully logged out.', notLoggedIn: 'You are not logged in. Redirecting to login page.', sessionExpired: 'Session expired or unauthorized. Please log in again.', profileLoadError: 'Error loading profile:', networkError: 'A network error occurred. Check your connection or try again later.', languageChanged: 'Language changed to: ', pageNotConfigured: 'Page "{page}" not configured for navigation. Create the corresponding HTML file.',
+            },
+            pt: {
+                dashboardTitle: 'KKR Credit | Dashboard', logoutButtonAlt: 'Sair', mainCardTitle: 'KKR Credit Arbitrage', earnMoreText: 'Ganhe mais Saldo KKR', yourNumber: 'Seu Número:', availableBalance: 'Saldo Disponível:', activeInvestment: 'Investimento Ativo:', noActiveInvestment: 'Nenhum', safeAndReliable: 'Seguro e Confiável', actionApp: 'App', actionTask: 'Tarefas', actionInvite: 'Convidar', actionTeam: 'Equipe', actionAbout: 'Sobre', actionHolding: 'Holding', actionWallet: 'Carteira', actionSupport: 'Suporte', inviteBannerTitle: 'Convide amigos, ganhe bônus!',
+                // MODIFICADO: Placeholder X%
+                inviteBannerText: 'Desfrute de ganhos constantes de X% sobre os lucros de seus referidos.', 
+                inviteNowButton: 'Convidar Agora', marketsTitle: 'Mercados', investNowButton: 'Investir Agora', marketHeaderAsset: 'Ativo', marketHeaderPrice: 'Preço', marketHeader24h: '24h', marketsLoading: 'Carregando mercados...', marketsLoadingError: 'Erro ao carregar mercados. Por favor, tente novamente.', navHome: 'Home', navPool: 'Pacotes', navIncome: 'Renda', navWallet: 'Carteira', navProfile: 'Perfil', logoutConfirm: 'Tem certeza que deseja sair?', loggedOutSuccess: 'Você foi desconectado com sucesso.', notLoggedIn: 'Você não está logado. Redirecionando para a página de login.', sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.', profileLoadError: 'Erro ao carregar perfil:', networkError: 'Ocorreu um erro de rede. Verifique sua conexão ou tente novamente mais tarde.', languageChanged: 'Idioma alterado para: ', pageNotConfigured: 'Página "{page}" não configurada para navegação. Crie o arquivo HTML correspondente.',
+            }
+        };
+
+        let currentLang = 'pt';
+        let dailyCommissionRate = 0; // Variável para armazenar a taxa de comissão
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLanguagePreference();
+            applyTranslations(currentLang);
+            fetchInitialData(); // Chamada inicial para buscar Perfil + Config Admin
+            fetchMarketData();
+        });
+
+        // --- Funções de Idioma (Mantidas) ---
+        const langOptions = document.querySelector('.lang-options');
+        const currentFlag = document.getElementById('currentFlag');
+        const currentLangText = document.getElementById('currentLangText');
+        const langDropdownDetails = document.querySelector('.lang-dropdown');
+
+        if (langOptions) {
+             langOptions.addEventListener('click', (event) => {
+                const selectedLi = event.target.closest('li');
+                if (selectedLi) {
+                    const lang = selectedLi.dataset.lang;
+                    const flag = selectedLi.dataset.flag;
+                    
+                    if (currentFlag) {
+                        currentFlag.src = `https://flagicons.lipis.dev/flags/4x3/${flag}.svg`;
+                        currentFlag.alt = `${lang.toUpperCase()} Flag`;
+                    }
+                    if (currentLangText) currentLangText.textContent = lang.toUpperCase();
+
+                    currentLang = lang;
+                    localStorage.setItem('langPreference', JSON.stringify({ lang, flag }));
+                    
+                    if (langDropdownDetails) langDropdownDetails.removeAttribute('open');
+
+                    applyTranslations(currentLang);
+                    alert(translations[currentLang].languageChanged + selectedLi.textContent.trim());
+                }
+            });
+        }
+
+
+        function loadLanguagePreference() {
+            const savedLang = localStorage.getItem('langPreference');
+            if (savedLang) {
+                const { lang, flag } = JSON.parse(savedLang);
+                currentLang = lang;
+                const flagSrc = `https://flagicons.lipis.dev/flags/4x3/${flag}.svg`;
+                if (currentFlag) currentFlag.src = flagSrc;
+                if (currentFlag) currentFlag.alt = `${lang.toUpperCase()} Flag`;
+                if (currentLangText) currentLangText.textContent = lang.toUpperCase();
+            }
+        }
+
+        // Lógica de tradução mais segura
+        function applyTranslations(lang) {
+            document.querySelectorAll('[data-translate-key]').forEach(element => {
+                const key = element.dataset.translateKey;
+                if (translations[lang] && translations[lang][key]) {
+                    if (element.tagName === 'TITLE') {
+                        document.title = translations[lang][key];
+                    } else if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
+                        element.placeholder = translations[lang][key];
+                    } else if (element.tagName !== 'BUTTON' && element.tagName !== 'I') {
+                         // Evita traduzir os spans de dados do usuário aqui para não apagar o placeholder
+                        if (element.id !== 'userPhoneNumber' && element.id !== 'userBalance' && element.id !== 'activeInvestmentName') {
+                            // Se for o banner, usa innerHTML para a substituição dinâmica
+                            if (element.classList.contains('invite-banner') && element.tagName === 'P') {
+                                // Deixa o texto original com o placeholder X%
+                            } else {
+                                element.textContent = translations[lang][key];
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Lógica de tradução de placeholder para Investimento Ativo
+            const activeInvestmentNameElem = document.getElementById('activeInvestmentName');
+            if (activeInvestmentNameElem && activeInvestmentNameElem.textContent === '') { // Se estiver vazio, aplica o placeholder traduzido
+                 activeInvestmentNameElem.textContent = translations[lang].noActiveInvestment;
+            }
+            
+            // Aplica a tradução do banner, usando o valor de dailyCommissionRate se já estiver disponível
+            updateInviteBannerText();
+        }
+
+        function updateInviteBannerText() {
+            const bannerTextElement = document.querySelector('.invite-banner p[data-translate-key="inviteBannerText"]');
+            if (bannerTextElement) {
+                const translatedText = translations[currentLang].inviteBannerText;
+                const commissionPercent = (dailyCommissionRate * 100).toFixed(0);
+                
+                // Substitui o placeholder X% pelo valor real
+                const newText = translatedText.replace('X%', `${commissionPercent}%`);
+                bannerTextElement.innerHTML = newText;
+            }
+        }
+        
+        // Nova função para buscar todos os dados iniciais
+        async function fetchInitialData() {
+            await Promise.all([
+                fetchUserProfile(),
+                fetchAdminData() // Chamada para buscar a configuração do admin
+            ]).catch(error => {
+                 console.error("[DIAGNÓSTICO] Erro em uma das chamadas iniciais:", error);
+                 // O tratamento de erro principal está em fetchUserProfile
+            });
+        }
+        
+        // --- Lógica de Carregamento da Configuração do Admin (NOVA FUNÇÃO) ---
+        async function fetchAdminData() {
+            try {
+                // Endpoint público que agora retorna a comissão diária (modificação necessária no controllers.js)
+                const response = await fetch(`${BACKEND_URL}/api/deposit-config`);
+                if (!response.ok) {
+                    throw new Error(`Status ${response.status}`);
+                }
+                const data = await response.json();
+                const config = data.config;
+                
+                if (config && config.commissionOnDailyProfit !== undefined) {
+                    dailyCommissionRate = config.commissionOnDailyProfit; // Salva a taxa
+                    updateInviteBannerText(); // Atualiza o texto do banner
+                }
+
+            } catch (error) {
+                console.error('[DIAGNÓSTICO] ERRO ao buscar config do admin:', error);
+            }
+        }
+
+
+        // --- Lógica de Carregamento do Perfil do Usuário (MANTER) ---
+        async function fetchUserProfile() {
+            const token = localStorage.getItem('token');
+            const userPhoneNumberElem = document.getElementById('userPhoneNumber');
+            const userBalanceElem = document.getElementById('userBalance');
+            const activeInvestmentNameElem = document.getElementById('activeInvestmentName');
+            const profileLoadMessage = document.getElementById('profileLoadMessage');
+
+            if (!token) {
+                console.warn(translations[currentLang].notLoggedIn);
+                if (userPhoneNumberElem) userPhoneNumberElem.textContent = 'Não Logado';
+                if (userBalanceElem) userBalanceElem.textContent = '0.00 MT';
+                if (activeInvestmentNameElem) activeInvestmentNameElem.textContent = translations[currentLang].noActiveInvestment;
+                return;
+            }
+
+            // Define os placeholders de "Carregando..."
+            if (userPhoneNumberElem) userPhoneNumberElem.textContent = 'Carregando...';
+            if (userBalanceElem) userBalanceElem.textContent = 'Carregando...';
+            if (activeInvestmentNameElem) activeInvestmentNameElem.textContent = 'Carregando...'; // Temporário para dar feedback
+            if (profileLoadMessage) profileLoadMessage.classList.add('hidden');
+
+
+            // 3. Chamada da API
+            console.log(`%c[DIAGNÓSTICO] Tentando buscar perfil em: ${BACKEND_URL}/api/profile`, 'color: orange; font-weight: bold;');
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/profile`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                console.log(`%c[DIAGNÓSTICO] Resposta da API - Status: ${response.status}`, 'color: cyan; font-weight: bold;');
+
+                if (response.status === 401 || response.status === 403) {
+                    const errorData = await response.json().catch(() => ({ message: 'Sem detalhes de erro na resposta.' }));
+                    console.error(`[DIAGNÓSTICO] FALHA CRÍTICA: Token inválido, expirado ou acesso negado. Status ${response.status}. Mensagem: ${errorData.message}`);
+                    localStorage.removeItem('token');
+                    alert(translations[currentLang].sessionExpired);
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const user = data.user;
+                    
+                    console.log('%c[DIAGNÓSTICO] DADOS RECEBIDOS (SUCESSO):', 'color: lightgreen; font-weight: bold;', user);
+                    
+                    // --- BLOCO CRÍTICO DE ATUALIZAÇÃO DE DADOS ---
+                    
+                    // 1. Número de Telefone
+                    const tel = user.phoneNumber || 'N/A';
+                    if (userPhoneNumberElem) userPhoneNumberElem.textContent = tel;
+                    
+                    // 2. Saldo Disponível
+                    const balanceValue = user.balance !== undefined && user.balance !== null ? user.balance : 0;
+                    const balanceText = `${balanceValue.toFixed(2)} MT`; 
+                    if (userBalanceElem) userBalanceElem.textContent = balanceText; 
+
+                    // 3. Investimento Ativo (Planos podem ser vazios)
+                    let investmentName = translations[currentLang].noActiveInvestment;
+                    const activeInv = user.activeInvestments && user.activeInvestments.length > 0 ? user.activeInvestments[0] : null;
+
+                    if (activeInv && activeInv.planId && activeInv.planId.name) {
+                        // Se for um objeto populado (com o nome)
+                        investmentName = activeInv.planId.name;
+                    } else if (activeInv && activeInv.planId) {
+                        // Se não for populado, pode ser apenas o ID do objeto
+                        investmentName = `ID Plano: ${activeInv.planId}`;
+                    }
+
+                    if (activeInvestmentNameElem) activeInvestmentNameElem.textContent = investmentName;
+
+                    // --- FIM DO BLOCO CRÍTICO ---
+                    
+                    console.log(`%c[DIAGNÓSTICO] VALORES ATRIBUÍDOS AO DOM:`, 'color: yellow; font-weight: bold;');
+                    console.log(`[D] Telefone: ${tel}`);
+                    console.log(`[D] Saldo: ${balanceText}`);
+                    console.log(`[D] Investimento: ${investmentName}`);
+
+
+                } else {
+                    // Se o status for 500, 404, etc.
+                    const errorData = await response.json().catch(() => ({ message: `Falha ao processar JSON. Status: ${response.status}.` }));
+                    console.error(`[DIAGNÓSTICO] FALHA NA RESPOSTA (Status: ${response.status}):`, errorData);
+                    
+                    if (profileLoadMessage) {
+                        profileLoadMessage.textContent = `${translations[currentLang].profileLoadError} ${errorData.message || 'Erro desconhecido.'} (Status: ${response.status})`;
+                        profileLoadMessage.classList.remove('hidden');
+                    }
+                    if (userPhoneNumberElem) userPhoneNumberElem.textContent = 'Erro';
+                    if (userBalanceElem) userBalanceElem.textContent = 'Erro';
+                    if (activeInvestmentNameElem) activeInvestmentNameElem.textContent = 'Erro';
+                }
+            } catch (error) {
+                console.error('[DIAGNÓSTICO] ERRO DE REDE/FETCH GERAL (CORS/Servidor Inativo):', error);
+                
+                if (profileLoadMessage) {
+                    profileLoadMessage.textContent = `${translations[currentLang].networkError} (Verifique o console para mais detalhes)`;
+                    profileLoadMessage.classList.remove('hidden');
+                }
+
+                if (userPhoneNumberElem) userPhoneNumberElem.textContent = 'Erro de Rede';
+                if (userBalanceElem) userBalanceElem.textContent = 'Erro de Rede';
+                if (activeInvestmentNameElem) activeInvestmentNameElem.textContent = 'Erro de Rede';
+            }
+        }
+
+
+        // --- Lógica de Carregamento de Mercados CoinGecko (Mantida) ---
+        async function fetchMarketData() {
+            const loadingSpinner = document.getElementById('markets-loading');
+            const errorElement = document.getElementById('markets-error');
+            const marketsTable = document.getElementById('markets-data');
+            const tableBody = marketsTable ? marketsTable.querySelector('tbody') : null;
+
+            if (loadingSpinner) loadingSpinner.classList.remove('hidden');
+            if (errorElement) errorElement.classList.add('hidden');
+            if (marketsTable) marketsTable.classList.add('hidden');
+            if (tableBody) tableBody.innerHTML = '';
+
+            try {
+                const response = await fetch(COINGECKO_API_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+
+                if (data.length === 0) {
+                    throw new Error('No market data received.');
+                }
+
+                data.forEach(coin => {
+                    const row = document.createElement('tr');
+                    const priceChange = coin.price_change_percentage_24h_in_currency;
+                    const priceChangeClass = priceChange >= 0 ? 'positive' : 'negative';
+
+                    // Converte de USD para MZN (usando uma taxa de câmbio fictícia de 60 MT/USD para demonstração)
+                    const conversionRate = 60; 
+                    const displayPrice = `${(coin.current_price * conversionRate).toLocaleString('pt-MZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MT`;
+                    const displayPriceChange = `${priceChange ? priceChange.toFixed(2) : '0.00'}%`;
+
+                    row.innerHTML = `
+                        <td class="coin-info"><img src="${coin.image}" alt="${coin.name} icon"> ${coin.symbol.toUpperCase()}</td>
+                        <td>${displayPrice}</td>
+                        <td class="price-change ${priceChangeClass}">${displayPriceChange}</td>
+                    `;
+                    if (tableBody) tableBody.appendChild(row);
+                });
+
+                if (marketsTable) marketsTable.classList.remove('hidden');
+            } catch (error) {
+                console.error('Erro ao buscar dados de mercado:', error);
+                if (errorElement) {
+                    errorElement.textContent = translations[currentLang].marketsLoadingError;
+                    errorElement.classList.remove('hidden');
+                }
+            } finally {
+                if (loadingSpinner) loadingSpinner.classList.add('hidden');
+            }
+        }
+
+
+        // --- Lógica de Navegação para Páginas Reais (Mantida) ---
+        function navigateTo(page) {
+            const pageMap = {
+                'home': 'dashboard.html',
+                'wallet': 'wallet.html',
+                'profile': 'profile.html',
+                'invite': 'invite.html',
+                'pool': 'pool.html',
+                'income': 'income.html',
+                'invest': 'pool.html', // Corrigido para pool.html
+                'app': 'app.html',
+                'task': 'task.html',
+                'team': 'team.html',
+                'about': 'about.html',
+                'holding': 'holding.html',
+                'support': 'support.html'
+            };
+
+            const targetPage = pageMap[page];
+            if (targetPage) {
+                window.location.href = targetPage;
+            } else {
+                alert(translations[currentLang].pageNotConfigured.replace('{page}', page));
+            }
+        }
+
+        // --- Função de Logout (Mantida) ---
+        function logout() {
+            if (confirm(translations[currentLang].logoutConfirm)) {
+                localStorage.removeItem('token');
+                alert(translations[currentLang].loggedOutSuccess);
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>

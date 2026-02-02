@@ -1,0 +1,360 @@
+--- START OF FILE investment-history.html ---
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="investmentHistoryTitle">KKR Credit | Histórico de Investimentos</title>
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome para ícones (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- CSS EMBUTIDO AQUI -->
+    <style>
+        /* Variáveis CSS (Consistente) */
+        :root {
+            --primary-purple: #6a0dad;
+            --light-purple: #9b59b6;
+            --hover-purple: #8e44ad;
+            --dark-background: #2c3e50;
+            --text-dark: #333;
+            --text-medium: #666;
+            --text-light: #555;
+            --border-light: #e0e0e0;
+            --white: #ffffff;
+            --card-bg-light: #f7faff;
+            --success-green: #2ecc71; /* Status Completo / Lucro Positivo */
+            --error-red: #e74c3c; /* Status Cancelado / Lucro Negativo */
+            --info-blue: #3498db;
+            --app-background: #e0e6ec;
+            --active-invest-color: #3498db; /* Cor para Investimento Ativo */
+            --completed-invest-color: var(--success-green);
+            --cancelled-invest-color: var(--error-red);
+        }
+
+        /* Base e Estrutura */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; line-height: 1.6; color: var(--text-dark); background-color: var(--app-background); min-height: 100vh; display: flex; flex-direction: column; }
+        .page-wrapper { max-width: 480px; width: 100%; margin: 0 auto; background-color: var(--card-bg-light); min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        
+        /* Header (Consistente) */
+        .app-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: var(--white); border-bottom: 1px solid var(--border-light); position: sticky; top: 0; z-index: 100; }
+        .app-header .logo { font-size: 1.5em; font-weight: 700; color: var(--primary-purple); }
+        .back-button { background: none; border: none; color: var(--text-medium); font-size: 1.2em; cursor: pointer; transition: color 0.2s ease; padding: 5px; }
+        .back-button:hover { color: var(--primary-purple); }
+        
+        /* Main Content */
+        .main-content { flex-grow: 1; padding: 20px; padding-bottom: 20px; overflow-y: auto; }
+        .page-title { font-size: 1.8em; color: var(--primary-purple); font-weight: 700; margin-bottom: 25px; text-align: center; }
+
+        /* Card de Resumo (Opcional, mas útil) */
+        .summary-card {
+            background-color: var(--dark-background);
+            border-radius: 15px;
+            padding: 15px 20px;
+            color: var(--white);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .summary-card p {
+            font-size: 0.9em;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Lista de Histórico */
+        #investmentHistoryList { /* ID alterado para consistência */
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Card de Transação (Investimento) */
+        .investment-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary-purple);
+        }
+
+        .investment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .investment-header .plan-name {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .investment-header .status {
+            font-size: 0.8em;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .status-active { background-color: var(--active-invest-color); }
+        .status-completed { background-color: var(--completed-invest-color); }
+        .status-cancelled { background-color: var(--cancelled-invest-color); }
+
+        .investment-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .investment-detail .label {
+            color: var(--text-medium);
+            font-weight: 500;
+        }
+
+        .investment-detail .value {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .investment-detail .value.positive {
+            color: var(--success-green);
+        }
+        .investment-detail .value.negative {
+            color: var(--error-red);
+        }
+
+        /* Mensagens */
+        .message { text-align: center; padding: 15px; border-radius: 8px; margin-top: 20px; font-weight: 500; }
+        .loading-message { color: var(--primary-purple); border: 1px solid var(--light-purple); background-color: rgba(106, 13, 173, 0.1); }
+        .info-message { color: var(--info-blue); border: 1px solid var(--info-blue); background-color: rgba(52, 152, 219, 0.1); }
+        .error-message { color: var(--error-red); border: 1px solid var(--error-red); background-color: rgba(231, 76, 60, 0.1); }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Header -->
+        <header class="app-header">
+            <button class="back-button" onclick="navigateTo('profile');" data-translate-key="backButtonAlt">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="logo">KKR Credit</div>
+            <div></div> 
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1 class="page-title" data-translate-key="investmentHistoryHeader">Histórico de Investimentos</h1>
+
+            <!-- Card de Resumo -->
+            <section class="summary-card">
+                <p data-translate-key="summaryTitle">Registro completo de todos os seus investimentos.</p>
+            </section>
+            
+            <!-- Mensagens -->
+            <p id="loadingMessage" class="message loading-message hidden" data-translate-key="loadingHistory">Carregando histórico de investimentos...</p>
+            <p id="errorMessage" class="message error-message hidden"></p>
+
+            <!-- Lista de Histórico -->
+            <div id="investmentHistoryList">
+                <!-- Cards de Investimento serão injetados aqui -->
+            </div>
+            <p id="noHistoryMessage" class="message info-message hidden" data-translate-key="noHistory">Nenhum investimento registrado.</p>
+
+        </main> <!-- Fim do main-content -->
+    </div> <!-- Fim do page-wrapper -->
+
+    <!-- Script para lógica do Histórico de Investimentos EMBUTIDO AQUI -->
+    <script>
+        const BACKEND_URL = 'https://backend-cjl7.onrender.com';
+
+        // Objeto de traduções
+        const translations = {
+            en: {
+                investmentHistoryTitle: 'KKR Credit | Investment History', backButtonAlt: 'Back', investmentHistoryHeader: 'Investment History',
+                summaryTitle: 'Complete record of all your investments.', loadingHistory: 'Loading investment history...',
+                noHistory: 'No investment records found.',
+                investedAmount: 'Invested Amount', totalProfit: 'Total Profit', startDate: 'Start Date', endDate: 'End Date',
+                status: 'Status', statusActive: 'Active', statusCompleted: 'Completed', statusCancelled: 'Cancelled',
+                networkError: 'A network error occurred. Check your connection or try again later.', sessionExpired: 'Session expired or unauthorized. Please log in again.',
+            },
+            pt: {
+                investmentHistoryTitle: 'KKR Credit | Histórico de Investimentos', backButtonAlt: 'Voltar', investmentHistoryHeader: 'Histórico de Investimentos',
+                summaryTitle: 'Registro completo de todos os seus investimentos.', loadingHistory: 'Carregando histórico de investimentos...',
+                noHistory: 'Nenhum registro de investimento encontrado.',
+                investedAmount: 'Valor Investido', totalProfit: 'Lucro Total', startDate: 'Data de Início', endDate: 'Data de Término',
+                status: 'Status', statusActive: 'Ativo', statusCompleted: 'Completo', statusCancelled: 'Cancelado',
+                networkError: 'Ocorreu um erro de rede. Verifique sua conexão ou tente novamente mais tarde.', sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.',
+            }
+        };
+
+        let currentLang = 'pt';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLanguagePreference();
+            applyTranslations(currentLang);
+            fetchInvestmentHistory();
+        });
+
+        // Expondo para o HTML
+        window.navigateTo = navigateTo;
+
+        // --- Funções Auxiliares de UI e Navegação (Consistente) ---
+        function setActionMessage(id, message, type = 'error', hide = false) {
+            const messageElement = document.getElementById(id);
+            if (messageElement) {
+                messageElement.classList.remove('hidden', 'loading-message', 'info-message', 'error-message');
+                messageElement.textContent = message;
+                messageElement.classList.add(`${type}-message`);
+                if (hide) messageElement.classList.add('hidden');
+            }
+        }
+        
+        function loadLanguagePreference() {
+            const savedLang = localStorage.getItem('langPreference');
+            if (savedLang) {
+                const { lang } = JSON.parse(savedLang);
+                currentLang = lang;
+            }
+        }
+
+        function applyTranslations(lang) {
+            document.querySelectorAll('[data-translate-key]').forEach(element => {
+                const key = element.dataset.translateKey;
+                if (translations[lang] && translations[lang][key]) {
+                    if (element.tagName === 'TITLE') {
+                        document.title = translations[lang][key];
+                    } else if (element.tagName !== 'BUTTON' && element.tagName !== 'I') {
+                        element.innerHTML = translations[lang][key];
+                    }
+                }
+            });
+        }
+
+        function navigateTo(page) {
+            const pageMap = {
+                'home': 'dashboard.html',
+                'profile': 'profile.html' 
+            };
+            const targetPage = pageMap[page] || 'dashboard.html'; 
+            window.location.href = targetPage;
+        }
+        
+        // --- Função Principal: Busca Histórico de Investimentos ---
+        async function fetchInvestmentHistory() {
+            const token = localStorage.getItem('token');
+            const listContainer = document.getElementById('investmentHistoryList');
+            const loadingMessage = document.getElementById('loadingMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            const noHistoryMessage = document.getElementById('noHistoryMessage');
+            
+            if (!token) {
+                setActionMessage('errorMessage', translations[currentLang].sessionExpired, 'error');
+                setTimeout(() => window.location.href = 'login.html', 2000);
+                return;
+            }
+
+            // 1. Limpa e mostra o spinner
+            listContainer.innerHTML = ''; 
+            loadingMessage.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            noHistoryMessage.classList.add('hidden');
+
+            try {
+                // Endpoint dedicado para histórico de investimentos
+                const response = await fetch(`${BACKEND_URL}/api/investments/history`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.status === 401 || response.status === 403) {
+                    throw new Error("sessionExpired");
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`Status ${response.status}`);
+                }
+
+                const data = await response.json();
+                const history = data.investments || []; 
+                
+                // 2. Renderização
+                if (history.length > 0) {
+                    renderInvestmentHistory(history);
+                } else {
+                    noHistoryMessage.classList.remove('hidden');
+                }
+                
+            } catch (error) {
+                if (error.message.includes("sessionExpired")) {
+                    setActionMessage('errorMessage', translations[currentLang].sessionExpired, 'error');
+                    localStorage.removeItem('token');
+                    setTimeout(() => window.location.href = 'login.html', 2000);
+                } else {
+                    // Exibe o retângulo de erro em caso de falha real
+                    setActionMessage('errorMessage', `${translations[currentLang].networkError}: ${error.message}`, 'error');
+                    console.error("Erro ao buscar histórico de investimentos:", error);
+                }
+            } finally {
+                // 3. Esconde o spinner
+                loadingMessage.classList.add('hidden');
+            }
+        }
+
+        // --- Constrói os Cards de Histórico ---
+        function renderInvestmentHistory(history) {
+            const listContainer = document.getElementById('investmentHistoryList');
+            
+            // Ordena por data de início mais recente
+            history.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+
+            history.forEach(investment => {
+                const card = document.createElement('div');
+                card.className = 'investment-card';
+                
+                // Pega nome do plano (populado)
+                const packageName = investment.planId ? investment.planId.name : 'Pacote Desconhecido';
+                
+                // Formata status e datas
+                const statusKey = `status${investment.status.charAt(0).toUpperCase() + investment.status.slice(1)}`;
+                const statusText = translations[currentLang][statusKey] || investment.status;
+                const startDateFormatted = new Date(investment.startDate).toLocaleDateString(currentLang);
+                const endDateFormatted = new Date(investment.endDate).toLocaleDateString(currentLang);
+                
+                const profitClass = investment.currentProfit >= 0 ? 'positive' : 'negative';
+
+                card.innerHTML = `
+                    <div class="investment-header">
+                        <span class="plan-name">${packageName}</span>
+                        <span class="status status-${investment.status}">${statusText}</span>
+                    </div>
+                    <div class="investment-detail">
+                        <span class="label">${translations[currentLang].investedAmount}:</span>
+                        <span class="value negative">${investment.investedAmount.toFixed(2)} MT</span>
+                    </div>
+                    <div class="investment-detail">
+                        <span class="label">${translations[currentLang].totalProfit}:</span>
+                        <span class="value ${profitClass}">${investment.currentProfit.toFixed(2)} MT</span>
+                    </div>
+                    <div class="investment-detail">
+                        <span class="label">${translations[currentLang].startDate}:</span>
+                        <span class="value">${startDateFormatted}</span>
+                    </div>
+                    <div class="investment-detail">
+                        <span class="label">${translations[currentLang].endDate}:</span>
+                        <span class="value">${endDateFormatted}</span>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
+--- END OF FILE investment-history.html ---

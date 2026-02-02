@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="walletTitle">KKR Credit | Carteira</title>
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome para ícones (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- CSS EMBUTIDO AQUI -->
+    <style>
+        /* Variáveis CSS (Consistente) */
+        :root {
+            --primary-purple: #6a0dad;
+            --light-purple: #9b59b6;
+            --hover-purple: #8e44ad;
+            --dark-background: #2c3e50;
+            --text-dark: #333;
+            --text-medium: #666;
+            --text-light: #555;
+            --border-light: #e0e0e0;
+            --white: #ffffff;
+            --card-bg-light: #f7faff;
+            --success-green: #2ecc71;
+            --error-red: #e74c3c;
+            --app-background: #e0e6ec;
+            --info-blue: #3498db;
+            --deposit-color: #007bff; 
+            --withdrawal-color: #dc3545; 
+            --warning-yellow: #f1c40f; 
+        }
+
+        /* Base e Estrutura */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; line-height: 1.6; color: var(--text-dark); background-color: var(--app-background); min-height: 100vh; display: flex; flex-direction: column; }
+        .page-wrapper { max-width: 480px; width: 100%; margin: 0 auto; background-color: var(--card-bg-light); min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        .app-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: var(--white); border-bottom: 1px solid var(--border-light); position: sticky; top: 0; z-index: 100; }
+        .app-header .logo { font-size: 1.5em; font-weight: 700; color: var(--primary-purple); }
+        .back-button { background: none; border: none; color: var(--text-medium); font-size: 1.2em; cursor: pointer; transition: color 0.2s ease; padding: 5px; }
+        .back-button:hover { color: var(--primary-purple); }
+        .main-content { flex-grow: 1; padding: 20px; padding-bottom: 80px; overflow-y: auto; }
+        .page-title { font-size: 1.8em; color: var(--primary-purple); font-weight: 700; margin-bottom: 25px; text-align: center; }
+
+        /* Card de Saldo */
+        .balance-card { background-color: var(--primary-purple); border-radius: 15px; padding: 25px; color: var(--white); margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .balance-card h2 { font-size: 1.2em; color: rgba(255,255,255,0.8); margin-bottom: 15px; }
+        .balance-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.2); }
+        .balance-item:last-child { border-bottom: none; }
+        .balance-item .label { font-size: 0.9em; font-weight: 500; }
+        .balance-item .value { font-size: 1.4em; font-weight: 700; color: var(--success-green); }
+        .balance-item.bonus .value { color: var(--warning-yellow); font-size: 1.1em; }
+
+        /* Abas e Formulários */
+        .action-tabs { display: flex; margin-bottom: 25px; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .action-tabs .tab-button { flex: 1; padding: 15px 10px; background-color: var(--white); color: var(--text-dark); border: none; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .action-tabs .tab-button.active { color: var(--white); background-color: var(--primary-purple); }
+        .action-tabs .tab-button:not(.active):hover { background-color: var(--card-bg-light); color: var(--primary-purple); }
+        .action-form { background-color: var(--white); border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 0.9em; color: var(--text-dark); font-weight: 500; }
+        .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 10px 15px; border: 1px solid var(--border-light); border-radius: 8px; font-size: 1em; transition: border-color 0.2s; }
+        .input-group input:focus, .input-group textarea:focus, .input-group select:focus { border-color: var(--primary-purple); outline: none; }
+        .input-group textarea { resize: vertical; min-height: 80px; }
+        .submit-btn { width: 100%; padding: 12px; color: var(--white); border: none; border-radius: 8px; font-size: 1em; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease, transform 0.1s ease; margin-top: 10px; }
+        .submit-btn.deposit { background-color: var(--deposit-color); }
+        .submit-btn.deposit:hover { background-color: #0056b3; }
+        .submit-btn.withdraw { background-color: var(--withdrawal-color); }
+        .submit-btn.withdraw:hover { background-color: #b3001e; }
+        .submit-btn:disabled { background-color: var(--text-medium); cursor: not-allowed; }
+
+        /* Mensagens */
+        .message { text-align: center; padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: 500; }
+        .error-message { color: var(--error-red); border: 1px solid var(--error-red); background-color: rgba(231, 76, 60, 0.1); }
+        .success-message { color: var(--success-green); border: 1px solid var(--success-green); background-color: rgba(46, 204, 113, 0.1); }
+        .hidden { display: none !important; }
+
+        /* Navegação Inferior */
+        .bottom-nav { display: flex; justify-content: space-around; align-items: center; padding: 10px 0; background-color: var(--white); border-top: 1px solid var(--border-light); box-shadow: 0 -5px 15px rgba(0,0,0,0.05); width: 100%; max-width: 480px; position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-medium); font-size: 0.7em; cursor: pointer; transition: color 0.2s ease; padding: 5px 0; flex: 1; }
+        .nav-item i { font-size: 1.3em; margin-bottom: 3px; }
+        .nav-item.active { color: var(--primary-purple); font-weight: 600; }
+        .nav-item:hover { color: var(--primary-purple); }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Header -->
+        <header class="app-header">
+            <button class="back-button" onclick="navigateTo('home');" data-translate-key="backButtonAlt">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="logo">KKR Credit</div>
+            <div></div> 
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1 class="page-title" data-translate-key="walletHeader">Minha Carteira</h1>
+
+            <!-- Card de Saldo -->
+            <section class="balance-card">
+                <h2 data-translate-key="balanceSummary">Resumo do Saldo</h2>
+                <p id="loadingMessage" class="message hidden" data-translate-key="loadingBalance">Carregando saldo...</p>
+
+                <div class="balance-item">
+                    <span class="label" data-translate-key="availableBalance">Saldo Disponível:</span>
+                    <span class="value" id="mainBalance">0.00 MT</span>
+                </div>
+                <div class="balance-item bonus">
+                    <span class="label" data-translate-key="bonusBalance">Saldo de Bônus:</span>
+                    <span class="value" id="bonusBalance">0.00 MT</span>
+                </div>
+            </section>
+
+            <!-- Abas de Ação -->
+            <section class="action-tabs">
+                <button id="depositTab" class="tab-button active" onclick="switchTab('deposit')" data-translate-key="depositTab">Depositar</button>
+                <button id="withdrawTab" class="tab-button" onclick="switchTab('withdraw')" data-translate-key="withdrawTab">Sacar</button>
+            </section>
+
+            <!-- Formulário de Depósito (Redireciona para Checkout) -->
+            <section id="depositFormContainer" class="action-form">
+                <h3 data-translate-key="depositHeader">Solicitar Depósito</h3>
+                <form id="depositForm">
+                    <div class="input-group">
+                        <label for="paymentMethodDeposit" data-translate-key="paymentMethodLabel">Método de Pagamento</label>
+                        <select id="paymentMethodDeposit" name="paymentMethodDeposit" required>
+                            <option value="M-Pesa">M-Pesa</option>
+                            <option value="Emola">Emola</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="depositAmount" data-translate-key="amountLabel">Valor (MT)</label>
+                        <input type="number" id="depositAmount" name="amount" placeholder="Mínimo 50 MT" min="50" step="any" required>
+                    </div>
+                    <p id="depositErrorMessage" class="message error-message hidden"></p>
+                    <p id="depositSuccessMessage" class="message success-message hidden"></p>
+                    <button type="submit" class="submit-btn deposit" data-translate-key="depositButton">Depositar</button>
+                </form>
+            </section>
+
+            <!-- Formulário de Saque -->
+            <section id="withdrawFormContainer" class="action-form hidden">
+                <h3 data-translate-key="withdrawHeader">Solicitar Saque</h3>
+                <form id="withdrawForm">
+                    <div class="input-group">
+                        <label for="paymentMethodWithdraw" data-translate-key="paymentMethodLabel">Método de Pagamento</label>
+                        <select id="paymentMethodWithdraw" name="paymentMethodWithdraw" required>
+                            <option value="M-Pesa">M-Pesa</option>
+                            <option value="Emola">Emola</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="withdrawAmount" data-translate-key="amountLabel">Valor (MT)</label>
+                        <input type="number" id="withdrawAmount" name="amount" placeholder="Mínimo 1 MT" min="1" step="any" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="recipientName" data-translate-key="recipientNameLabel">Nome Completo do Destinatário</label>
+                        <input type="text" id="recipientName" name="recipientName" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="recipientPhoneNumber" data-translate-key="recipientPhoneLabel">Número do Destinatário</label>
+                        <input type="tel" id="recipientPhoneNumber" name="recipientPhoneNumber" placeholder="Ex: 84xxxxxxx" required pattern="^\d{9}$">
+                    </div>
+                    
+                    <p id="withdrawErrorMessage" class="message error-message hidden"></p>
+                    <p id="withdrawSuccessMessage" class="message success-message hidden"></p>
+                    <button type="submit" class="submit-btn withdraw" data-translate-key="withdrawButton">Solicitar Saque</button>
+                </form>
+            </section>
+
+        </main> <!-- Fim do main-content -->
+        
+        <!-- Bottom Navigation Bar (Consistente) -->
+        <nav class="bottom-nav">
+            <div class="nav-item" onclick="navigateTo('home');">
+                <i class="fas fa-home"></i>
+                <span data-translate-key="navHome">Home</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('pool');">
+                <i class="fas fa-coins"></i>
+                <span data-translate-key="navPool">Pacotes</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('income');">
+                <i class="fas fa-chart-line"></i>
+                <span data-translate-key="navIncome">Renda</span>
+            </div>
+            <div class="nav-item active" onclick="navigateTo('wallet');">
+                <i class="fas fa-wallet"></i>
+                <span data-translate-key="navWallet">Carteira</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('profile');">
+                <i class="fas fa-user"></i>
+                <span data-translate-key="navProfile">Perfil</span>
+            </div>
+        </nav>
+
+    </div> <!-- Fim do page-wrapper -->
+
+    <!-- Script para lógica da Carteira EMBUTIDO AQUI -->
+    <script>
+        // IIFE para garantir o escopo e a ordem de execução
+        (function() {
+            const BACKEND_URL = 'https://backend-cjl7.onrender.com';
+            const MIN_DEPOSIT_AMOUNT = 50;
+            let currentAvailableBalance = 0;
+            let currentLang = 'pt'; // Declaração no escopo local
+            
+            // Objeto de traduções
+            const translations = {
+                en: {
+                    walletTitle: 'KKR Credit | Wallet', backButtonAlt: 'Back', walletHeader: 'My Wallet', balanceSummary: 'Balance Summary', loadingBalance: 'Loading balance...', availableBalance: 'Available Balance:', bonusBalance: 'Bonus Balance:', depositTab: 'Deposit', withdrawTab: 'Withdraw', depositHeader: 'Request Deposit', withdrawHeader: 'Request Withdrawal', amountLabel: 'Amount (MT)', confirmationLabel: 'Confirmation Proof', confirmationPlaceholder: 'Ex: Sender number, transaction ID (TXID)', paymentMethodLabel: 'Payment Method', walletAddressLabel: 'Payment Details', walletAddressPlaceholder: 'Ex: M-Pesa 84xxxxxxx', depositButton: 'Deposit', withdrawButton: 'Request Withdrawal', recipientNameLabel: 'Full Recipient Name', recipientPhoneLabel: 'Recipient Number', minAmountError: `The minimum deposit amount is ${MIN_DEPOSIT_AMOUNT} MT.`, minWithdrawalError: 'The minimum withdrawal amount is 1 MT.', insufficientBalance: 'Insufficient available balance for this withdrawal.', depositSuccess: 'Deposit request sent for approval. Check profile history for status.', withdrawSuccess: 'Withdrawal request sent. Funds will be processed shortly. Check profile history for status.', requestFailed: 'Request failed:', networkError: 'A network error occurred. Check your connection or try again later.', sessionExpired: 'Session expired or unauthorized. Please log in again.', navHome: 'Home', navPool: 'Pacotes', navIncome: 'Income', navWallet: 'Wallet', navProfile: 'Profile',
+                },
+                pt: {
+                    walletTitle: 'KKR Credit | Carteira', backButtonAlt: 'Voltar', walletHeader: 'Minha Carteira', balanceSummary: 'Resumo do Saldo', loadingBalance: 'Carregando saldo...', availableBalance: 'Saldo Disponível:', bonusBalance: 'Saldo de Bônus:', depositTab: 'Depositar', withdrawTab: 'Sacar', depositHeader: 'Solicitar Depósito', withdrawHeader: 'Solicitar Saque', amountLabel: 'Valor (MT)', confirmationLabel: 'Comprovativo de Confirmação', confirmationPlaceholder: 'Ex: Número do remetente, ID da transação (TXID)', paymentMethodLabel: 'Método de Pagamento', walletAddressLabel: 'Detalhes de Pagamento', walletAddressPlaceholder: 'Ex: M-Pesa 84xxxxxxx', depositButton: 'Depositar', withdrawButton: 'Solicitar Saque', recipientNameLabel: 'Nome Completo do Destinatário', recipientPhoneLabel: 'Número do Destinatário', minAmountError: `O valor mínimo de depósito é ${MIN_DEPOSIT_AMOUNT} MT.`, minWithdrawalError: 'O valor mínimo de saque é 1 MT.', insufficientBalance: 'Saldo disponível insuficiente para este saque.', depositSuccess: 'Solicitação de depósito enviada para aprovação. Verifique o histórico no perfil.', withdrawSuccess: 'Solicitação de saque enviada. Os fundos serão processados em breve. Verifique o histórico no perfil.', requestFailed: 'Falha na solicitação:', networkError: 'Ocorreu um erro de rede. Verifique sua conexão ou tente novamente mais tarde.', sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.', navHome: 'Home', navPool: 'Pacotes', navIncome: 'Renda', navWallet: 'Carteira', navProfile: 'Perfil',
+                    }
+                };
+
+
+            document.addEventListener('DOMContentLoaded', () => {
+                loadLanguagePreference(); 
+                applyTranslations(currentLang);
+                fetchUserBalance(); 
+                
+                document.getElementById('depositForm').addEventListener('submit', handleInitialDepositRequest); 
+                document.getElementById('withdrawForm').addEventListener('submit', handleWithdrawalRequest);
+            });
+            
+            // --- FUNÇÕES EXPOSTAS PARA O HTML (CORREÇÃO CRÍTICA DO ESCOPO) ---
+            window.switchTab = switchTab;
+            window.navigateTo = navigateTo;
+            
+            // --- Implementações de Funções (Consistentes) ---
+            
+            function setActionMessage(containerId, message, type = 'error') {
+                const errorElement = document.getElementById(containerId + 'ErrorMessage');
+                const successElement = document.getElementById(containerId + 'SuccessMessage');
+                
+                if (errorElement) errorElement.classList.add('hidden');
+                if (successElement) successElement.classList.add('hidden');
+
+                if (type === 'success' && successElement) {
+                    successElement.textContent = message;
+                    successElement.classList.remove('hidden');
+                } else if (type === 'error' && errorElement) {
+                    errorElement.textContent = message;
+                    errorElement.classList.remove('hidden');
+                }
+            }
+            
+            function clearActionMessages(containerId) {
+                const errorElement = document.getElementById(containerId + 'ErrorMessage');
+                const successElement = document.getElementById(containerId + 'SuccessMessage');
+                if (errorElement) errorElement.classList.add('hidden');
+                if (successElement) successElement.classList.add('hidden');
+            }
+
+            function loadLanguagePreference() {
+                const savedLang = localStorage.getItem('langPreference');
+                if (savedLang) {
+                    const { lang } = JSON.parse(savedLang);
+                    currentLang = lang;
+                }
+            }
+
+            function applyTranslations(lang) {
+                document.querySelectorAll('[data-translate-key]').forEach(element => {
+                    const key = element.dataset.translateKey;
+                    if (translations[lang] && translations[lang][key]) {
+                        if (element.tagName === 'TITLE') {
+                            document.title = translations[lang][key];
+                        } else if (element.tagName !== 'BUTTON' && element.tagName !== 'I' && element.tagName !== 'TEXTAREA' && element.tagName !== 'INPUT' && element.tagName !== 'SELECT') {
+                            element.textContent = translations[lang][key];
+                        }
+                    }
+                });
+                // Colocando placeholders nos inputs dinamicamente (para evitar problemas de tradução)
+                if(document.getElementById('depositAmount')) document.getElementById('depositAmount').placeholder = `Mínimo ${MIN_DEPOSIT_AMOUNT} MT`;
+                if(document.getElementById('withdrawAmount')) document.getElementById('withdrawAmount').placeholder = `Mínimo 1 MT`;
+            }
+
+            function navigateTo(page) {
+                const pageMap = {
+                    'home': 'dashboard.html',
+                    'pool': 'pool.html',
+                    'income': 'income.html',
+                    'wallet': 'wallet.html',
+                    'profile': 'profile.html',
+                    'deposit-history': 'deposit-history.html', 
+                    'withdrawal-history': 'withdrawal-history.html', 
+                };
+                const targetPage = pageMap[page];
+                if (targetPage) {
+                    window.location.href = targetPage;
+                }
+            }
+
+            function switchTab(tab) {
+                const depositContainer = document.getElementById('depositFormContainer');
+                const withdrawContainer = document.getElementById('withdrawFormContainer');
+                const depositTabBtn = document.getElementById('depositTab');
+                const withdrawTabBtn = document.getElementById('withdrawTab');
+
+                clearActionMessages('depositForm');
+                clearActionMessages('withdrawForm');
+
+                if (tab === 'deposit') {
+                    depositContainer.classList.remove('hidden');
+                    withdrawContainer.classList.add('hidden');
+                    depositTabBtn.classList.add('active');
+                    withdrawTabBtn.classList.remove('active');
+                } else if (tab === 'withdraw') {
+                    depositContainer.classList.add('hidden');
+                    withdrawContainer.classList.remove('hidden');
+                    depositTabBtn.classList.remove('active');
+                    withdrawTabBtn.classList.add('active');
+                }
+            }
+
+            // --- 1. Busca Saldo do Usuário (Mantida) ---
+            async function fetchUserBalance() {
+                const token = localStorage.getItem('token');
+                const loadingMessage = document.getElementById('loadingMessage');
+                
+                if (!token) {
+                    loadingMessage.textContent = translations[currentLang].sessionExpired;
+                    setTimeout(() => window.location.href = 'login.html', 2000);
+                    return;
+                }
+
+                loadingMessage.classList.remove('hidden');
+
+                try {
+                    const response = await fetch(`${BACKEND_URL}/api/profile`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    if (response.status === 401 || response.status === 403) {
+                        throw new Error("sessionExpired");
+                    }
+                    
+                    const data = await response.json();
+                    
+                    currentAvailableBalance = data.user.balance || 0;
+                    const bonusBalance = data.user.bonusBalance || 0;
+
+                    document.getElementById('mainBalance').textContent = `${currentAvailableBalance.toFixed(2)} MT`;
+                    document.getElementById('bonusBalance').textContent = `${bonusBalance.toFixed(2)} MT`;
+
+                } catch (error) {
+                    const message = error.message.includes("sessionExpired") ? 
+                        translations[currentLang].sessionExpired : 
+                        translations[currentLang].networkError;
+                    
+                    loadingMessage.textContent = message;
+                    loadingMessage.classList.add('error-message');
+                    
+                    if (error.message.includes("sessionExpired")) {
+                        localStorage.removeItem('token');
+                        setTimeout(() => window.location.href = 'login.html', 2000);
+                    }
+                } finally {
+                    loadingMessage.classList.add('hidden');
+                }
+            }
+            
+            // --- 2. Lida com a Solicitação de Depósito (Redireciona para Checkout) ---
+            function handleInitialDepositRequest(event) {
+                event.preventDefault();
+                clearActionMessages('depositForm');
+
+                const amountInput = document.getElementById('depositAmount');
+                const methodInput = document.getElementById('paymentMethodDeposit');
+                
+                if (!amountInput || !methodInput) {
+                    console.error("[ERRO CRÍTICO] Input de valor ou método de pagamento não encontrado no DOM.");
+                    setActionMessage('depositForm', "Erro interno: Campo do formulário não encontrado.", 'error');
+                    return;
+                }
+
+                const amount = parseFloat(amountInput.value);
+                const method = methodInput.value;
+
+                if (isNaN(amount) || amount < MIN_DEPOSIT_AMOUNT) {
+                    setActionMessage('depositForm', translations[currentLang].minAmountError);
+                    return;
+                }
+                
+                try {
+                    const depositData = { amount, method };
+                    
+                    console.log("[DEBUG REDIRECT] Dados a serem salvos:", depositData);
+                    
+                    // 1. Salva os dados no sessionStorage
+                    sessionStorage.setItem('depositData', JSON.stringify(depositData));
+                    
+                    console.log("[DEBUG REDIRECT] Dados salvos. Tentando redirecionar...");
+
+                    // 2. Redireciona para a página de checkout
+                    window.location.href = 'deposit_checkout.html';
+                    
+                    // Nota: Se esta linha aparecer, o redirecionamento foi tentado.
+                    console.log("[DEBUG REDIRECT] Redirecionamento iniciado (Verifique o console da nova página para erros).");
+                    
+                } catch (e) {
+                    console.error("[ERRO CRÍTICO DE SESSION/REDIRECIONAMENTO]", e);
+                    setActionMessage('depositForm', "Erro ao iniciar o checkout. Verifique o console.", 'error');
+                }
+            }
+
+            // --- 3. Lida com a Solicitação de Saque (Saque Detalhado) ---
+            async function handleWithdrawalRequest(event) {
+                event.preventDefault();
+                const form = event.target;
+                const button = form.querySelector('.submit-btn');
+                clearActionMessages('withdrawForm');
+
+                const amount = parseFloat(document.getElementById('withdrawAmount').value);
+                const recipientName = document.getElementById('recipientName').value.trim();
+                const recipientPhoneNumber = document.getElementById('recipientPhoneNumber').value.trim();
+                const paymentMethod = document.getElementById('paymentMethodWithdraw').value;
+
+                // --- DIAGNÓSTICO: VALIDAÇÕES DE FRONT-END MAIS EXPLICITAS ---
+
+                if (isNaN(amount) || amount < 1) {
+                    setActionMessage('withdrawForm', translations[currentLang].minWithdrawalError);
+                    console.error("[SAQUE ERRO] Valor inválido ou abaixo do mínimo (1 MT).");
+                    return;
+                }
+                if (amount > currentAvailableBalance) {
+                    setActionMessage('withdrawForm', translations[currentLang].insufficientBalance);
+                    console.error("[SAQUE ERRO] Saldo insuficiente. Saldo: " + currentAvailableBalance);
+                    return;
+                }
+                if (recipientName.length < 3) {
+                    setActionMessage('withdrawForm', 'O Nome Completo do Destinatário deve ter pelo menos 3 caracteres.');
+                    console.error("[SAQUE ERRO] Nome do destinatário muito curto.");
+                    return;
+                }
+                // O padrão regex é '^\d{9}$'
+                if (recipientPhoneNumber.length !== 9 || !/^\d{9}$/.test(recipientPhoneNumber)) {
+                    setActionMessage('withdrawForm', 'O Número do Destinatário deve ter exatamente 9 dígitos numéricos.');
+                    console.error("[SAQUE ERRO] Número de telefone inválido.");
+                    return;
+                }
+                
+                // --- FIM DA VALIDAÇÃO DE FRONT-END ---
+
+                button.disabled = true;
+                button.textContent = 'Enviando...';
+
+                // Junta os dados no formato esperado pelo campo 'walletAddress' do backend
+                const walletAddressDetails = `Método: ${paymentMethod}, Nome: ${recipientName}, Telefone: ${recipientPhoneNumber}`;
+
+                try {
+                    const token = localStorage.getItem('token');
+                    console.log("[SAQUE DEBUG] Enviando para /api/withdrawals. Detalhes:", { amount, walletAddress: walletAddressDetails });
+                    
+                    const response = await fetch(`${BACKEND_URL}/api/withdrawals`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ amount, walletAddress: walletAddressDetails }) 
+                    });
+
+                    const data = await response.json();
+                    console.log("[SAQUE DEBUG] Resposta da API:", data);
+
+
+                    if (response.ok) {
+                        setActionMessage('withdrawForm', translations[currentLang].withdrawSuccess, 'success');
+                        currentAvailableBalance -= amount;
+                        document.getElementById('mainBalance').textContent = `${currentAvailableBalance.toFixed(2)} MT`;
+                        form.reset(); 
+                    } else if (response.status === 401 || response.status === 403) {
+                        throw new Error("sessionExpired");
+                    } else {
+                        // Erro de backend
+                        throw new Error(data.message || translations[currentLang].requestFailed);
+                    }
+
+                } catch (error) {
+                    if (error.message.includes("sessionExpired")) {
+                        setActionMessage('withdrawForm', translations[currentLang].sessionExpired, 'error');
+                        localStorage.removeItem('token');
+                        setTimeout(() => window.location.href = 'login.html', 2000);
+                    } else {
+                        setActionMessage('withdrawForm', `${translations[currentLang].requestFailed} ${error.message}`);
+                    }
+                } finally {
+                    button.disabled = false;
+                    button.textContent = translations[currentLang].withdrawButton;
+                }
+            }
+        })(); // Fim da IIFE
+    </script>
+</body>
+</html>

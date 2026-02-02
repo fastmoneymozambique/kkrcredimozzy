@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Depositar | KKR Credit</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00D094;
+            --dark: #0f172a;
+            --darker: #020617;
+            --card: #1e293b;
+            --text: #e2e8f0;
+            --danger: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            background-color: var(--darker);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--dark);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        h2 { font-size: 1.2rem; }
+
+        .container {
+            padding: 1.5rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Cartão de Instrução de Pagamento */
+        .payment-info-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .payment-title {
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .phone-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 10px 0;
+            letter-spacing: 2px;
+        }
+
+        .copy-btn {
+            background-color: rgba(255,255,255,0.1);
+            border: none;
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+
+        .copy-btn:hover { background-color: var(--primary); color: var(--darker); }
+
+        /* Formulário */
+        .form-group { margin-bottom: 1.5rem; }
+
+        label { display: block; margin-bottom: 0.5rem; color: #94a3b8; font-size: 0.9rem; }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background-color: var(--card);
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input:focus { border-color: var(--primary); }
+
+        .btn-confirm {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: var(--darker);
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .tips {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #64748b;
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .tips ul { padding-left: 20px; margin-top: 5px; }
+        .tips li { margin-bottom: 5px; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="back-btn" onclick="window.location.href='dashboard.html'">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <h2>Recarregar Conta</h2>
+    </header>
+
+    <div class="container">
+        
+        <!-- Área onde mostramos para onde enviar o dinheiro -->
+        <div class="payment-info-card">
+            <div class="payment-title">Enviar M-Pesa / e-Mola para:</div>
+            <div class="phone-number" id="adminPhone">84 123 4567</div>
+            <div style="margin-bottom: 10px; color: #94a3b8; font-size: 0.9rem;">(Nome do Titular)</div>
+            
+            <button class="copy-btn" onclick="copyPhone()">
+                <i class="fas fa-copy"></i> Copiar Número
+            </button>
+        </div>
+
+        <form id="depositForm">
+            <div class="form-group">
+                <label>Valor Enviado (MT)</label>
+                <input type="number" id="amount" placeholder="Ex: 500" required min="1">
+            </div>
+
+            <div class="form-group">
+                <label>ID da Transação (Código da SMS)</label>
+                <input type="text" id="proof" placeholder="Ex: 8G3123ABC" required>
+            </div>
+
+            <button type="submit" class="btn-confirm" id="btnSubmit">Confirmar Depósito</button>
+        </form>
+
+        <div class="tips">
+            <strong>Como funciona?</strong>
+            <ul>
+                <li>Envie o valor exato para o número acima.</li>
+                <li>Copie o código da transação que recebeu por SMS.</li>
+                <li>Cole o código aqui e clique em Confirmar.</li>
+                <li>O saldo será atualizado após verificação do administrador.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://kkr-uis4.onrender.com/api';
+        const token = localStorage.getItem('token');
+
+        if (!token) window.location.href = 'login.html';
+
+        // Função para copiar número
+        function copyPhone() {
+            const phone = document.getElementById('adminPhone').innerText.replace(/\s/g, '');
+            navigator.clipboard.writeText(phone).then(() => {
+                alert('Número copiado!');
+            });
+        }
+
+        // Manipular Envio
+        document.getElementById('depositForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const amount = document.getElementById('amount').value;
+            const proof = document.getElementById('proof').value;
+            const btn = document.getElementById('btnSubmit');
+
+            if (!amount || amount <= 0) {
+                alert('Insira um valor válido.');
+                return;
+            }
+            if (!proof) {
+                alert('Insira o código da transação.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = 'Enviando...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/wallet/deposit`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ amount, proof })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Depósito solicitado com sucesso! Aguarde a aprovação.');
+                    window.location.href = 'dashboard.html';
+                } else {
+                    alert(data.message || 'Erro ao solicitar depósito.');
+                    btn.disabled = false;
+                    btn.innerText = 'Confirmar Depósito';
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert('Erro de conexão.');
+                btn.disabled = false;
+                btn.innerText = 'Confirmar Depósito';
+            }
+        });
+    </script>
+</body>
+</html>

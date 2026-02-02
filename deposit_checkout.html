@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KKR Credit | Checkout</title>
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome para ícones (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- CSS EMBUTIDO AQUI -->
+    <style>
+        /* Variáveis CSS (Consistente) */
+        :root {
+            --primary-purple: #6a0dad;
+            --light-purple: #9b59b6;
+            --hover-purple: #8e44ad;
+            --dark-background: #2c3e50;
+            --text-dark: #333;
+            --white: #ffffff;
+            --deposit-color: #007bff; 
+            --error-red: #e74c3c;
+            --success-green: #2ecc71;
+            --app-background: #e0e6ec;
+        }
+
+        /* Base e Estrutura */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Poppins', sans-serif; line-height: 1.6; color: var(--text-dark); background-color: var(--app-background); min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 20px 0; 
+        }
+        .checkout-container {
+            background: var(--white); border-radius: 15px; padding: 30px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 0 25px rgba(0, 0, 0, 0.2); margin-top: 20px;
+        }
+        
+        /* Cabeçalho do Checkout */
+        .checkout-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--app-background);
+        }
+        .checkout-header h3 { 
+            color: var(--deposit-color); margin-bottom: 5px; font-size: 1.5em; 
+        }
+
+        /* Timer */
+        .modal-timer { 
+            font-size: 1.8em; font-weight: 700; color: var(--error-red); margin-bottom: 20px; padding: 5px; border: 2px dashed var(--error-red); border-radius: 8px; display: inline-block;
+        }
+
+        /* Detalhes da Transferência */
+        .deposit-details { margin-bottom: 25px; padding: 15px; background: var(--dark-background); border-radius: 10px; text-align: left; color: var(--white); }
+        .deposit-details p { margin: 8px 0; font-size: 0.9em; }
+        .deposit-details strong { color: var(--success-green); font-size: 1.2em; display: block; margin-top: 2px; }
+        .copy-btn { margin-left: 10px; padding: 5px 10px; background-color: var(--primary-purple); color: var(--white); border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.2s; font-size: 0.8em; }
+        .copy-btn:hover { background-color: var(--hover-purple); }
+        .copy-btn:disabled { background-color: var(--text-dark); }
+        
+        /* Formulário de Confirmação */
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 0.9em; color: var(--text-dark); font-weight: 500; }
+        .input-group textarea { width: 100%; padding: 10px 15px; border: 1px solid var(--app-background); border-radius: 8px; font-size: 1em; resize: vertical; min-height: 80px; }
+        .submit-btn { width: 100%; padding: 12px; color: var(--white); border: none; border-radius: 8px; font-size: 1em; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; margin-top: 10px; }
+        .submit-btn.deposit { background-color: var(--deposit-color); }
+        .submit-btn.deposit:hover { background-color: #0056b3; }
+        .submit-btn.cancel { background-color: var(--error-red); margin-top: 10px; }
+        .submit-btn.cancel:hover { background-color: #b3001e; }
+        
+        /* Mensagens */
+        .message { text-align: center; padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: 500; }
+        .error-message { color: var(--error-red); border: 1px solid var(--error-red); background-color: rgba(231, 76, 60, 0.1); }
+        .success-message { color: var(--success-green); border: 1px solid var(--success-green); background-color: rgba(46, 204, 113, 0.1); }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <h3 data-translate-key="checkoutTitle">Checkout de Depósito</h3>
+            <p class="modal-timer" id="timerDisplay">05:00</p>
+        </div>
+        
+        <p data-translate-key="checkoutInstruction">Transfira o valor de <strong id="checkoutAmount">...</strong> para a conta abaixo (<span id="checkoutMethod">...</span>) em até 5 minutos.</p>
+
+        <div class="deposit-details">
+            <p><span data-translate-key="modalRecipientNameLabel">Nome:</span> <strong><span id="checkoutRecipientName">Carregando...</span></strong></p>
+            <p><span data-translate-key="modalPhoneNumberLabel">Número:</span> <strong><span id="checkoutPhoneNumber">Carregando...</span></strong> <button class="copy-btn fas fa-copy" onclick="copyToClipboard('checkoutPhoneNumber', this)"></button></p>
+        </div>
+        
+        <form id="checkoutConfirmationForm">
+            <div class="input-group">
+                <label for="confirmationMessage" data-translate-key="confirmationLabel">Cole a Mensagem de Confirmação</label>
+                <textarea id="confirmationMessage" name="confirmationMessage" required></textarea>
+            </div>
+            <p id="checkoutErrorMessage" class="message error-message hidden"></p>
+            <p id="checkoutSuccessMessage" class="message success-message hidden"></p>
+            
+            <button type="submit" class="submit-btn deposit" data-translate-key="modalConfirmButton">Confirmar Transferência</button>
+        </form>
+        <button class="submit-btn cancel" onclick="cancelCheckout()" data-translate-key="modalCancelButton">Cancelar</button>
+    </div>
+
+    <!-- Script para lógica do Checkout EMBUTIDO AQUI -->
+    <script>
+        const BACKEND_URL = 'https://backend-cjl7.onrender.com';
+        const CHECKOUT_DURATION = 60 * 5; // 5 minutos em segundos
+        let timerInterval;
+
+        // Variável de estado para guardar a config real do Admin
+        let DEPOSIT_CONFIG = {}; 
+
+        // Objeto de traduções
+        const translations = {
+            pt: {
+                checkoutTitle: 'Checkout de Depósito',
+                checkoutInstruction: 'Transfira o valor de {amount} MT para a conta abaixo ({method}) em até 5 minutos.',
+                modalRecipientNameLabel: 'Nome:',
+                modalPhoneNumberLabel: 'Número:',
+                confirmationLabel: 'Comprovativo de Confirmação',
+                modalConfirmButton: 'Confirmar Transferência',
+                modalCancelButton: 'Cancelar',
+                depositSuccess: 'Solicitação de depósito enviada para aprovação. Verifique o histórico no perfil.',
+                timerExpired: 'Tempo expirado. Cancelado. Retornando para a Carteira.',
+                requestFailed: 'Falha na solicitação:',
+                networkError: 'Ocorreu um erro de rede. Verifique sua conexão ou tente novamente mais tarde.',
+                sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.',
+                copySuccess: 'Copiado!',
+                loadingConfig: 'Carregando configurações de depósito...'
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', initializeCheckout);
+
+        // --- Funções Auxiliares de UI ---
+        function setActionMessage(id, message, type = 'error') {
+            const messageElement = document.getElementById(id);
+            if (messageElement) {
+                const errorElement = document.getElementById('checkoutErrorMessage');
+                const successElement = document.getElementById('checkoutSuccessMessage');
+                
+                if (errorElement) errorElement.classList.add('hidden');
+                if (successElement) successElement.classList.add('hidden');
+
+                if (type === 'success' && successElement) {
+                    successElement.textContent = message;
+                    successElement.classList.remove('hidden');
+                } else if (type === 'error' && errorElement) {
+                    errorElement.textContent = message;
+                    errorElement.classList.remove('hidden');
+                }
+            }
+        }
+
+        // --- 1. Busca Configuração do Admin (REAL) ---
+        async function fetchDepositConfig() {
+            try {
+                // Rota pública para obter as configurações de depósito
+                const response = await fetch(`${BACKEND_URL}/api/deposit-config`); 
+                if (!response.ok) {
+                    throw new Error(`Falha ao carregar configurações (Status: ${response.status})`);
+                }
+                const data = await response.json();
+                
+                // Mapeia para a estrutura que precisamos:
+                DEPOSIT_CONFIG = {
+                    'M-Pesa': { 
+                        name: data.config.mpesaRecipientName || 'M-Pesa Admin', 
+                        phoneNumber: data.config.mpesaDepositNumber || '840000000' 
+                    },
+                    'Emola': { 
+                        name: data.config.emolaRecipientName || 'Emola Admin', 
+                        phoneNumber: data.config.emolaDepositNumber || '870000000' 
+                    }
+                };
+                return true;
+            } catch (error) {
+                console.error("Erro ao buscar configurações de depósito:", error);
+                return false;
+            }
+        }
+
+        // --- 2. Inicializa o Checkout ---
+        async function initializeCheckout() {
+            const timerDisplay = document.getElementById('timerDisplay');
+            timerDisplay.textContent = translations.pt.loadingConfig;
+            
+            // 1. Puxa os dados da sessionStorage (Redireciona se falhar)
+            const depositData = JSON.parse(sessionStorage.getItem('depositData'));
+            if (!depositData || !depositData.amount || !depositData.method) {
+                alert('Nenhum dado de depósito encontrado. Retornando para a Carteira.');
+                window.location.href = 'wallet.html';
+                return;
+            }
+            
+            // 2. Busca as Configurações do Admin (REAL)
+            const configLoaded = await fetchDepositConfig();
+            if (!configLoaded) {
+                 timerDisplay.textContent = 'Erro de Configuração';
+                 setActionMessage('checkoutForm', 'Falha ao carregar configurações de depósito do Admin. Contate o suporte.', 'error');
+                 return;
+            }
+            const config = DEPOSIT_CONFIG[depositData.method];
+
+            // 3. Preenche o HTML com dados Reais
+            document.getElementById('checkoutAmount').textContent = `${depositData.amount.toFixed(2)} MT`;
+            document.getElementById('checkoutMethod').textContent = depositData.method;
+            document.getElementById('checkoutRecipientName').textContent = config.name;
+            document.getElementById('checkoutPhoneNumber').textContent = config.phoneNumber;
+
+            // 4. Aplica tradução e instruções
+            document.querySelector('p[data-translate-key="checkoutInstruction"]').innerHTML = translations.pt.checkoutInstruction
+                .replace('{amount}', depositData.amount.toFixed(2))
+                .replace('{method}', `<span style="color: ${depositData.method === 'M-Pesa' ? 'red' : 'green'};">${depositData.method}</span>`);
+
+            // 5. Inicia o Timer e Configura o Formulário
+            startTimer(CHECKOUT_DURATION, document.getElementById('timerDisplay'));
+            document.getElementById('checkoutConfirmationForm').addEventListener('submit', (e) => handleCheckoutConfirmation(e, depositData));
+        }
+
+        // --- Funções de Timer e Navegação (Mantidas) ---
+        function startTimer(duration, display) {
+            let timer = duration;
+            clearInterval(timerInterval); // Garante que o timer anterior seja limpo
+            timerInterval = setInterval(function () {
+                const minutes = parseInt(timer / 60, 10);
+                const seconds = parseInt(timer % 60, 10);
+
+                display.textContent = `${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+
+                if (--timer < 0) {
+                    clearInterval(timerInterval);
+                    alert(translations.pt.timerExpired);
+                    sessionStorage.removeItem('depositData'); 
+                    window.location.href = 'wallet.html'; 
+                }
+            }, 1000);
+        }
+
+        function cancelCheckout() {
+            clearInterval(timerInterval);
+            sessionStorage.removeItem('depositData');
+            window.location.href = 'wallet.html';
+        }
+
+        // --- 3. Lida com a Confirmação do Checkout (REAL) ---
+        async function handleCheckoutConfirmation(event, depositData) {
+            event.preventDefault();
+            clearInterval(timerInterval); 
+            
+            const form = event.target;
+            const button = form.querySelector('.submit-btn');
+            const confirmationMessage = document.getElementById('confirmationMessage').value.trim();
+            const errorMessageElement = document.getElementById('checkoutErrorMessage');
+            const successMessageElement = document.getElementById('checkoutSuccessMessage');
+
+            errorMessageElement.classList.add('hidden');
+            successMessageElement.classList.add('hidden');
+
+            if (confirmationMessage.length < 5) {
+                errorMessageElement.textContent = translations.pt.confirmationLabel + ' é obrigatório.';
+                errorMessageElement.classList.remove('hidden');
+                // Reinicia o timer por um breve período para dar chance de corrigir (5 segundos)
+                startTimer(5, document.getElementById('timerDisplay')); 
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = 'Enviando...';
+            
+            // Prepara a string do comprovativo para o backend (Incluindo Método e Valor)
+            const confirmationDetails = `Método: ${depositData.method}, Valor: ${depositData.amount.toFixed(2)} MT, Comprovativo: ${confirmationMessage}`;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${BACKEND_URL}/api/deposits`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ amount: depositData.amount, confirmationMessage: confirmationDetails }) 
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    successMessageElement.textContent = translations.pt.depositSuccess;
+                    successMessageElement.classList.remove('hidden');
+                    sessionStorage.removeItem('depositData'); 
+                    
+                    // Redireciona para a carteira após o sucesso
+                    setTimeout(() => window.location.href = 'wallet.html', 3000); 
+
+                } else if (response.status === 401 || response.status === 403) {
+                    sessionStorage.removeItem('depositData');
+                    throw new Error("sessionExpired");
+                } else {
+                    throw new Error(data.message || translations.pt.requestFailed);
+                }
+            } catch (error) {
+                errorMessageElement.textContent = error.message.includes("sessionExpired") ? 
+                    translations.pt.sessionExpired : 
+                    `${translations.pt.requestFailed} ${error.message}`;
+                errorMessageElement.classList.remove('hidden');
+                
+                button.disabled = false;
+                button.textContent = translations.pt.modalConfirmButton;
+                // Volta o timer completo em caso de erro na API
+                startTimer(CHECKOUT_DURATION, document.getElementById('timerDisplay')); 
+            }
+        }
+
+        function copyToClipboard(elementId, buttonElement) {
+             const textToCopy = document.getElementById(elementId).textContent.trim();
+             navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = buttonElement.className;
+                buttonElement.className = `copy-btn fas fa-check`;
+                setTimeout(() => buttonElement.className = originalText, 1000);
+             });
+        }
+    </script>
+</body>
+</html>

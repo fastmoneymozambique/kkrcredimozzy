@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="profileTitle">KKR Credit | Perfil</title>
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome para ícones (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- CSS EMBUTIDO AQUI -->
+    <style>
+        /* Variáveis CSS para fácil modificação de cores (consistente com dashboard) */
+        :root {
+            --primary-purple: #6a0dad;
+            --light-purple: #9b59b6;
+            --hover-purple: #8e44ad;
+            --dark-background: #2c3e50; /* Para o card principal */
+            --text-dark: #333;
+            --text-medium: #666;
+            --text-light: #555;
+            --border-light: #e0e0e0;
+            --white: #ffffff;
+            --card-bg-light: #f7faff;
+            --success-green: #2ecc71;
+            --error-red: #e74c3c;
+            --app-background: #e0e6ec; /* Fundo cinza claro para o corpo do app */
+        }
+
+        /* Reset básico e fontes */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--app-background);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Container principal (consistente com dashboard) */
+        .page-wrapper {
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+            background-color: var(--card-bg-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Header (consistente com dashboard) */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .app-header .logo {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--primary-purple);
+        }
+        .app-header .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Botão de Voltar (Novo para páginas internas) */
+        .back-button {
+            background: none;
+            border: none;
+            color: var(--text-medium);
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            padding: 5px;
+        }
+        .back-button:hover {
+            color: var(--primary-purple);
+        }
+
+        /* Botão de Logout (consistente com dashboard) */
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--text-medium);
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            padding: 5px;
+        }
+        .logout-btn:hover {
+            color: var(--error-red);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            padding-bottom: 80px; /* Espaço para a navegação inferior fixa */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Card de Detalhes do Perfil */
+        .profile-card {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            color: var(--text-dark);
+        }
+        .profile-card h2 {
+            font-size: 1.4em;
+            color: var(--primary-purple);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .profile-detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border-light); /* Linha tracejada */
+            font-size: 0.95em;
+        }
+        .profile-detail-item:last-child {
+            border-bottom: none;
+        }
+        .profile-detail-item .label {
+            color: var(--text-medium);
+            font-weight: 500;
+        }
+        .profile-detail-item .value {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        .profile-detail-item .value.status-active {
+            color: var(--success-green);
+        }
+        .profile-detail-item .value.status-blocked {
+            color: var(--error-red);
+        }
+        .profile-detail-item .value.copied {
+            color: var(--primary-purple);
+            animation: flashCopy 0.3s ease-in-out;
+        }
+        @keyframes flashCopy {
+            0% { background-color: transparent; }
+            50% { background-color: var(--primary-purple); color: var(--white); padding: 2px 5px; border-radius: 5px; }
+            100% { background-color: transparent; }
+        }
+
+        /* Botões de Ação Rápida (Ex: Ver histórico) */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr; /* Uma coluna por padrão */
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .quick-action-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-purple);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .quick-action-btn:hover {
+            background-color: var(--hover-purple);
+            transform: translateY(-2px);
+        }
+        .quick-action-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Bottom Navigation Bar (consistente com dashboard) */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+            background-color: var(--white);
+            border-top: 1px solid var(--border-light);
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 480px;
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-medium);
+            font-size: 0.7em;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            padding: 5px 0;
+            flex: 1;
+        }
+        .nav-item i {
+            font-size: 1.3em;
+            margin-bottom: 3px;
+        }
+        .nav-item.active {
+            color: var(--primary-purple);
+            font-weight: 600;
+        }
+        .nav-item:hover {
+            color: var(--primary-purple);
+        }
+
+        /* Estilo para spinner de carregamento */
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-purple);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        .text-center { text-align: center; }
+        .text-muted { color: var(--text-medium); font-size: 0.9em; }
+
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Header -->
+        <header class="app-header">
+            <button class="back-button" onclick="navigateTo('home');" data-translate-key="backButtonAlt">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="logo">KKR Credit</div>
+            <div class="header-actions">
+                <!-- Botão de Logout -->
+                <button class="logout-btn" onclick="logout()" data-translate-key="logoutButtonAlt">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1 class="text-center" data-translate-key="myProfileTitle">Meu Perfil</h1>
+            
+            <div id="loadingProfile" class="loading-spinner"></div>
+            <p id="profileError" class="error-message text-center hidden" data-translate-key="profileLoadingError">Erro ao carregar perfil.</p>
+
+            <div id="profileDetails" class="profile-card hidden">
+                <div class="profile-detail-item">
+                    <span class="label" data-translate-key="yourNumber">Seu Número:</span>
+                    <span class="value" id="profilePhoneNumber">--.--</span>
+                </div>
+                <div class="profile-detail-item">
+                    <span class="label" data-translate-key="availableBalance">Saldo Disponível:</span>
+                    <span class="value" id="profileBalance">--.-- MT</span>
+                </div>
+                <div class="profile-detail-item">
+                    <span class="label" data-translate-key="bonusBalance">Saldo de Bônus:</span>
+                    <span class="value" id="profileBonusBalance">--.-- MT</span>
+                </div>
+                <div class="profile-detail-item">
+                    <span class="label" data-translate-key="accountStatus">Status da Conta:</span>
+                    <span class="value" id="profileStatus">--.--</span>
+                </div>
+                <div class="profile-detail-item">
+                    <span class="label" data-translate-key="referralCode">Código de Indicação:</span>
+                    <span class="value" id="profileReferralCode" onclick="copyToClipboard('profileReferralCode')">--.-- <i class="far fa-copy"></i></span>
+                </div>
+                <div class="profile-detail-item">
+                    <span class="label" data-translate-key="invitedBy">Convidado Por:</span>
+                    <span class="value" id="profileInvitedBy">--.--</span>
+                </div>
+                <div class="profile-detail-item">
+                    <span class="label" data-translate-key="dateJoined">Data de Registro:</span>
+                    <span class="value" id="profileCreatedAt">--.--</span>
+                </div>
+                <div class="profile-detail-item">
+                    <span class="label" data-translate-key="lastLogin">Último Login:</span>
+                    <span class="value" id="profileLastLogin">--.--</span>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="navigateTo('deposit-history');">
+                        <i class="fas fa-history"></i> <span data-translate-key="depositHistoryButton">Histórico de Depósitos</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="navigateTo('withdrawal-history');">
+                        <i class="fas fa-money-bill-transfer"></i> <span data-translate-key="withdrawalHistoryButton">Histórico de Saques</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="navigateTo('investment-history');">
+                        <i class="fas fa-chart-line"></i> <span data-translate-key="investmentHistoryButton">Histórico de Investimentos</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="navigateTo('referred-users');">
+                        <i class="fas fa-users-line"></i> <span data-translate-key="referredUsersButton">Usuários Indicados</span>
+                    </button>
+                    <!-- Você pode adicionar mais botões de ação rápida aqui -->
+                </div>
+            </div>
+            
+        </main> <!-- Fim do main-content -->
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="bottom-nav">
+            <div class="nav-item" onclick="navigateTo('home');">
+                <i class="fas fa-home"></i>
+                <span data-translate-key="navHome">Home</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('pool');">
+                <i class="fas fa-coins"></i>
+                <span data-translate-key="navPool">Pool</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('income');">
+                <i class="fas fa-chart-line"></i>
+                <span data-translate-key="navIncome">Renda</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('wallet');">
+                <i class="fas fa-wallet"></i>
+                <span data-translate-key="navWallet">Carteira</span>
+            </div>
+            <div class="nav-item active" onclick="navigateTo('profile');">
+                <i class="fas fa-user"></i>
+                <span data-translate-key="navProfile">Perfil</span>
+            </div>
+        </nav>
+
+    </div> <!-- Fim do page-wrapper -->
+
+    <!-- Script para lógica do Perfil EMBUTIDO AQUI -->
+    <script>
+        const BACKEND_URL = 'https://backend-cjl7.onrender.com'; // Sua URL do backend
+
+        // Objeto de traduções (expansivo para incluir a página de perfil)
+        const translations = {
+            en: {
+                // Dashboard keys (mantidos por consistência e reutilização)
+                dashboardTitle: 'KKR Credit | Dashboard',
+                logoutButtonAlt: 'Logout',
+                mainCardTitle: 'KKR Credit Arbitrage',
+                earnMoreText: 'Earn more KKR Balance',
+                yourNumber: 'Your Number:',
+                availableBalance: 'Available Balance:',
+                activeInvestment: 'Active Investment:',
+                noActiveInvestment: 'None',
+                safeAndReliable: 'Safe and Reliable',
+                actionApp: 'App',
+                actionTask: 'Task',
+                actionInvite: 'Invite',
+                actionTeam: 'Team',
+                actionAbout: 'About',
+                actionHolding: 'Holding',
+                actionWallet: 'Wallet',
+                actionSupport: 'Support',
+                inviteBannerTitle: 'Invite friends, earn bonus!',
+                inviteBannerText: 'Enjoy steady 3% earnings on your referred users\' profits.',
+                inviteNowButton: 'Invite Now',
+                marketsTitle: 'Markets',
+                investNowButton: 'Invest Now',
+                marketHeaderAsset: 'Asset',
+                marketHeaderPrice: 'Price',
+                marketHeader24h: '24h',
+                marketsLoading: 'Loading markets...',
+                marketsLoadingError: 'Error loading markets. Please try again.',
+                navHome: 'Home',
+                navPool: 'Pool',
+                navIncome: 'Income',
+                navWallet: 'Wallet',
+                navProfile: 'Profile',
+                logoutConfirm: 'Are you sure you want to log out?',
+                loggedOutSuccess: 'You have been successfully logged out.',
+                notLoggedIn: 'You are not logged in. Redirecting to login page.',
+                sessionExpired: 'Session expired or unauthorized. Please log in again.',
+                networkError: 'A network error occurred. Check your connection or try again later.',
+                languageChanged: 'Language changed to: ',
+                pageNotConfigured: 'Page "{page}" not configured for navigation. Create the corresponding HTML file.',
+
+                // Profile-specific keys
+                profileTitle: 'KKR Credit | Profile',
+                backButtonAlt: 'Back',
+                myProfileTitle: 'My Profile',
+                profileLoadingError: 'Error loading profile. Please try again.',
+                bonusBalance: 'Bonus Balance:',
+                accountStatus: 'Account Status:',
+                referralCode: 'Referral Code:',
+                invitedBy: 'Invited By:',
+                dateJoined: 'Date Joined:',
+                lastLogin: 'Last Login:',
+                depositHistoryButton: 'Deposit History',
+                withdrawalHistoryButton: 'Withdrawal History',
+                investmentHistoryButton: 'Investment History',
+                referredUsersButton: 'Referred Users',
+                statusActive: 'Active',
+                statusBlocked: 'Blocked',
+                copySuccess: 'Copied!',
+                noInviter: 'N/A',
+                noLastLogin: 'Never logged in',
+            },
+            pt: {
+                // Dashboard keys
+                dashboardTitle: 'KKR Credit | Dashboard',
+                logoutButtonAlt: 'Sair',
+                mainCardTitle: 'KKR Credit Arbitrage',
+                earnMoreText: 'Ganhe mais Saldo KKR',
+                yourNumber: 'Seu Número:',
+                availableBalance: 'Saldo Disponível:',
+                activeInvestment: 'Investimento Ativo:',
+                noActiveInvestment: 'Nenhum',
+                safeAndReliable: 'Seguro e Confiável',
+                actionApp: 'App',
+                actionTask: 'Tarefas',
+                actionInvite: 'Convidar',
+                actionTeam: 'Equipe',
+                actionAbout: 'Sobre',
+                actionHolding: 'Holding',
+                actionWallet: 'Carteira',
+                actionSupport: 'Suporte',
+                inviteBannerTitle: 'Convide amigos, ganhe bônus!',
+                inviteBannerText: 'Desfrute de ganhos constantes de 3% sobre os lucros de seus referidos.',
+                inviteNowButton: 'Convidar Agora',
+                marketsTitle: 'Mercados',
+                investNowButton: 'Investir Agora',
+                marketHeaderAsset: 'Ativo',
+                marketHeaderPrice: 'Preço',
+                marketHeader24h: '24h',
+                marketsLoading: 'Carregando mercados...',
+                marketsLoadingError: 'Erro ao carregar mercados. Por favor, tente novamente.',
+                navHome: 'Home',
+                navPool: 'Pool',
+                navIncome: 'Renda',
+                navWallet: 'Carteira',
+                navProfile: 'Perfil',
+                logoutConfirm: 'Tem certeza que deseja sair?',
+                loggedOutSuccess: 'Você foi desconectado com sucesso.',
+                notLoggedIn: 'Você não está logado. Redirecionando para a página de login.',
+                sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.',
+                networkError: 'Ocorreu um erro de rede. Verifique sua conexão ou tente novamente mais tarde.',
+                languageChanged: 'Idioma alterado para: ',
+                pageNotConfigured: 'Página "{page}" não configurada para navegação. Crie o arquivo HTML correspondente.',
+
+                // Profile-specific keys
+                profileTitle: 'KKR Credit | Perfil',
+                backButtonAlt: 'Voltar',
+                myProfileTitle: 'Meu Perfil',
+                profileLoadingError: 'Erro ao carregar perfil. Por favor, tente novamente.',
+                bonusBalance: 'Saldo de Bônus:',
+                accountStatus: 'Status da Conta:',
+                referralCode: 'Código de Indicação:',
+                invitedBy: 'Convidado Por:',
+                dateJoined: 'Data de Registro:',
+                lastLogin: 'Último Login:',
+                depositHistoryButton: 'Histórico de Depósitos',
+                withdrawalHistoryButton: 'Histórico de Saques',
+                investmentHistoryButton: 'Histórico de Investimentos',
+                referredUsersButton: 'Usuários Indicados',
+                statusActive: 'Ativa',
+                statusBlocked: 'Bloqueada',
+                copySuccess: 'Copiado!',
+                noInviter: 'N/A',
+                noLastLogin: 'Nunca logado',
+            }
+        };
+
+        let currentLang = 'pt'; // Idioma padrão
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLanguagePreference();
+            applyTranslations(currentLang); // Aplica traduções iniciais
+            fetchUserProfile();
+        });
+
+        // --- Lógica de Idioma (consistente com dashboard) ---
+        function loadLanguagePreference() {
+            const savedLang = localStorage.getItem('langPreference');
+            if (savedLang) {
+                const { lang, flag } = JSON.parse(savedLang);
+                currentLang = lang; // Define a linguagem global
+                // No perfil não temos seletor de idioma no header, então não precisamos atualizar currentFlag/currentLangText
+            }
+        }
+
+        function applyTranslations(lang) {
+            document.querySelectorAll('[data-translate-key]').forEach(element => {
+                const key = element.dataset.translateKey;
+                if (translations[lang] && translations[lang][key]) {
+                    if (element.tagName === 'TITLE') {
+                        document.title = translations[lang][key];
+                    } else if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
+                        element.placeholder = translations[lang][key];
+                    } else if (element.tagName === 'BUTTON' && element.hasAttribute('data-translate-key') && (key === 'logoutButtonAlt' || key === 'backButtonAlt')) {
+                        // Não muda o textContent do botão de logout/voltar que tem um <i>
+                    } else {
+                        element.textContent = translations[lang][key];
+                    }
+                }
+            });
+        }
+
+        // --- Lógica de Carregamento do Perfil do Usuário ---
+        async function fetchUserProfile() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert(translations[currentLang].notLoggedIn);
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const loadingSpinner = document.getElementById('loadingProfile');
+            const profileError = document.getElementById('profileError');
+            const profileDetailsDiv = document.getElementById('profileDetails');
+
+            if (loadingSpinner) loadingSpinner.classList.remove('hidden');
+            if (profileError) profileError.classList.add('hidden');
+            if (profileDetailsDiv) profileDetailsDiv.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/profile`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const user = data.user;
+
+                    // Preenche os detalhes do perfil
+                    document.getElementById('profilePhoneNumber').textContent = user.phoneNumber || translations[currentLang].noInviter;
+                    document.getElementById('profileBalance').textContent = `${user.balance ? user.balance.toFixed(2) : '0.00'} MT`;
+                    document.getElementById('profileBonusBalance').textContent = `${user.bonusBalance ? user.bonusBalance.toFixed(2) : '0.00'} MT`;
+                    
+                    const statusElem = document.getElementById('profileStatus');
+                    if (statusElem) {
+                        statusElem.textContent = user.status === 'active' ? translations[currentLang].statusActive : translations[currentLang].statusBlocked;
+                        statusElem.className = `value status-${user.status}`; // Adiciona classe para estilização de status
+                    }
+                    
+                    document.getElementById('profileReferralCode').childNodes[0].nodeValue = user.referralCode || translations[currentLang].noInviter; // Pega o textNode antes do <i>
+                    document.getElementById('profileInvitedBy').textContent = user.invitedBy || translations[currentLang].noInviter;
+                    document.getElementById('profileCreatedAt').textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString(currentLang) : translations[currentLang].noInviter;
+                    document.getElementById('profileLastLogin').textContent = user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString(currentLang) : translations[currentLang].noLastLogin;
+
+                    if (profileDetailsDiv) profileDetailsDiv.classList.remove('hidden');
+                    console.log('Dados do perfil do usuário:', user);
+
+                } else if (response.status === 401 || response.status === 403) {
+                    alert(translations[currentLang].sessionExpired);
+                    localStorage.removeItem('token');
+                    window.location.href = 'login.html';
+                } else {
+                    const errorData = await response.json();
+                    if (profileError) {
+                        profileError.textContent = `${translations[currentLang].profileLoadingError} ${errorData.message || translations[currentLang].networkError}`;
+                        profileError.classList.remove('hidden');
+                    }
+                    console.error('Erro ao buscar perfil:', errorData);
+                }
+            } catch (error) {
+                console.error('Erro de rede ao buscar perfil:', error);
+                if (profileError) {
+                    profileError.textContent = translations[currentLang].networkError;
+                    profileError.classList.remove('hidden');
+                }
+            } finally {
+                if (loadingSpinner) loadingSpinner.classList.add('hidden');
+            }
+        }
+
+        // --- Lógica de Navegação para Páginas Reais (consistente com dashboard) ---
+        function navigateTo(page) {
+            const pageMap = {
+                'home': 'dashboard.html',
+                'wallet': 'wallet.html',
+                'profile': 'profile.html',
+                'invite': 'invite.html',
+                'pool': 'pool.html',
+                'income': 'income.html',
+                'invest': 'invest.html',
+                'deposit-history': 'deposit-history.html', // Nova página
+                'withdrawal-history': 'withdrawal-history.html', // Nova página
+                'investment-history': 'investment-history.html', // Nova página
+                'referred-users': 'referred-users.html', // Nova página
+                // ... adicione outras páginas aqui conforme necessário
+            };
+
+            const targetPage = pageMap[page];
+            if (targetPage) {
+                window.location.href = targetPage;
+            } else {
+                alert(translations[currentLang].pageNotConfigured.replace('{page}', page));
+            }
+        }
+
+        // --- Função de Logout (consistente com dashboard) ---
+        function logout() {
+            if (confirm(translations[currentLang].logoutConfirm)) {
+                localStorage.removeItem('token');
+                alert(translations[currentLang].loggedOutSuccess);
+                window.location.href = 'login.html';
+            }
+        }
+
+        // --- Função para Copiar Código de Indicação ---
+        async function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const textToCopy = element.childNodes[0].nodeValue.trim(); // Pega o valor do texto, ignorando o ícone
+            
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                const originalText = element.childNodes[0].nodeValue;
+                const originalClasses = element.className;
+
+                // Animação de feedback
+                element.childNodes[0].nodeValue = translations[currentLang].copySuccess;
+                element.classList.add('copied');
+
+                setTimeout(() => {
+                    element.childNodes[0].nodeValue = originalText;
+                    element.classList.remove('copied');
+                }, 1000); // Volta ao normal após 1 segundo
+            } catch (err) {
+                console.error('Falha ao copiar:', err);
+                alert('Erro ao copiar código. Por favor, copie manualmente.');
+            }
+        }
+    </script>
+</body>
+</html>
