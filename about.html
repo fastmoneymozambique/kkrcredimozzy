@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="aboutTitle">KKR Credit | Sobre Nós</title>
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome para ícones (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- CSS EMBUTIDO AQUI (Tema de Usuário) -->
+    <style>
+        /* Variáveis CSS (Consistente com Dashboard/Wallet) */
+        :root {
+            --primary-purple: #6a0dad;
+            --light-purple: #9b59b6;
+            --hover-purple: #8e44ad;
+            --dark-background: #2c3e50;
+            --text-dark: #333;
+            --text-medium: #666;
+            --border-light: #e0e0e0;
+            --white: #ffffff;
+            --card-bg-light: #f7faff;
+            --success-green: #2ecc71;
+            --app-background: #e0e6ec;
+        }
+
+        /* Reset e Base */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; line-height: 1.6; color: var(--text-dark); background-color: var(--app-background); min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* Container Principal */
+        .page-wrapper { max-width: 480px; width: 100%; margin: 0 auto; background-color: var(--card-bg-light); min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+
+        /* Header (Consistente) */
+        .app-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: var(--white); border-bottom: 1px solid var(--border-light); position: sticky; top: 0; z-index: 100; }
+        .app-header .logo { font-size: 1.5em; font-weight: 700; color: var(--primary-purple); }
+        .back-button { background: none; border: none; color: var(--text-medium); font-size: 1.2em; cursor: pointer; transition: color 0.2s ease; padding: 5px; }
+        .back-button:hover { color: var(--primary-purple); }
+
+        /* Main Content */
+        .main-content { flex-grow: 1; padding: 20px; overflow-y: auto; }
+
+        /* Título da Página */
+        .page-title { font-size: 1.8em; color: var(--primary-purple); font-weight: 700; margin-bottom: 25px; text-align: center; }
+
+        /* Card de Informação */
+        .info-card {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .info-card h2 {
+            font-size: 1.4em;
+            color: var(--dark-background);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--primary-purple);
+            padding-bottom: 5px;
+        }
+
+        .info-card p, .info-card ul {
+            font-size: 0.95em;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .info-card ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .info-card li {
+            background-color: var(--card-bg-light);
+            border-left: 3px solid var(--success-green);
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+        
+        .version-info {
+            text-align: center;
+            font-size: 0.8em;
+            color: var(--text-medium);
+            margin-top: 30px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Header -->
+        <header class="app-header">
+            <button class="back-button" onclick="navigateTo('home');" data-translate-key="backButtonAlt">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="logo">KKR Credit</div>
+            <div></div> <!-- Espaçador para alinhamento -->
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1 class="page-title" data-translate-key="aboutHeader">Sobre Nós</h1>
+
+            <!-- Card: Missão e Visão -->
+            <section class="info-card">
+                <h2 data-translate-key="missionTitle"><i class="fas fa-bullseye"></i> Nossa Missão</h2>
+                <p data-translate-key="missionText">
+                    A KKR Credit está comprometida em democratizar o acesso a oportunidades de investimento no mercado de arbitragem de ativos. Nossa missão é fornecer uma plataforma segura, transparente e altamente lucrativa para que investidores em Moçambique possam aumentar o seu capital com risco minimizado.
+                </p>
+            </section>
+
+            <!-- Card: Como Funciona -->
+            <section class="info-card">
+                <h2 data-translate-key="howItWorksTitle"><i class="fas fa-cogs"></i> Como Funciona</h2>
+                <p data-translate-key="howItWorksIntro">
+                    Nossa tecnologia proprietária rastreia discrepâncias de preços em ativos financeiros, executando negociações de alta frequência para garantir lucros diários.
+                </p>
+                <ul data-translate-key="stepsList">
+                    <li><i class="fas fa-check-circle" style="color: var(--success-green);"></i> <strong>Depósito:</strong> Recarregue sua conta via M-Pesa ou e-Mola de forma rápida.</li>
+                    <li><i class="fas fa-check-circle" style="color: var(--success-green);"></i> <strong>Ativação:</strong> Escolha um pacote de investimento com base no seu orçamento.</li>
+                    <li><i class="fas fa-check-circle" style="color: var(--success-green);"></i> <strong>Ganhos Diários:</strong> Receba lucros diretamente na sua conta a cada 24 horas.</li>
+                    <li><i class="fas fa-check-circle" style="color: var(--success-green);"></i> <strong>Saque:</strong> Retire seu capital e lucro a qualquer momento após o término do ciclo.</li>
+                </ul>
+            </section>
+            
+            <!-- Card: Equipe e Confiança -->
+            <section class="info-card">
+                <h2 data-translate-key="trustTitle"><i class="fas fa-shield-alt"></i> Segurança e Transparência</h2>
+                <p data-translate-key="trustText">
+                    Garantimos a segurança dos seus fundos através de parceiros financeiros regulamentados e usamos a mais recente tecnologia de criptografia. Nossa equipe é composta por especialistas em finanças e tecnologia com anos de experiência no mercado de capitais.
+                </p>
+            </section>
+            
+            <div class="version-info">
+                <p>KKR Credit v1.0.0 - <span data-translate-key="versionNote">Plataforma de Arbitragem de Ativos</span></p>
+            </div>
+
+        </main> <!-- Fim do main-content -->
+
+    </div> <!-- Fim do page-wrapper -->
+
+    <!-- Script de navegação (Consistente com outras páginas) -->
+    <script>
+        // Objeto de traduções (Apenas o essencial para a página)
+        const translations = {
+            pt: {
+                aboutTitle: 'KKR Credit | Sobre Nós', backButtonAlt: 'Voltar', aboutHeader: 'Sobre Nós',
+                missionTitle: 'Nossa Missão', howItWorksTitle: 'Como Funciona', trustTitle: 'Segurança e Transparência',
+                missionText: 'A KKR Credit está comprometida em democratizar o acesso a oportunidades de investimento no mercado de arbitragem de ativos. Nossa missão é fornecer uma plataforma segura, transparente e altamente lucrativa para que investidores em Moçambique possam aumentar o seu capital com risco minimizado.',
+                howItWorksIntro: 'Nossa tecnologia proprietária rastreia discrepâncias de preços em ativos financeiros, executando negociações de alta frequência para garantir lucros diários.',
+                trustText: 'Garantimos a segurança dos seus fundos através de parceiros financeiros regulamentados e usamos a mais recente tecnologia de criptografia. Nossa equipe é composta por especialistas em finanças e tecnologia com anos de experiência no mercado de capitais.',
+                versionNote: 'Plataforma de Arbitragem de Ativos',
+                // Chaves de navegação (apenas para a função navigateTo)
+                pageNotConfigured: 'Página "{page}" não configurada para navegação.',
+            }
+        };
+
+        let currentLang = 'pt'; // Manter padrão 'pt'
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLanguagePreference();
+            applyTranslations(currentLang);
+        });
+
+        // --- Funções Auxiliares de Idioma e Navegação (Padrão) ---
+        function loadLanguagePreference() {
+            const savedLang = localStorage.getItem('langPreference');
+            if (savedLang) {
+                const { lang } = JSON.parse(savedLang);
+                currentLang = lang;
+            }
+        }
+
+        function applyTranslations(lang) {
+            document.querySelectorAll('[data-translate-key]').forEach(element => {
+                const key = element.dataset.translateKey;
+                if (translations[lang] && translations[lang][key]) {
+                    if (element.tagName === 'TITLE') {
+                        document.title = translations[lang][key];
+                    } else if (element.tagName !== 'BUTTON' && element.tagName !== 'I') {
+                        element.innerHTML = translations[lang][key];
+                    }
+                }
+            });
+        }
+
+        function navigateTo(page) {
+            const pageMap = {
+                'home': 'dashboard.html',
+                // Você pode adicionar outras páginas aqui se o botão de voltar for usado para outra coisa
+            };
+            const targetPage = pageMap[page] || 'dashboard.html'; // Padrão para dashboard
+            window.location.href = targetPage;
+        }
+    </script>
+</body>
+</html>

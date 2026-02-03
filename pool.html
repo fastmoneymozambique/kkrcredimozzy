@@ -1,5 +1,3 @@
---- START OF FILE pool.html ---
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -13,7 +11,7 @@
     <!-- Font Awesome para ícones (CDN) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- CSS EMBUTIDO AQUI -->
+    <!-- CSS EMBUTIDO AQUI (Consistente com Dashboard) -->
     <style>
         /* Variáveis CSS (Consistente com Dashboard) */
         :root {
@@ -109,19 +107,26 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: transform 0.2s ease;
             position: relative;
+            text-align: center; /* Centraliza a imagem/conteúdo principal */
         }
         .plan-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
 
+        .plan-image {
+            width: 100%;
+            max-height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
         .plan-card h3 {
-            font-size: 1.2em;
+            font-size: 1.4em;
             color: var(--dark-background);
             margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            font-weight: 700;
         }
         .plan-card h3 .rate {
             color: var(--success-green);
@@ -134,6 +139,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-bottom: 15px;
+            text-align: left;
         }
 
         .detail-item {
@@ -153,31 +159,26 @@
             font-weight: 600;
         }
 
-        /* Input e Botão de Ativação */
+        /* Área de Preço Fixo e Botão */
         .activation-area {
             padding-top: 15px;
             border-top: 1px dashed var(--border-light);
         }
-        .activation-area label {
+        .fixed-price-label {
             display: block;
             margin-bottom: 8px;
             font-size: 0.9em;
-            color: var(--text-dark);
+            color: var(--primary-purple);
             font-weight: 600;
         }
-        .activation-area input[type="number"] {
-            width: 100%;
-            padding: 10px 15px;
-            border: 1px solid var(--border-light);
-            border-radius: 8px;
-            font-size: 1em;
-            margin-bottom: 10px;
-            transition: border-color 0.2s;
+        .fixed-price-value {
+             font-size: 2em;
+             font-weight: 800;
+             color: var(--dark-background);
+             margin-bottom: 15px;
         }
-        .activation-area input[type="number"]:focus {
-            border-color: var(--primary-purple);
-            outline: none;
-        }
+        
+        /* Botão de Ativação */
         .activate-btn {
             width: 100%;
             padding: 12px;
@@ -284,7 +285,7 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1 class="page-title" data-translate-key="poolHeader">Opções de Investimento Disponíveis</h1>
+            <h1 class="page-title" data-translate-key="poolHeader">Pacotes de Investimento</h1>
 
             <div id="plansList">
                 <!-- As opções serão injetadas aqui pelo JavaScript -->
@@ -329,48 +330,38 @@
         // Objeto de traduções (TERMINOLOGIA ATUALIZADA)
         const translations = {
             en: {
-                // ... (Manter outras chaves)
-                poolTitle: 'KKR Credit | Investment Options',
+                poolTitle: 'KKR Credit | Investment Packages',
                 backButtonAlt: 'Back',
-                poolHeader: 'Available Investment Options',
-                loadingPlans: 'Loading investment options...',
+                poolHeader: 'Investment Packages Available',
+                loadingPlans: 'Loading investment packages...',
                 planDuration: 'Duration',
-                planMin: 'Min. Amount',
-                planMax: 'Max. Amount',
+                planFixedAmount: 'Fixed Price', // Chave atualizada
                 planProfitRate: 'Daily Profit Rate',
                 durationDays: 'days',
                 amountMT: 'MT',
-                investAmountPlaceholder: 'Enter investment amount...',
                 activateButton: 'Activate Package',
                 activationSuccess: 'Investment activated successfully! Redirecting to Income...',
                 activationError: 'Activation failed:',
-                amountRequired: 'Please enter a valid amount.',
-                invalidAmount: 'The amount must be between {min} MT and {max} MT.',
-                insufficientBalance: 'Insufficient balance to activate this package.',
-                noActivePlans: 'No active investment options found. Please check back later.', // Nova mensagem de falta de dados
+                insufficientBalance: 'Insufficient balance ({amount} MT) to activate this package.',
+                noActivePlans: 'No active investment packages found. Please check back later.', 
                 sessionExpired: 'Session expired or unauthorized. Please log in again.',
                 navHome: 'Home', navPool: 'Pacotes', navIncome: 'Income', navWallet: 'Wallet', navProfile: 'Profile',
             },
             pt: {
-                // ... (Manter outras chaves)
-                poolTitle: 'KKR Credit | Opções de Investimento',
+                poolTitle: 'KKR Credit | Pacotes de Investimento',
                 backButtonAlt: 'Voltar',
-                poolHeader: 'Opções de Investimento Disponíveis',
-                loadingPlans: 'Carregando opções de investimento...',
+                poolHeader: 'Pacotes de Investimento Disponíveis',
+                loadingPlans: 'Carregando pacotes de investimento...',
                 planDuration: 'Duração',
-                planMin: 'Valor Mín.',
-                planMax: 'Valor Máx.',
+                planFixedAmount: 'Preço Fixo', // Chave atualizada
                 planProfitRate: 'Taxa de Lucro Diário',
                 durationDays: 'dias',
                 amountMT: 'MT',
-                investAmountPlaceholder: 'Digite o valor do investimento...',
                 activateButton: 'Ativar Pacote',
                 activationSuccess: 'Investimento ativado com sucesso! Redirecionando para a Renda...',
                 activationError: 'Falha na ativação:',
-                amountRequired: 'Por favor, digite um valor válido.',
-                invalidAmount: 'O valor deve estar entre {min} MT e {max} MT.',
-                insufficientBalance: 'Saldo insuficiente para ativar este pacote.',
-                noActivePlans: 'Sem opções de investimento ativas no momento.', // Nova mensagem de falta de dados
+                insufficientBalance: 'Saldo insuficiente ({amount} MT) para ativar este pacote.',
+                noActivePlans: 'Sem pacotes de investimento ativos no momento.',
                 sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.',
                 navHome: 'Home', navPool: 'Pacotes', navIncome: 'Renda', navWallet: 'Carteira', navProfile: 'Perfil',
             }
@@ -389,11 +380,9 @@
         function setActionMessage(id, message, type = 'error') {
             const messageElement = document.getElementById(id);
             if (messageElement) {
-                // Remove todas as classes de tipo antes de adicionar a correta
                 messageElement.classList.remove('hidden', 'loading-message', 'error-message', 'success-message', 'info-message');
                 messageElement.textContent = message;
                 messageElement.classList.add(`${type}-message`);
-                // Esconde a mensagem após 3 segundos, exceto para mensagens de erro/info permanentes
                 if (type === 'success') {
                      setTimeout(() => messageElement.classList.add('hidden'), 3000);
                 }
@@ -421,9 +410,9 @@
                     if (element.tagName === 'TITLE') {
                         document.title = translations[lang][key];
                     } else if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
-                        // Não traduz o placeholder, pois ele é definido diretamente no innerHTML com a tradução correta
+                        // Ignora
                     } else if (element.tagName === 'INPUT' && element.hasAttribute('type', 'number')) {
-                        // Ignora, pois o innerHTML já cuida do valor.
+                        // Ignora
                     } else {
                         element.textContent = translations[lang][key];
                     }
@@ -459,7 +448,7 @@
 
             clearActionMessages();
             loadingMessage.classList.remove('hidden');
-            plansList.innerHTML = ''; // Limpa a lista antes de começar
+            plansList.innerHTML = ''; 
 
             try {
                 // Busca o perfil para obter o saldo atual
@@ -480,7 +469,6 @@
                 if (plansResponse.ok && plansData.plans && plansData.plans.length > 0) {
                     renderPlans(plansData.plans);
                 } else {
-                    // CORREÇÃO: Trata o caso de lista vazia
                     plansList.innerHTML = `<p class="message info-message">${translations[currentLang].noActivePlans}</p>`;
                 }
 
@@ -491,7 +479,6 @@
                     localStorage.removeItem('token');
                     setTimeout(() => window.location.href = 'login.html', 2000);
                 } else {
-                    // Apenas para erros reais de rede/código
                     setActionMessage('errorMessage', `${translations[currentLang].networkError}: ${error.message}`, 'error');
                 }
             } finally {
@@ -502,53 +489,45 @@
         // --- 2. Renderiza as Opções no HTML ---
         function renderPlans(plans) {
             const plansList = document.getElementById('plansList');
-            plansList.innerHTML = ''; // Limpa a mensagem de carregamento/info
+            plansList.innerHTML = ''; 
 
             plans.forEach(plan => {
                 const card = document.createElement('div');
                 card.className = 'plan-card';
 
-                // Usa as traduções dinamicamente
-                const durationText = translations[currentLang].durationDays;
-                const minAmountText = plan.minAmount.toFixed(2) + ' ' + translations[currentLang].amountMT;
-                const maxAmountText = plan.maxAmount.toFixed(2) + ' ' + translations[currentLang].amountMT;
-                const investPlaceholderText = translations[currentLang].investAmountPlaceholder;
-                const activateButtonText = translations[currentLang].activateButton;
+                // Preço Fixo
+                const fixedAmount = plan.minAmount;
+                const fixedAmountText = fixedAmount.toFixed(2) + ' ' + translations[currentLang].amountMT;
+                
+                // Imagem padrão de fallback
+                const imageUrl = plan.imageUrl && plan.imageUrl !== 'https://res.cloudinary.com/default-image-url' ? plan.imageUrl : 'https://i.ibb.co/6y45s10/placeholder-image.png';
+
 
                 card.innerHTML = `
-                    <h3>
-                        ${plan.name}
-                        <span class="rate">${(plan.dailyProfitRate * 100).toFixed(2)}%</span>
-                    </h3>
+                    <img src="${imageUrl}" alt="${plan.name}" class="plan-image">
+
+                    <h3>${plan.name}</h3>
+
                     <div class="details-grid">
                         <div class="detail-item">
                             <span class="label">${translations[currentLang].planDuration}</span>
-                            <span class="value">${plan.durationDays} ${durationText}</span>
+                            <span class="value">${plan.durationDays} ${translations[currentLang].durationDays}</span>
                         </div>
                         <div class="detail-item">
                             <span class="label">${translations[currentLang].planProfitRate}</span>
                             <span class="value">${(plan.dailyProfitRate * 100).toFixed(2)}%</span>
                         </div>
-                        <div class="detail-item">
-                            <span class="label">${translations[currentLang].planMin}</span>
-                            <span class="value">${minAmountText}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="label">${translations[currentLang].planMax}</span>
-                            <span class="value">${maxAmountText}</span>
-                        </div>
                     </div>
+                    
                     <div class="activation-area">
-                        <label for="amount-${plan._id}">${investPlaceholderText}</label>
-                        <input type="number" id="amount-${plan._id}" 
-                               placeholder="${minAmountText} - ${maxAmountText}"
-                               min="${plan.minAmount}" max="${plan.maxAmount}" step="any" required>
+                        <span class="fixed-price-label" data-translate-key="planFixedAmount">${translations[currentLang].planFixedAmount}:</span>
+                        <span class="fixed-price-value">${fixedAmountText}</span>
+
                         <button class="activate-btn" 
                                 data-plan-id="${plan._id}" 
-                                data-min="${plan.minAmount}" 
-                                data-max="${plan.maxAmount}"
+                                data-fixed-amount="${fixedAmount}" 
                                 onclick="activatePlan(event)">
-                            ${activateButtonText}
+                            ${translations[currentLang].activateButton}
                         </button>
                     </div>
                 `;
@@ -556,57 +535,47 @@
             });
         }
 
-        // --- 3. Função de Ativação do Pacote ---
+        // --- 3. Função de Ativação do Pacote (SEM INPUT DE VALOR) ---
         async function activatePlan(event) {
             clearActionMessages();
             const button = event.currentTarget;
             const planId = button.dataset.planId;
-            const minAmount = parseFloat(button.dataset.min);
-            const maxAmount = parseFloat(button.dataset.max);
-            const inputId = `amount-${planId}`;
-            const amountInput = document.getElementById(inputId);
-            const amount = parseFloat(amountInput.value);
+            const fixedAmount = parseFloat(button.dataset.fixedAmount); // Pega o valor fixo
 
-            // Validação de entrada
-            if (isNaN(amount) || amount <= 0) {
-                setActionMessage('errorMessage', translations[currentLang].amountRequired, 'error');
-                return;
-            }
-
-            if (amount < minAmount || amount > maxAmount) {
-                const message = translations[currentLang].invalidAmount
-                    .replace('{min}', minAmount.toFixed(2))
-                    .replace('{max}', maxAmount.toFixed(2));
+            // 1. Validação de Saldo
+            if (fixedAmount > currentUserBalance) {
+                const message = translations[currentLang].insufficientBalance.replace('{amount}', fixedAmount.toFixed(2));
                 setActionMessage('errorMessage', message, 'error');
                 return;
             }
-
-            if (amount > currentUserBalance) {
-                setActionMessage('errorMessage', translations[currentLang].insufficientBalance, 'error');
+            
+            if (!confirm(`Confirmar investimento de ${fixedAmount.toFixed(2)} MT?`)) {
                 return;
             }
-            
-            // Inicia a requisição
+
+            // 2. Inicia a requisição
             button.disabled = true;
             button.textContent = 'Ativando...';
 
             try {
                 const token = localStorage.getItem('token');
+                
+                // OBS: Não enviamos o 'amount' no body, o controller usará o plan.minAmount
                 const response = await fetch(`${BACKEND_URL}/api/investments`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ planId, amount })
+                    body: JSON.stringify({ planId }) 
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
                     setActionMessage('successMessage', translations[currentLang].activationSuccess, 'success');
-                    currentUserBalance -= amount; // Atualiza o saldo local (temporário)
-                    setTimeout(() => navigateTo('income'), 2000); // Redireciona para a página de Renda
+                    currentUserBalance -= fixedAmount; // Atualiza o saldo local
+                    setTimeout(() => navigateTo('income'), 2000); 
                 } else if (response.status === 401 || response.status === 403) {
                     throw new Error("sessionExpired");
                 } else {
@@ -619,7 +588,6 @@
                     localStorage.removeItem('token');
                     setTimeout(() => window.location.href = 'login.html', 2000);
                 } else {
-                     // Exibe a mensagem do backend ou um erro genérico
                     setActionMessage('errorMessage', `${error.message}`, 'error');
                 }
             } finally {
@@ -630,4 +598,3 @@
     </script>
 </body>
 </html>
---- END OF FILE pool.html ---

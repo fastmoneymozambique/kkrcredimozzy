@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="appTitle">KKR Credit | Instalar App</title>
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome para ícones (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- CSS EMBUTIDO AQUI (Tema de Usuário) -->
+    <style>
+        /* Variáveis CSS (Consistente com Dashboard/Wallet) */
+        :root {
+            --primary-purple: #6a0dad;
+            --light-purple: #9b59b6;
+            --hover-purple: #8e44ad;
+            --dark-background: #2c3e50;
+            --text-dark: #333;
+            --text-medium: #666;
+            --border-light: #e0e0e0;
+            --white: #ffffff;
+            --card-bg-light: #f7faff;
+            --success-green: #2ecc71;
+            --app-background: #e0e6ec;
+            --download-color: #007bff; /* Cor para Download/Ação */
+        }
+
+        /* Reset e Base */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; line-height: 1.6; color: var(--text-dark); background-color: var(--app-background); min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* Container Principal */
+        .page-wrapper { max-width: 480px; width: 100%; margin: 0 auto; background-color: var(--card-bg-light); min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+
+        /* Header (Consistente) */
+        .app-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: var(--white); border-bottom: 1px solid var(--border-light); position: sticky; top: 0; z-index: 100; }
+        .app-header .logo { font-size: 1.5em; font-weight: 700; color: var(--primary-purple); }
+        .back-button { background: none; border: none; color: var(--text-medium); font-size: 1.2em; cursor: pointer; transition: color 0.2s ease; padding: 5px; }
+        .back-button:hover { color: var(--primary-purple); }
+
+        /* Main Content */
+        .main-content { flex-grow: 1; padding: 20px; overflow-y: auto; text-align: center; }
+
+        /* Título da Página */
+        .page-title { font-size: 1.8em; color: var(--primary-purple); font-weight: 700; margin-bottom: 25px; }
+
+        /* Card de App */
+        .app-card {
+            background-color: var(--dark-background);
+            border-radius: 15px;
+            padding: 30px 20px;
+            color: var(--white);
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .app-icon { font-size: 4em; color: var(--success-green); margin-bottom: 15px; }
+        .app-card h2 { font-size: 1.5em; font-weight: 600; margin-bottom: 5px; }
+        .app-card p { font-size: 0.9em; color: rgba(255,255,255,0.7); margin-bottom: 20px; }
+
+        /* Botão de Download/Instalação */
+        .download-btn {
+            width: 80%;
+            padding: 15px;
+            background-color: var(--download-color);
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .download-btn:hover { background-color: #0056b3; transform: translateY(-2px); }
+
+        /* Instruções */
+        .instructions-card {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: left;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .instructions-card h3 {
+            font-size: 1.2em;
+            color: var(--primary-purple);
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 5px;
+        }
+        .instructions-card ol {
+            padding-left: 20px;
+            font-size: 0.9em;
+        }
+        .instructions-card li {
+            margin-bottom: 15px;
+        }
+        .instructions-card li strong {
+            color: var(--download-color);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Header -->
+        <header class="app-header">
+            <button class="back-button" onclick="navigateTo('home');" data-translate-key="backButtonAlt">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="logo">KKR Credit</div>
+            <div></div> <!-- Espaçador para alinhamento -->
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1 class="page-title" data-translate-key="appHeader">Aplicativo KKR Credit</h1>
+
+            <!-- Card Principal de Download -->
+            <section class="app-card">
+                <div class="app-icon"><i class="fas fa-mobile-alt"></i></div>
+                <h2 data-translate-key="appCardTitle">Instale o App para uma Experiência Completa!</h2>
+                <p data-translate-key="appCardSubtitle">O PWA (Progressive Web App) garante acesso rápido, notificações e uso offline.</p>
+
+                <button class="download-btn" onclick="showInstallInstructions()" data-translate-key="downloadButton">
+                    <i class="fas fa-download"></i> Baixar App (PWA)
+                </button>
+            </section>
+
+            <!-- Card de Instruções de Instalação -->
+            <section id="installInstructionsCard" class="instructions-card hidden">
+                <h3 data-translate-key="instructionsTitle">Instruções de Instalação (PWA)</h3>
+                
+                <ol>
+                    <li data-translate-key="step1">
+                        <strong>No Chrome/Android:</strong> Toque no menu de 3 pontos (<i class="fas fa-ellipsis-v"></i>) no canto superior direito e selecione "Instalar Aplicativo".
+                    </li>
+                    <li data-translate-key="step2">
+                        <strong>No Safari/iOS:</strong> Toque no ícone de "Compartilhar" (<i class="fas fa-share-square"></i>) na barra inferior e selecione "Adicionar à Tela de Início".
+                    </li>
+                    <li data-translate-key="step3">
+                        <strong data-translate-key="step3Action">Instale</strong> e abra o App diretamente da sua Tela de Início!
+                    </li>
+                </ol>
+            </section>
+
+
+        </main> <!-- Fim do main-content -->
+
+    </div> <!-- Fim do page-wrapper -->
+
+    <!-- Script de navegação (Consistente com outras páginas) -->
+    <script>
+        // Objeto de traduções (Apenas o essencial para a página)
+        const translations = {
+            pt: {
+                appTitle: 'KKR Credit | Instalar App', backButtonAlt: 'Voltar', appHeader: 'Aplicativo KKR Credit',
+                appCardTitle: 'Instale o App para uma Experiência Completa!',
+                appCardSubtitle: 'O PWA (Progressive Web App) garante acesso rápido, notificações e uso offline.',
+                downloadButton: 'Baixar App (PWA)',
+                instructionsTitle: 'Instruções de Instalação (PWA)',
+                step1: '<strong>No Chrome/Android:</strong> Toque no menu de 3 pontos (<i class="fas fa-ellipsis-v"></i>) no canto superior direito e selecione "Instalar Aplicativo".',
+                step2: '<strong>No Safari/iOS:</strong> Toque no ícone de "Compartilhar" (<i class="fas fa-share-square"></i>) na barra inferior e selecione "Adicionar à Tela de Início".',
+                step3Action: 'Instale',
+                // Chaves de navegação (apenas para a função navigateTo)
+                pageNotConfigured: 'Página "{page}" não configurada para navegação.',
+            }
+        };
+
+        let currentLang = 'pt'; // Manter padrão 'pt'
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLanguagePreference();
+            applyTranslations(currentLang);
+        });
+
+        // Variável para armazenar o evento de instalação do PWA
+        let deferredPrompt;
+
+        // Listener para o evento beforeinstallprompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Previne que o mini-infobar apareça no celular
+            e.preventDefault();
+            // Armazena o evento para que possa ser acionado depois
+            deferredPrompt = e;
+            // Opcional: Mostra o botão de download diretamente se o prompt nativo for suportado
+        });
+        
+        // --- Função de Ação do Botão ---
+        function showInstallInstructions() {
+            const instructionsCard = document.getElementById('installInstructionsCard');
+            
+            // 1. Tenta acionar o prompt nativo (se suportado e não tiver sido acionado)
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                // O evento de instalação será tratado pelo listener 'beforeinstallprompt'
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuário aceitou o prompt de instalação');
+                    } else {
+                        console.log('Usuário recusou o prompt de instalação');
+                    }
+                    deferredPrompt = null; // Limpa após o uso
+                });
+            } else {
+                 // 2. Mostra as instruções manuais se o prompt nativo não estiver disponível (ou já foi rejeitado)
+                instructionsCard.classList.remove('hidden');
+                // Role para as instruções
+                instructionsCard.scrollIntoView({ behavior: 'smooth' });
+                
+                // Exibe um alerta de fallback
+                alert(translations[currentLang].instructionsTitle + ": " + 
+                      (navigator.userAgent.includes("Android") ? 
+                       "Use o menu de 3 pontos > Instalar Aplicativo." : 
+                       "Use o ícone de Compartilhar > Adicionar à Tela de Início."));
+            }
+        }
+
+
+        // --- Funções Auxiliares de Idioma e Navegação (Padrão) ---
+        function loadLanguagePreference() {
+            const savedLang = localStorage.getItem('langPreference');
+            if (savedLang) {
+                const { lang } = JSON.parse(savedLang);
+                currentLang = lang;
+            }
+        }
+
+        function applyTranslations(lang) {
+            document.querySelectorAll('[data-translate-key]').forEach(element => {
+                const key = element.dataset.translateKey;
+                if (translations[lang] && translations[lang][key]) {
+                    if (element.tagName === 'TITLE') {
+                        document.title = translations[lang][key];
+                    } else if (element.tagName !== 'BUTTON' && element.tagName !== 'I') {
+                        element.innerHTML = translations[lang][key];
+                    }
+                }
+            });
+        }
+
+        function navigateTo(page) {
+            const pageMap = {
+                'home': 'dashboard.html',
+                // Você pode adicionar outras páginas aqui se o botão de voltar for usado para outra coisa
+            };
+            const targetPage = pageMap[page] || 'dashboard.html'; // Padrão para dashboard
+            window.location.href = targetPage;
+        }
+    </script>
+</body>
+</html>

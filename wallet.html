@@ -84,6 +84,17 @@
         .nav-item i { font-size: 1.3em; margin-bottom: 3px; }
         .nav-item.active { color: var(--primary-purple); font-weight: 600; }
         .nav-item:hover { color: var(--primary-purple); }
+
+        /* Estilo para a mensagem de horário de saque */
+        .withdrawal-info-message {
+            font-size: 0.9em;
+            color: var(--text-dark);
+            background-color: var(--card-bg-light);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -146,6 +157,13 @@
             <!-- Formulário de Saque -->
             <section id="withdrawFormContainer" class="action-form hidden">
                 <h3 data-translate-key="withdrawHeader">Solicitar Saque</h3>
+                
+                <!-- NOVO: Mensagem de Horário de Saque -->
+                <div id="withdrawalTimeInfo" class="withdrawal-info-message hidden">
+                    <i class="fas fa-clock"></i> <span id="withdrawalTimeText">Carregando horário de saque...</span>
+                </div>
+                <!-- FIM NOVO -->
+                
                 <form id="withdrawForm">
                     <div class="input-group">
                         <label for="paymentMethodWithdraw" data-translate-key="paymentMethodLabel">Método de Pagamento</label>
@@ -156,7 +174,8 @@
                     </div>
                     <div class="input-group">
                         <label for="withdrawAmount" data-translate-key="amountLabel">Valor (MT)</label>
-                        <input type="number" id="withdrawAmount" name="amount" placeholder="Mínimo 1 MT" min="1" step="any" required>
+                        <!-- ID: withdrawAmount / Placeholder será definido dinamicamente -->
+                        <input type="number" id="withdrawAmount" name="amount" min="1" step="any" required>
                     </div>
                     <div class="input-group">
                         <label for="recipientName" data-translate-key="recipientNameLabel">Nome Completo do Destinatário</label>
@@ -208,15 +227,22 @@
             const BACKEND_URL = 'https://backend-cjl7.onrender.com';
             const MIN_DEPOSIT_AMOUNT = 50;
             let currentAvailableBalance = 0;
-            let currentLang = 'pt'; // Declaração no escopo local
+            let currentLang = 'pt'; 
+            let withdrawalTimeConfig = null; 
             
             // Objeto de traduções
             const translations = {
                 en: {
-                    walletTitle: 'KKR Credit | Wallet', backButtonAlt: 'Back', walletHeader: 'My Wallet', balanceSummary: 'Balance Summary', loadingBalance: 'Loading balance...', availableBalance: 'Available Balance:', bonusBalance: 'Bonus Balance:', depositTab: 'Deposit', withdrawTab: 'Withdraw', depositHeader: 'Request Deposit', withdrawHeader: 'Request Withdrawal', amountLabel: 'Amount (MT)', confirmationLabel: 'Confirmation Proof', confirmationPlaceholder: 'Ex: Sender number, transaction ID (TXID)', paymentMethodLabel: 'Payment Method', walletAddressLabel: 'Payment Details', walletAddressPlaceholder: 'Ex: M-Pesa 84xxxxxxx', depositButton: 'Deposit', withdrawButton: 'Request Withdrawal', recipientNameLabel: 'Full Recipient Name', recipientPhoneLabel: 'Recipient Number', minAmountError: `The minimum deposit amount is ${MIN_DEPOSIT_AMOUNT} MT.`, minWithdrawalError: 'The minimum withdrawal amount is 1 MT.', insufficientBalance: 'Insufficient available balance for this withdrawal.', depositSuccess: 'Deposit request sent for approval. Check profile history for status.', withdrawSuccess: 'Withdrawal request sent. Funds will be processed shortly. Check profile history for status.', requestFailed: 'Request failed:', networkError: 'A network error occurred. Check your connection or try again later.', sessionExpired: 'Session expired or unauthorized. Please log in again.', navHome: 'Home', navPool: 'Pacotes', navIncome: 'Income', navWallet: 'Wallet', navProfile: 'Profile',
+                    walletTitle: 'KKR Credit | Wallet', backButtonAlt: 'Back', walletHeader: 'My Wallet', balanceSummary: 'Balance Summary', loadingBalance: 'Loading balance...', availableBalance: 'Available Balance:', bonusBalance: 'Bonus Balance:', depositTab: 'Deposit', withdrawTab: 'Withdraw', depositHeader: 'Request Deposit', withdrawHeader: 'Request Withdrawal', amountLabel: 'Amount (MT)', confirmationLabel: 'Confirmation Proof', confirmationPlaceholder: 'Ex: Sender number, transaction ID (TXID)', paymentMethodLabel: 'Payment Method', walletAddressLabel: 'Payment Details', walletAddressPlaceholder: 'Ex: M-Pesa 84xxxxxxx', depositButton: 'Deposit', withdrawButton: 'Request Withdrawal', recipientNameLabel: 'Full Recipient Name', recipientPhoneLabel: 'Recipient Number', minAmountError: `The minimum deposit amount is ${MIN_DEPOSIT_AMOUNT} MT.`, minWithdrawalError: 'The minimum withdrawal amount is {min} MT.', maxWithdrawalError: 'The maximum withdrawal amount is {max} MT.', insufficientBalance: 'Insufficient available balance for this withdrawal.', depositSuccess: 'Deposit request sent for approval. Check profile history for status.', withdrawSuccess: 'Withdrawal request sent. Funds will be processed shortly. Check profile history for status.', requestFailed: 'Request failed:', networkError: 'A network error occurred. Check your connection or try again later.', sessionExpired: 'Session expired or unauthorized. Please log in again.', navHome: 'Home', navPool: 'Pacotes', navIncome: 'Income', navWallet: 'Wallet', navProfile: 'Profile',
+                    withdrawalTimeAllowed: 'Saques permitidos das {start} às {end} (MZ Time).',
+                    withdrawalTimeRestricted: 'O horário de saque é das {start} às {end} (MZ Time).',
+                    withdrawPlaceholder: 'Mín. {min} MT / Máx. {max} MT', /* NOVO */
                 },
                 pt: {
-                    walletTitle: 'KKR Credit | Carteira', backButtonAlt: 'Voltar', walletHeader: 'Minha Carteira', balanceSummary: 'Resumo do Saldo', loadingBalance: 'Carregando saldo...', availableBalance: 'Saldo Disponível:', bonusBalance: 'Saldo de Bônus:', depositTab: 'Depositar', withdrawTab: 'Sacar', depositHeader: 'Solicitar Depósito', withdrawHeader: 'Solicitar Saque', amountLabel: 'Valor (MT)', confirmationLabel: 'Comprovativo de Confirmação', confirmationPlaceholder: 'Ex: Número do remetente, ID da transação (TXID)', paymentMethodLabel: 'Método de Pagamento', walletAddressLabel: 'Detalhes de Pagamento', walletAddressPlaceholder: 'Ex: M-Pesa 84xxxxxxx', depositButton: 'Depositar', withdrawButton: 'Solicitar Saque', recipientNameLabel: 'Nome Completo do Destinatário', recipientPhoneLabel: 'Número do Destinatário', minAmountError: `O valor mínimo de depósito é ${MIN_DEPOSIT_AMOUNT} MT.`, minWithdrawalError: 'O valor mínimo de saque é 1 MT.', insufficientBalance: 'Saldo disponível insuficiente para este saque.', depositSuccess: 'Solicitação de depósito enviada para aprovação. Verifique o histórico no perfil.', withdrawSuccess: 'Solicitação de saque enviada. Os fundos serão processados em breve. Verifique o histórico no perfil.', requestFailed: 'Falha na solicitação:', networkError: 'Ocorreu um erro de rede. Verifique sua conexão ou tente novamente mais tarde.', sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.', navHome: 'Home', navPool: 'Pacotes', navIncome: 'Renda', navWallet: 'Carteira', navProfile: 'Perfil',
+                    walletTitle: 'KKR Credit | Carteira', backButtonAlt: 'Voltar', walletHeader: 'Minha Carteira', balanceSummary: 'Resumo do Saldo', loadingBalance: 'Carregando saldo...', availableBalance: 'Saldo Disponível:', bonusBalance: 'Saldo de Bônus:', depositTab: 'Depositar', withdrawTab: 'Sacar', depositHeader: 'Solicitar Depósito', withdrawHeader: 'Solicitar Saque', amountLabel: 'Valor (MT)', confirmationLabel: 'Comprovativo de Confirmação', confirmationPlaceholder: 'Ex: Número do remetente, ID da transação (TXID)', paymentMethodLabel: 'Método de Pagamento', walletAddressLabel: 'Detalhes de Pagamento', walletAddressPlaceholder: 'Ex: M-Pesa 84xxxxxxx', depositButton: 'Depositar', withdrawButton: 'Solicitar Saque', recipientNameLabel: 'Nome Completo do Destinatário', recipientPhoneLabel: 'Número do Destinatário', minAmountError: `O valor mínimo de depósito é ${MIN_DEPOSIT_AMOUNT} MT.`, minWithdrawalError: 'O saque mínimo é {min} MT.', maxWithdrawalError: 'O saque máximo é {max} MT.', insufficientBalance: 'Saldo disponível insuficiente para este saque.', depositSuccess: 'Solicitação de depósito enviada para aprovação. Verifique o histórico no perfil.', withdrawSuccess: 'Solicitação de saque enviada. Os fundos serão processados em breve. Verifique o histórico no perfil.', requestFailed: 'Falha na solicitação:', networkError: 'Ocorreu um erro de rede. Verifique sua conexão ou tente novamente mais tarde.', sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.', navHome: 'Home', navPool: 'Pacotes', navIncome: 'Renda', navWallet: 'Carteira', navProfile: 'Perfil',
+                    withdrawalTimeAllowed: 'Saques permitidos das {start} às {end} (MZ Time).',
+                    withdrawalTimeRestricted: 'O horário de saque é das {start} às {end} (MZ Time).',
+                    withdrawPlaceholder: 'Mín. {min} MT / Máx. {max} MT', /* NOVO */
                     }
                 };
 
@@ -224,7 +250,7 @@
             document.addEventListener('DOMContentLoaded', () => {
                 loadLanguagePreference(); 
                 applyTranslations(currentLang);
-                fetchUserBalance(); 
+                fetchInitialData(); // Busca saldo e config de saque
                 
                 document.getElementById('depositForm').addEventListener('submit', handleInitialDepositRequest); 
                 document.getElementById('withdrawForm').addEventListener('submit', handleWithdrawalRequest);
@@ -280,7 +306,8 @@
                 });
                 // Colocando placeholders nos inputs dinamicamente (para evitar problemas de tradução)
                 if(document.getElementById('depositAmount')) document.getElementById('depositAmount').placeholder = `Mínimo ${MIN_DEPOSIT_AMOUNT} MT`;
-                if(document.getElementById('withdrawAmount')) document.getElementById('withdrawAmount').placeholder = `Mínimo 1 MT`;
+                
+                // Placeholder de saque é atualizado dinamicamente em fetchAdminWithdrawalConfig
             }
 
             function navigateTo(page) {
@@ -321,7 +348,17 @@
                 }
             }
 
-            // --- 1. Busca Saldo do Usuário (Mantida) ---
+            // --- NOVO: Busca saldo E Configuração de Saque ---
+            async function fetchInitialData() {
+                 await Promise.all([
+                    fetchUserBalance(),
+                    fetchAdminWithdrawalConfig()
+                 ]).catch(error => {
+                    console.error("[DIAGNÓSTICO] Erro em uma das chamadas iniciais da Carteira:", error);
+                 });
+            }
+
+            // --- 1. Busca Saldo do Usuário ---
             async function fetchUserBalance() {
                 const token = localStorage.getItem('token');
                 const loadingMessage = document.getElementById('loadingMessage');
@@ -367,8 +404,90 @@
                     loadingMessage.classList.add('hidden');
                 }
             }
-            
-            // --- 2. Lida com a Solicitação de Depósito (Redireciona para Checkout) ---
+
+            // --- 2. Busca Configuração de Horário e Limites de Saque (ATUALIZADA) ---
+            async function fetchAdminWithdrawalConfig() {
+                const infoElement = document.getElementById('withdrawalTimeInfo');
+                const textElement = document.getElementById('withdrawalTimeText');
+                const withdrawInput = document.getElementById('withdrawAmount');
+                const withdrawButton = document.querySelector('#withdrawForm .submit-btn');
+
+                infoElement.classList.remove('hidden');
+
+                try {
+                    const response = await fetch(`${BACKEND_URL}/api/deposit-config`); 
+                    if (!response.ok) {
+                        throw new Error(`Status ${response.status}`);
+                    }
+                    const data = await response.json();
+                    
+                    withdrawalTimeConfig = data.config;
+                    const { withdrawalStartTime: start, withdrawalEndTime: end, minWithdrawalAmount: min, maxWithdrawalAmount: max } = withdrawalTimeConfig;
+
+                    // 1. Atualiza Placeholder do Input
+                    const placeholderText = translations[currentLang].withdrawPlaceholder
+                        .replace('{min}', min || 1)
+                        .replace('{max}', max || 5000);
+                        
+                    withdrawInput.placeholder = placeholderText;
+                    withdrawInput.min = min || 1; // Define o min do HTML
+                    withdrawInput.max = max || 5000; // Define o max do HTML
+
+
+                    // 2. Atualiza Mensagem de Horário
+                    if (start && end) {
+                        const now = new Date();
+                        const isAllowed = isTimeAllowed(now, start, end);
+                        
+                        const timeText = (isAllowed ? translations[currentLang].withdrawalTimeAllowed : translations[currentLang].withdrawalTimeRestricted)
+                            .replace('{start}', start)
+                            .replace('{end}', end);
+
+                        textElement.innerHTML = timeText;
+                        if (!isAllowed) {
+                           infoElement.classList.add('info-message'); 
+                           withdrawButton.disabled = true;
+                           withdrawButton.textContent = "Fora do Horário de Saque";
+                        } else {
+                            infoElement.classList.remove('info-message');
+                            withdrawButton.disabled = false;
+                        }
+
+                    } else {
+                        textElement.textContent = "Horário de saque não configurado. Saques podem estar indisponíveis.";
+                        infoElement.classList.add('info-message');
+                    }
+
+
+                } catch (error) {
+                    textElement.textContent = "Erro ao carregar horário/limites de saque.";
+                    infoElement.classList.add('error-message');
+                    withdrawButton.disabled = true; 
+                    console.error("Erro ao buscar config de saque:", error);
+                }
+            }
+
+            /**
+             * Auxiliar para verificar se a hora atual está dentro do intervalo HH:MM.
+             */
+            function isTimeAllowed(now, startTime, endTime) {
+                const currentHour = now.getHours();
+                const currentMinute = now.getMinutes();
+
+                const parseTime = (timeStr) => {
+                    const [hour, minute] = timeStr.split(':').map(Number);
+                    return hour * 60 + minute;
+                };
+
+                const currentTimeInMinutes = currentHour * 60 + currentMinute;
+                const startTimeInMinutes = parseTime(startTime);
+                const endTimeInMinutes = parseTime(endTime);
+
+                return currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes;
+            }
+
+
+            // --- 3. Lida com a Solicitação de Depósito (Redireciona para Checkout) ---
             function handleInitialDepositRequest(event) {
                 event.preventDefault();
                 clearActionMessages('depositForm');
@@ -392,19 +511,8 @@
                 
                 try {
                     const depositData = { amount, method };
-                    
-                    console.log("[DEBUG REDIRECT] Dados a serem salvos:", depositData);
-                    
-                    // 1. Salva os dados no sessionStorage
                     sessionStorage.setItem('depositData', JSON.stringify(depositData));
-                    
-                    console.log("[DEBUG REDIRECT] Dados salvos. Tentando redirecionar...");
-
-                    // 2. Redireciona para a página de checkout
                     window.location.href = 'deposit_checkout.html';
-                    
-                    // Nota: Se esta linha aparecer, o redirecionamento foi tentado.
-                    console.log("[DEBUG REDIRECT] Redirecionamento iniciado (Verifique o console da nova página para erros).");
                     
                 } catch (e) {
                     console.error("[ERRO CRÍTICO DE SESSION/REDIRECIONAMENTO]", e);
@@ -412,40 +520,46 @@
                 }
             }
 
-            // --- 3. Lida com a Solicitação de Saque (Saque Detalhado) ---
+            // --- 4. Lida com a Solicitação de Saque (Saque Detalhado - VALIDAÇÃO DE FRONTEND ATUALIZADA) ---
             async function handleWithdrawalRequest(event) {
                 event.preventDefault();
                 const form = event.target;
                 const button = form.querySelector('.submit-btn');
                 clearActionMessages('withdrawForm');
-
+                
                 const amount = parseFloat(document.getElementById('withdrawAmount').value);
                 const recipientName = document.getElementById('recipientName').value.trim();
                 const recipientPhoneNumber = document.getElementById('recipientPhoneNumber').value.trim();
                 const paymentMethod = document.getElementById('paymentMethodWithdraw').value;
 
-                // --- DIAGNÓSTICO: VALIDAÇÕES DE FRONT-END MAIS EXPLICITAS ---
+                // --- VALIDAÇÕES DE FRONT-END (Usando limites dinâmicos) ---
+                const min = withdrawalTimeConfig ? withdrawalTimeConfig.minWithdrawalAmount : 1;
+                const max = withdrawalTimeConfig ? withdrawalTimeConfig.maxWithdrawalAmount : Infinity;
 
-                if (isNaN(amount) || amount < 1) {
-                    setActionMessage('withdrawForm', translations[currentLang].minWithdrawalError);
-                    console.error("[SAQUE ERRO] Valor inválido ou abaixo do mínimo (1 MT).");
+                if (isNaN(amount) || amount < min) {
+                    setActionMessage('withdrawForm', translations[currentLang].minWithdrawalError.replace('{min}', min));
+                    return;
+                }
+                if (amount > max) {
+                    setActionMessage('withdrawForm', translations[currentLang].maxWithdrawalError.replace('{max}', max));
                     return;
                 }
                 if (amount > currentAvailableBalance) {
                     setActionMessage('withdrawForm', translations[currentLang].insufficientBalance);
-                    console.error("[SAQUE ERRO] Saldo insuficiente. Saldo: " + currentAvailableBalance);
                     return;
                 }
                 if (recipientName.length < 3) {
                     setActionMessage('withdrawForm', 'O Nome Completo do Destinatário deve ter pelo menos 3 caracteres.');
-                    console.error("[SAQUE ERRO] Nome do destinatário muito curto.");
                     return;
                 }
-                // O padrão regex é '^\d{9}$'
                 if (recipientPhoneNumber.length !== 9 || !/^\d{9}$/.test(recipientPhoneNumber)) {
                     setActionMessage('withdrawForm', 'O Número do Destinatário deve ter exatamente 9 dígitos numéricos.');
-                    console.error("[SAQUE ERRO] Número de telefone inválido.");
                     return;
+                }
+                // Validação de horário (para desabilitar o botão se estiver fora)
+                if (button.disabled && button.textContent.includes("Horário")) {
+                     setActionMessage('withdrawForm', "Saque fora do horário permitido. Aguarde o horário de abertura.", 'error');
+                     return;
                 }
                 
                 // --- FIM DA VALIDAÇÃO DE FRONT-END ---
@@ -458,7 +572,6 @@
 
                 try {
                     const token = localStorage.getItem('token');
-                    console.log("[SAQUE DEBUG] Enviando para /api/withdrawals. Detalhes:", { amount, walletAddress: walletAddressDetails });
                     
                     const response = await fetch(`${BACKEND_URL}/api/withdrawals`, {
                         method: 'POST',
@@ -470,7 +583,6 @@
                     });
 
                     const data = await response.json();
-                    console.log("[SAQUE DEBUG] Resposta da API:", data);
 
 
                     if (response.ok) {
@@ -481,7 +593,7 @@
                     } else if (response.status === 401 || response.status === 403) {
                         throw new Error("sessionExpired");
                     } else {
-                        // Erro de backend
+                        // Erro de backend (incluindo erro de horário/limite do backend)
                         throw new Error(data.message || translations[currentLang].requestFailed);
                     }
 
@@ -489,7 +601,7 @@
                     if (error.message.includes("sessionExpired")) {
                         setActionMessage('withdrawForm', translations[currentLang].sessionExpired, 'error');
                         localStorage.removeItem('token');
-                        setTimeout(() => window.location.href = 'login.html', 2000);
+                        setTimeout(() => navigateTo('login.html'), 2000);
                     } else {
                         setActionMessage('withdrawForm', `${translations[currentLang].requestFailed} ${error.message}`);
                     }
