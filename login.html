@@ -318,9 +318,9 @@
                 if (response.ok) {
                     // Armazenar o token (ex: em localStorage ou cookies)
                     localStorage.setItem('token', data.token);
-                    alert('Login bem-sucedido! Redirecionando para o perfil...');
+                    alert('Login bem-sucedido!');
                     // Redirecionar para a página do perfil ou dashboard do usuário
-                    window.location.href = 'profile.html'; // Você precisará criar esta página
+                    window.location.href = 'dashboard.html'; // Você precisará criar esta página
                 } else {
                     errorMessage.textContent = data.message || 'Erro no login.';
                 }
