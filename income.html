@@ -1,3 +1,5 @@
+--- START OF FILE income.html ---
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -30,6 +32,7 @@
             --app-background: #e0e6ec;
             --info-blue: #3498db;
             --investment-orange: #ff9800; /* Cor para montante investido */
+            --coin-color: #f1c40f; /* Amarelo/Dourado para destacar potencial */
         }
 
         /* Reset e Base */
@@ -197,6 +200,26 @@
         .investment-detail .value.profit {
             color: var(--success-green);
         }
+        
+        /* NOVO: Estilo para exibir comissões (Atualizado para valor real) */
+        .commission-summary {
+             background-color: var(--info-blue);
+             color: var(--white);
+             border-radius: 8px;
+             padding: 10px 15px;
+             margin-top: 25px;
+             text-align: center;
+        }
+        .commission-summary p {
+             font-size: 0.9em;
+             margin: 5px 0;
+        }
+        .commission-summary .value {
+             font-weight: 700;
+             color: var(--coin-color); /* Amarelo/Dourado para destacar potencial */
+        }
+        /* FIM NOVO */
+
 
         /* Mensagens (Consistente com Pool) */
         .message {
@@ -275,7 +298,8 @@
 
             <!-- Card de Resumo de Renda -->
             <section class="income-summary-card">
-                <p class="summary-title" data-translate-key="totalProfitLabel">Lucro Total Acumulado</p>
+                <p class="summary-title" data-translate-key="totalProfitLabel">Lucro Total Acumulado (Próprio)</p>
+                <!-- Agora exibe apenas o lucro de investimento próprio (Profit) -->
                 <p class="summary-value" id="totalProfitValue">0.00 MT</p>
                 
                 <div class="summary-info-grid">
@@ -284,10 +308,18 @@
                         <p class="value" id="totalInvestedValue">0.00 MT</p>
                     </div>
                     <div class="summary-item">
-                        <p class="label" data-translate-key="todayProfitLabel">Lucro de Hoje</p>
-                        <p class="value" id="todayProfitValue">0.00 MT</p>
+                        <p class="label" data-translate-key="dailyPotentialLabel">Potencial Diário Próprio</p>
+                        <p class="value" id="dailyInvestmentProfit">0.00 MT</p>
                     </div>
                 </div>
+                
+                <!-- NOVO: Resumo de Comissões (Comissão Real) -->
+                <div class="commission-summary">
+                    <p data-translate-key="commissionRateLabel">Comissão Total Ganha</p>
+                    <!-- Agora exibe o valor real do totalCommissionEarned -->
+                    <p class="value" id="totalCommissionEarnedValue">0.00 MT</p>
+                </div>
+                <!-- FIM NOVO -->
             </section>
 
             <!-- Seção de Investimentos Ativos -->
@@ -338,12 +370,12 @@
                 incomeTitle: 'KKR Credit | Income',
                 backButtonAlt: 'Back',
                 incomeHeader: 'Investment Income',
-                totalProfitLabel: 'Total Accumulated Profit',
+                totalProfitLabel: 'Total Accumulated Profit (Own)', // Alterado
                 totalInvestedLabel: 'Total Invested',
-                todayProfitLabel: 'Today\'s Profit',
+                dailyPotentialLabel: 'Own Daily Potential', 
                 activeInvestmentsHeader: 'My Active Packages',
                 loadingInvestments: 'Loading active investments...',
-                noActiveInvestments: 'No active investment packages found. Start investing in the Pacotes page!',
+                noActiveInvestments: 'No active investment packages found. Start investing in the Packages page!',
                 investmentName: 'Package Name',
                 investedAmount: 'Invested Amount',
                 currentProfit: 'Accumulated Profit',
@@ -354,15 +386,18 @@
                 statusCancelled: 'Cancelled',
                 networkError: 'A network error occurred. Check your connection or try again later.',
                 sessionExpired: 'Session expired or unauthorized. Please log in again.',
-                navHome: 'Home', navPool: 'Pacotes', navIncome: 'Income', navWallet: 'Wallet', navProfile: 'Profile',
+                navHome: 'Home', navPool: 'Packages', navIncome: 'Income', navWallet: 'Wallet', navProfile: 'Profile',
+                dailyPotentialLabel: 'Own Daily Potential', 
+                commissionRateLabel: 'Total Commission Earned', // Alterado
+                // commissionPotentialLabel: 'Daily Commission Potential:', // Removido
             },
             pt: {
                 incomeTitle: 'KKR Credit | Renda',
                 backButtonAlt: 'Voltar',
                 incomeHeader: 'Renda de Investimentos',
-                totalProfitLabel: 'Lucro Total Acumulado',
+                totalProfitLabel: 'Lucro Total Acumulado (Próprio)', // Alterado
                 totalInvestedLabel: 'Total Investido',
-                todayProfitLabel: 'Lucro de Hoje',
+                dailyPotentialLabel: 'Potencial Diário Próprio', 
                 activeInvestmentsHeader: 'Meus Pacotes Ativos',
                 loadingInvestments: 'Carregando investimentos ativos...',
                 noActiveInvestments: 'Nenhum pacote de investimento ativo encontrado. Comece a investir na página Pacotes!',
@@ -377,16 +412,22 @@
                 networkError: 'Ocorreu um erro de rede. Verifique sua conexão ou tente novamente mais tarde.',
                 sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.',
                 navHome: 'Home', navPool: 'Pacotes', navIncome: 'Renda', navWallet: 'Carteira', navProfile: 'Perfil',
+                dailyPotentialLabel: 'Potencial Diário Próprio', 
+                commissionRateLabel: 'Comissão Total Ganha', // Alterado
+                // commissionPotentialLabel: 'Potencial de Comissão Diária Total:', // Removido
             }
         };
 
         let currentLang = 'pt';
-
+        
         document.addEventListener('DOMContentLoaded', () => {
             loadLanguagePreference();
             applyTranslations(currentLang);
-            fetchActiveInvestments();
+            fetchInitialData(); 
         });
+
+        // Expondo para o HTML
+        window.navigateTo = navigateTo;
 
         // --- Funções Auxiliares de UI e Navegação (Consistente) ---
         function setActionMessage(id, message, type = 'error') {
@@ -433,8 +474,8 @@
             }
         }
         
-        // --- Função Principal: Busca Investimentos Ativos ---
-        async function fetchActiveInvestments() {
+        // --- Função Principal: Busca Dados Consolidados (Perfil + Histórico) ---
+        async function fetchInitialData() {
             const token = localStorage.getItem('token');
             const listContainer = document.getElementById('activeInvestmentsList');
             const loadingMessage = document.getElementById('loadingMessage');
@@ -446,53 +487,69 @@
             }
 
             loadingMessage.classList.remove('hidden');
-            listContainer.innerHTML = ''; // Limpa a lista antes de carregar
+            listContainer.innerHTML = ''; 
 
             try {
-                const response = await fetch(`${BACKEND_URL}/api/investments/active`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                // 1. Busca Perfil (para comissão total e investimentos ativos)
+                const profileResponse = await fetch(`${BACKEND_URL}/api/profile`, { headers: { 'Authorization': `Bearer ${token}` } });
                 
-                if (response.status === 401 || response.status === 403) {
+                if (profileResponse.status === 401 || profileResponse.status === 403 || !profileResponse.ok) {
                     throw new Error("sessionExpired");
                 }
                 
-                if (!response.ok) {
-                    throw new Error(`Status ${response.status}`);
-                }
-
-                const data = await response.json();
+                const profileData = await profileResponse.json();
+                const user = profileData.user;
                 
-                // 1. Calcular Totais para o Card de Resumo
+                // 2. Busca Histórico Completo de Investimentos (para Total Investido e Lucro Total Acumulado)
+                const historyResponse = await fetch(`${BACKEND_URL}/api/investments/history`, { headers: { 'Authorization': `Bearer ${token}` } });
+                
+                if (!historyResponse.ok) {
+                     // Não lançamos erro fatal, apenas avisamos que o cálculo total pode estar errado
+                     console.error("Falha ao buscar histórico completo de investimentos.");
+                }
+                const historyData = await historyResponse.json();
+
+
+                // --- PROCESSAMENTO DE DADOS ---
+
+                const allInvestments = historyData.investments || []; 
+                const activeInvestments = user.activeInvestments || [];
+
                 let totalInvested = 0;
                 let totalAccumulatedProfit = 0;
-                let todayProfit = 0; // O cálculo de lucro de hoje é complexo no frontend e simplificado aqui
-                                    // Mas no backend (processDailyProfitsAndCommissions) ele é exato.
-                                    // Para o frontend, vamos estimar o lucro diário total para o resumo.
+                let dailyInvestmentProfit = 0; // Lucro diário próprio (real)
                 
-                // 2. Renderizar Investimentos
-                if (data.investments && data.investments.length > 0) {
-                    data.investments.forEach(inv => {
-                        // Calcula totais
-                        totalInvested += inv.investedAmount;
-                        totalAccumulatedProfit += inv.currentProfit;
-                        
-                        // O lucro de hoje seria o investedAmount * dailyProfitRate (se a cron rodou)
-                        todayProfit += (inv.investedAmount * inv.dailyProfitRate);
+                // Soma de todos os investimentos do histórico (incluindo upgrade, se houver)
+                allInvestments.forEach(inv => {
+                    // Soma do Valor Investido (Não é a melhor métrica se houver upgrade, mas é o que temos)
+                    // Para o total Investido, usamos apenas os ativos.
+                    // Para o total de lucro, somamos de todos.
+                    totalAccumulatedProfit += inv.currentProfit;
+                });
+                
+                // Calcula o Investido Total e o Lucro Diário APENAS DOS ATIVOS
+                activeInvestments.forEach(inv => {
+                    totalInvested += inv.investedAmount;
+                    dailyInvestmentProfit += (inv.investedAmount * inv.dailyProfitRate);
+                    
+                    // Renderiza o card de ativo
+                    const card = createInvestmentCard(inv);
+                    listContainer.appendChild(card);
+                });
 
-                        // Renderiza o Card Individual
-                        const card = createInvestmentCard(inv);
-                        listContainer.appendChild(card);
-                    });
-                } else {
-                    // Sem investimentos ativos
-                    listContainer.innerHTML = `<p class="message info-message">${translations[currentLang].noActiveInvestments}</p>`;
-                }
-                
-                // 3. Atualizar o Card de Resumo
+
+                // 3. Atualizar o Card de Resumo (Dados 100% Reais do Backend)
                 document.getElementById('totalInvestedValue').textContent = totalInvested.toFixed(2) + ' MT';
                 document.getElementById('totalProfitValue').textContent = totalAccumulatedProfit.toFixed(2) + ' MT';
-                document.getElementById('todayProfitValue').textContent = todayProfit.toFixed(2) + ' MT'; // Usando a estimativa
+                document.getElementById('dailyInvestmentProfit').textContent = dailyInvestmentProfit.toFixed(2) + ' MT';
+                
+                // NOVO: Comissão Total Ganha (Valor Real)
+                document.getElementById('totalCommissionEarnedValue').textContent = user.totalCommissionEarned.toFixed(2) + ' MT';
+                
+                // 4. Verificação final
+                if (activeInvestments.length === 0) {
+                    listContainer.innerHTML = `<p class="message info-message">${translations[currentLang].noActiveInvestments}</p>`;
+                }
                 
             } catch (error) {
                 if (error.message.includes("sessionExpired")) {
@@ -501,7 +558,7 @@
                     setTimeout(() => window.location.href = 'login.html', 2000);
                 } else {
                     setActionMessage('loadingMessage', `${translations[currentLang].networkError}: ${error.message}`, 'error');
-                    console.error("Erro ao buscar investimentos ativos:", error);
+                    console.error("Erro ao buscar dados de renda:", error);
                 }
             } finally {
                 loadingMessage.classList.add('hidden');
@@ -521,6 +578,9 @@
 
             // Formata a data de término
             const endDateFormatted = new Date(inv.endDate).toLocaleDateString(currentLang);
+            
+            // Calcula o lucro diário para exibir no card
+            const dailyProfit = inv.investedAmount * inv.dailyProfitRate;
 
             card.innerHTML = `
                 <h3>
@@ -532,12 +592,12 @@
                     <span class="value invested">${inv.investedAmount.toFixed(2)} MT</span>
                 </div>
                 <div class="investment-detail">
-                    <span class="label" data-translate-key="currentProfit">${translations[currentLang].currentProfit}</span>
-                    <span class="value profit">${inv.currentProfit.toFixed(2)} MT</span>
+                    <span class="label">Lucro Diário</span>
+                    <span class="value profit">${dailyProfit.toFixed(2)} MT</span>
                 </div>
                 <div class="investment-detail">
-                    <span class="label" data-translate-key="dailyRate">${translations[currentLang].dailyRate}</span>
-                    <span class="value">${(inv.dailyProfitRate * 100).toFixed(2)}%</span>
+                    <span class="label" data-translate-key="currentProfit">${translations[currentLang].currentProfit}</span>
+                    <span class="value profit">${inv.currentProfit.toFixed(2)} MT</span>
                 </div>
                 <div class="investment-detail">
                     <span class="label" data-translate-key="endDate">${translations[currentLang].endDate}</span>

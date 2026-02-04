@@ -346,6 +346,14 @@
                     <span class="label" data-translate-key="availableBalance">Saldo Disponível:</span>
                     <span class="value" id="profileBalance">--.-- MT</span>
                 </div>
+                
+                <!-- NOVO CAMPO: Total de Comissões Ganhas -->
+                <div class="profile-detail-item">
+                    <span class="label" data-translate-key="totalCommissionEarned">Comissão Total Ganha:</span>
+                    <span class="value" id="profileTotalCommission">--.-- MT</span>
+                </div>
+                <!-- FIM NOVO CAMPO -->
+
                 <!-- REMOVIDO: Saldo Bônus (Conforme solicitação) -->
                 <div class="profile-detail-item">
                     <span class="label" data-translate-key="accountStatus">Status da Conta:</span>
@@ -429,6 +437,7 @@
                 // Profile-specific keys
                 profileTitle: 'KKR Credit | Profile', backButtonAlt: 'Back', myProfileTitle: 'My Profile', profileLoadingError: 'Error loading profile. Please try again.',
                 accountStatus: 'Account Status:', referralCode: 'Referral Code:', invitedBy: 'Invited By:', dateJoined: 'Date Joined:', lastLogin: 'Last Login:',
+                totalCommissionEarned: 'Total Commission Earned:', // <--- ADICIONADO
                 depositHistoryButton: 'Deposit History', withdrawalHistoryButton: 'Withdrawal History', investmentHistoryButton: 'Investment History', referredUsersButton: 'Referred Users',
                 statusActive: 'Active', statusBlocked: 'Blocked', copySuccess: 'Code Copied!', noInviter: 'N/A', noLastLogin: 'Never logged in',
             },
@@ -439,6 +448,7 @@
                 // Profile-specific keys
                 profileTitle: 'KKR Credit | Perfil', backButtonAlt: 'Voltar', myProfileTitle: 'Meu Perfil', profileLoadingError: 'Erro ao carregar perfil. Por favor, tente novamente.',
                 accountStatus: 'Status da Conta:', referralCode: 'Código de Indicação:', invitedBy: 'Convidado Por:', dateJoined: 'Data de Registro:', lastLogin: 'Último Login:',
+                totalCommissionEarned: 'Comissão Total Ganha:', // <--- ADICIONADO
                 depositHistoryButton: 'Histórico de Depósitos', withdrawalHistoryButton: 'Histórico de Saques', investmentHistoryButton: 'Histórico de Investimentos', referredUsersButton: 'Usuários Indicados',
                 statusActive: 'Ativa', statusBlocked: 'Bloqueada', copySuccess: 'Código Copiado!', noInviter: 'N/A', noLastLogin: 'Nunca logado',
             }
@@ -522,7 +532,7 @@
             });
         }
 
-        // --- Lógica de Carregamento do Perfil do Usuário (AJUSTADA para Saldo Único) ---
+        // --- Lógica de Carregamento do Perfil do Usuário (AJUSTADA para Saldo Único + Comissão Total) ---
         async function fetchUserProfile() {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -556,6 +566,9 @@
                     document.getElementById('profilePhoneNumber').textContent = user.phoneNumber || translations[currentLang].noInviter;
                     // Saldo Único
                     document.getElementById('profileBalance').textContent = `${user.balance ? user.balance.toFixed(2) : '0.00'} MT`; 
+                    
+                    // NOVO CAMPO: Comissão Total
+                    document.getElementById('profileTotalCommission').textContent = `${user.totalCommissionEarned ? user.totalCommissionEarned.toFixed(2) : '0.00'} MT`; // <--- ADICIONADO
                     
                     const statusElem = document.getElementById('profileStatus');
                     if (statusElem) {
