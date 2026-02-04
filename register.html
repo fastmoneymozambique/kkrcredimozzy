@@ -334,6 +334,7 @@
         </div>
     </div>
 
+    <!-- Script para lógica do formulário de Registro (ATUALIZADO) -->
     <script>
         const BACKEND_URL = 'https://backend-cjl7.onrender.com';
 
@@ -344,6 +345,21 @@
             localStorage.setItem('visitorId', visitorId);
         }
         
+        document.addEventListener('DOMContentLoaded', () => {
+            // NOVO: Lógica para preencher o código de convite a partir da URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref'); // Obtém o valor do parâmetro 'ref'
+
+            if (refCode) {
+                const inviteCodeInput = document.getElementById('inviteCode');
+                if (inviteCodeInput) {
+                    inviteCodeInput.value = refCode;
+                    // Opcional: Você pode desabilitar o campo se o código for preenchido via link
+                    // inviteCodeInput.disabled = true; 
+                }
+            }
+        });
+
         document.getElementById('registerForm').addEventListener('submit', async (event) => {
             event.preventDefault();
 
@@ -366,7 +382,7 @@
                         phoneNumber, 
                         password, 
                         inviteCode,
-                        visitorId // Enviando o visitorId para corrigir o erro
+                        visitorId 
                     }),
                 });
 
