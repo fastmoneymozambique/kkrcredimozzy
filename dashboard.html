@@ -130,18 +130,18 @@
 
         /* CORREÇÃO CRÍTICA DO CSS: Alinhamento para Label + Valor */
         .main-card .detail-item { 
-            display: flex; /* Usa flexbox para alinhamento */
-            justify-content: space-between; /* Empurra os itens para as extremidades */
-            align-items: center; /* Centraliza verticalmente */
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
             margin-bottom: 8px;
             font-size: 0.9em;
-            color: rgba(255,255,255,0.85); /* Cor do label */
+            color: rgba(255,255,255,0.85); 
         }
         
         .main-card .detail-item strong { 
-            color: var(--white); /* Cor do valor (para se destacar) */
+            color: var(--white); 
             font-weight: 600; 
-            text-align: right; /* Garante que o texto do valor fique à direita */
+            text-align: right; 
         }
         /* FIM DA CORREÇÃO CRÍTICA */
         
@@ -158,13 +158,8 @@
         .icon-app { background-color: var(--icon-bg-green); } .icon-task { background-color: var(--icon-bg-orange); } .icon-invite { background-color: var(--icon-bg-blue); } .icon-team { background-color: var(--icon-bg-purple); } .icon-about { background-color: var(--icon-bg-teal); } .icon-holding { background-color: var(--icon-bg-red); } .icon-wallet { background-color: var(--icon-bg-blue); } .icon-support { background-color: var(--icon-bg-green); }
         .action-item span { font-size: 0.8em; color: var(--text-medium); font-weight: 500; }
 
-        /* Banner "Invite friends, earn coins" */
-        .invite-banner { background-color: var(--warning-yellow); border-radius: 15px; padding: 20px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .invite-banner h4 { font-size: 1.1em; font-weight: 600; color: var(--text-dark); margin-bottom: 5px; }
-        .invite-banner p { font-size: 0.8em; color: var(--text-medium); margin-bottom: 15px; }
-        .invite-banner .invite-btn { background-color: #f39c12; color: var(--white); border: none; padding: 10px 20px; border-radius: 20px; font-size: 0.9em; cursor: pointer; transition: background-color 0.2s ease; font-weight: 500; }
-        .invite-banner .invite-btn:hover { background-color: #e67e22; }
-
+        /* Banner "Invite friends, earn coins" (REMOVIDO DO HTML FINAL) */
+        
         /* Seção de Mercados */
         .markets-section { margin-bottom: 20px; }
         .markets-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
@@ -208,9 +203,55 @@
             background-color: rgba(231, 76, 60, 0.1);
             border-radius: 8px;
         }
+
+        /* --- NOVO: Estilo para Toast Notification --- */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            width: 90%;
+            max-width: 400px;
+            pointer-events: none; /* Permite cliques através */
+        }
+        .toast {
+            background-color: var(--white);
+            color: var(--text-dark);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            transform: translateY(-20px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast.success { border-left: 5px solid var(--success-green); }
+        .toast.error { border-left: 5px solid var(--error-red); }
+        .toast.info { border-left: 5px solid var(--info-blue, #3498db); }
+        .toast i { font-size: 1.2em; }
+        .toast.success i { color: var(--success-green); }
+        .toast.error i { color: var(--error-red); }
+        .toast.info i { color: var(--info-blue, #3498db); }
+        /* --- FIM: Estilo para Toast Notification --- */
     </style>
 </head>
 <body>
+    <!-- NOVO: Toast Container -->
+    <div class="toast-container">
+        <div id="appToast" class="toast hidden">
+            <i class="fas fa-info-circle"></i>
+            <span id="toastMessage">Mensagem</span>
+        </div>
+    </div>
+    <!-- FIM NOVO: Toast Container -->
+    
     <div class="dashboard-wrapper">
         <!-- Header -->
         <header class="app-header">
@@ -302,12 +343,7 @@
                 </div>
             </section>
 
-            <!-- Banner "Invite friends, earn coins" (COM DADOS REAIS DO ADMIN) -->
-            <section class="invite-banner">
-                <h4 data-translate-key="inviteBannerTitle">Convide amigos, ganhe bônus!</h4>
-                <p data-translate-key="inviteBannerText">Desfrute de ganhos constantes de X% sobre os lucros de seus referidos.</p>
-                <button class="invite-btn" onclick="navigateTo('invite');" data-translate-key="inviteNowButton">Convidar Agora</button>
-            </section>
+            <!-- REMOVIDO: Banner "Invite friends, earn coins" -->
 
             <!-- Seção de Mercados (dados reais CoinGecko) -->
             <section class="markets-section">
@@ -343,7 +379,7 @@
             </div>
             <div class="nav-item" onclick="navigateTo('pool');">
                 <i class="fas fa-coins"></i>
-                <span data-translate-key="navPool">Pool</span>
+                <span data-translate-key="navPool">Pacotes</span>
             </div>
             <div class="nav-item" onclick="navigateTo('income');">
                 <i class="fas fa-chart-line"></i>
@@ -361,7 +397,7 @@
 
     </div> <!-- Fim do dashboard-wrapper -->
 
-    <!-- Script para lógica do Dashboard (Versão Final de Atribuição Comprovada) -->
+    <!-- Script para lógica do Dashboard (Atualizado com Toast e sem bônus) -->
     <script>
         // *** PONTO CRÍTICO: VERIFIQUE ESTA URL! ***
         const BACKEND_URL = 'https://backend-cjl7.onrender.com'; 
@@ -370,27 +406,54 @@
         // Objeto de traduções
         const translations = {
             en: {
-                dashboardTitle: 'KKR Credit | Dashboard', logoutButtonAlt: 'Logout', mainCardTitle: 'KKR Credit Arbitrage', earnMoreText: 'Earn more KKR Balance', yourNumber: 'Your Number:', availableBalance: 'Available Balance:', activeInvestment: 'Active Investment:', noActiveInvestment: 'None', safeAndReliable: 'Safe and Reliable', actionApp: 'App', actionTask: 'Task', actionInvite: 'Invite', actionTeam: 'Team', actionAbout: 'About', actionHolding: 'Holding', actionWallet: 'Wallet', actionSupport: 'Support', inviteBannerTitle: 'Invite friends, earn bonus!', inviteBannerText: 'Enjoy steady X% earnings on your referred users\' profits.', inviteNowButton: 'Invite Now', marketsTitle: 'Markets', investNowButton: 'Invest Now', marketHeaderAsset: 'Asset', marketHeaderPrice: 'Price', marketHeader24h: '24h', marketsLoading: 'Loading markets...', marketsLoadingError: 'Error loading markets. Please try again.', navHome: 'Home', navPool: 'Pool', navIncome: 'Income', navWallet: 'Wallet', navProfile: 'Profile', logoutConfirm: 'Are you sure you want to log out?', loggedOutSuccess: 'You have been successfully logged out.', notLoggedIn: 'You are not logged in. Redirecting to login page.', sessionExpired: 'Session expired or unauthorized. Please log in again.', profileLoadError: 'Error loading profile:', networkError: 'A network error occurred. Check your connection or try again later.', languageChanged: 'Language changed to: ', pageNotConfigured: 'Page "{page}" not configured for navigation. Create the corresponding HTML file.',
+                dashboardTitle: 'KKR Credit | Dashboard', logoutButtonAlt: 'Logout', mainCardTitle: 'KKR Credit Arbitrage', earnMoreText: 'Earn more KKR Balance', yourNumber: 'Your Number:', availableBalance: 'Available Balance:', activeInvestment: 'Active Investment:', noActiveInvestment: 'None', safeAndReliable: 'Safe and Reliable', actionApp: 'App', actionTask: 'Task', actionInvite: 'Invite', actionTeam: 'Team', actionAbout: 'About', actionHolding: 'Holding', actionWallet: 'Wallet', actionSupport: 'Support', marketsTitle: 'Markets', investNowButton: 'Invest Now', marketHeaderAsset: 'Asset', marketHeaderPrice: 'Price', marketHeader24h: '24h', marketsLoading: 'Loading markets...', marketsLoadingError: 'Error loading markets. Please try again.', navHome: 'Home', navPool: 'Packages', navIncome: 'Income', navWallet: 'Wallet', navProfile: 'Profile', logoutConfirm: 'Are you sure you want to log out?', loggedOutSuccess: 'You have been successfully logged out.', notLoggedIn: 'You are not logged in. Redirecting to login page.', sessionExpired: 'Session expired or unauthorized. Please log in again.', profileLoadError: 'Error loading profile:', networkError: 'A network error occurred. Check your connection or try again later.', languageChanged: 'Language changed to: ', pageNotConfigured: 'Page "{page}" not configured for navigation. Create the corresponding HTML file.',
             },
             pt: {
-                dashboardTitle: 'KKR Credit | Dashboard', logoutButtonAlt: 'Sair', mainCardTitle: 'KKR Credit Arbitrage', earnMoreText: 'Ganhe mais Saldo KKR', yourNumber: 'Seu Número:', availableBalance: 'Saldo Disponível:', activeInvestment: 'Investimento Ativo:', noActiveInvestment: 'Nenhum', safeAndReliable: 'Seguro e Confiável', actionApp: 'App', actionTask: 'Tarefas', actionInvite: 'Convidar', actionTeam: 'Equipe', actionAbout: 'Sobre', actionHolding: 'Holding', actionWallet: 'Carteira', actionSupport: 'Suporte', inviteBannerTitle: 'Convide amigos, ganhe bônus!',
-                // MODIFICADO: Placeholder X%
-                inviteBannerText: 'Desfrute de ganhos constantes de X% sobre os lucros de seus referidos.', 
-                inviteNowButton: 'Convidar Agora', marketsTitle: 'Mercados', investNowButton: 'Investir Agora', marketHeaderAsset: 'Ativo', marketHeaderPrice: 'Preço', marketHeader24h: '24h', marketsLoading: 'Carregando mercados...', marketsLoadingError: 'Erro ao carregar mercados. Por favor, tente novamente.', navHome: 'Home', navPool: 'Pacotes', navIncome: 'Renda', navWallet: 'Carteira', navProfile: 'Perfil', logoutConfirm: 'Tem certeza que deseja sair?', loggedOutSuccess: 'Você foi desconectado com sucesso.', notLoggedIn: 'Você não está logado. Redirecionando para a página de login.', sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.', profileLoadError: 'Erro ao carregar perfil:', networkError: 'Ocorreu um erro de rede. Verifique sua conexão ou tente novamente mais tarde.', languageChanged: 'Idioma alterado para: ', pageNotConfigured: 'Página "{page}" não configurada para navegação. Crie o arquivo HTML correspondente.',
+                dashboardTitle: 'KKR Credit | Dashboard', logoutButtonAlt: 'Sair', mainCardTitle: 'KKR Credit Arbitrage', earnMoreText: 'Ganhe mais Saldo KKR', yourNumber: 'Seu Número:', availableBalance: 'Saldo Disponível:', activeInvestment: 'Investimento Ativo:', noActiveInvestment: 'Nenhum', safeAndReliable: 'Seguro e Confiável', actionApp: 'App', actionTask: 'Tarefas', actionInvite: 'Convidar', actionTeam: 'Equipe', actionAbout: 'Sobre', actionHolding: 'Holding', actionWallet: 'Carteira', actionSupport: 'Suporte', marketsTitle: 'Mercados', investNowButton: 'Investir Agora', marketHeaderAsset: 'Ativo', marketHeaderPrice: 'Preço', marketHeader24h: '24h', marketsLoading: 'Carregando mercados...', marketsLoadingError: 'Erro ao carregar mercados. Por favor, tente novamente.', navHome: 'Home', navPool: 'Pacotes', navIncome: 'Renda', navWallet: 'Carteira', navProfile: 'Perfil', logoutConfirm: 'Tem certeza que deseja sair?', loggedOutSuccess: 'Você foi desconectado com sucesso.', notLoggedIn: 'Você não está logado. Redirecionando para a página de login.', sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.', profileLoadError: 'Erro ao carregar perfil:', networkError: 'Ocorreu um erro de rede. Verifique sua conexão ou tente novamente mais tarde.', languageChanged: 'Idioma alterado para: ', pageNotConfigured: 'Página "{page}" não configurada para navegação. Crie o arquivo HTML correspondente.',
             }
         };
 
         let currentLang = 'pt';
-        let dailyCommissionRate = 0; // Variável para armazenar a taxa de comissão
+        // Removida: let dailyCommissionRate = 0; 
 
         document.addEventListener('DOMContentLoaded', () => {
             loadLanguagePreference();
             applyTranslations(currentLang);
-            fetchInitialData(); // Chamada inicial para buscar Perfil + Config Admin
+            fetchUserProfile(); // Apenas Perfil, sem Admin Data de Bônus
             fetchMarketData();
         });
+        
+        // --- NOVO: Função para exibir Toast ---
+        function showToast(message, type = 'info') {
+            const toastElement = document.getElementById('appToast');
+            const toastMessage = document.getElementById('toastMessage');
+            const icon = toastElement.querySelector('i');
 
-        // --- Funções de Idioma (Mantidas) ---
+            if (!toastElement || !toastMessage || !icon) return;
+
+            // Limpa classes anteriores e define a nova
+            toastElement.className = 'toast show';
+            icon.className = 'fas';
+            
+            if (type === 'success') {
+                toastElement.classList.add('success');
+                icon.classList.add('fa-check-circle');
+            } else if (type === 'error') {
+                toastElement.classList.add('error');
+                icon.classList.add('fa-times-circle');
+            } else {
+                toastElement.classList.add('info');
+                icon.classList.add('fa-info-circle');
+            }
+
+            toastMessage.textContent = message;
+
+            setTimeout(() => {
+                toastElement.classList.remove('show');
+            }, 3000); // Esconde após 3 segundos
+        }
+
+        // --- Funções de Idioma (Mantidas e Ajustadas) ---
         const langOptions = document.querySelector('.lang-options');
         const currentFlag = document.getElementById('currentFlag');
         const currentLangText = document.getElementById('currentLangText');
@@ -415,7 +478,7 @@
                     if (langDropdownDetails) langDropdownDetails.removeAttribute('open');
 
                     applyTranslations(currentLang);
-                    alert(translations[currentLang].languageChanged + selectedLi.textContent.trim());
+                    showToast(translations[currentLang].languageChanged + selectedLi.textContent.trim(), 'info');
                 }
             });
         }
@@ -433,7 +496,6 @@
             }
         }
 
-        // Lógica de tradução mais segura
         function applyTranslations(lang) {
             document.querySelectorAll('[data-translate-key]').forEach(element => {
                 const key = element.dataset.translateKey;
@@ -443,75 +505,23 @@
                     } else if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
                         element.placeholder = translations[lang][key];
                     } else if (element.tagName !== 'BUTTON' && element.tagName !== 'I') {
-                         // Evita traduzir os spans de dados do usuário aqui para não apagar o placeholder
                         if (element.id !== 'userPhoneNumber' && element.id !== 'userBalance' && element.id !== 'activeInvestmentName') {
-                            // Se for o banner, usa innerHTML para a substituição dinâmica
-                            if (element.classList.contains('invite-banner') && element.tagName === 'P') {
-                                // Deixa o texto original com o placeholder X%
-                            } else {
-                                element.textContent = translations[lang][key];
-                            }
+                            element.textContent = translations[lang][key];
                         }
                     }
                 }
             });
             
-            // Lógica de tradução de placeholder para Investimento Ativo
             const activeInvestmentNameElem = document.getElementById('activeInvestmentName');
-            if (activeInvestmentNameElem && activeInvestmentNameElem.textContent === '') { // Se estiver vazio, aplica o placeholder traduzido
+            if (activeInvestmentNameElem && activeInvestmentNameElem.textContent === '') { 
                  activeInvestmentNameElem.textContent = translations[lang].noActiveInvestment;
             }
-            
-            // Aplica a tradução do banner, usando o valor de dailyCommissionRate se já estiver disponível
-            updateInviteBannerText();
-        }
-
-        function updateInviteBannerText() {
-            const bannerTextElement = document.querySelector('.invite-banner p[data-translate-key="inviteBannerText"]');
-            if (bannerTextElement) {
-                const translatedText = translations[currentLang].inviteBannerText;
-                const commissionPercent = (dailyCommissionRate * 100).toFixed(0);
-                
-                // Substitui o placeholder X% pelo valor real
-                const newText = translatedText.replace('X%', `${commissionPercent}%`);
-                bannerTextElement.innerHTML = newText;
-            }
         }
         
-        // Nova função para buscar todos os dados iniciais
-        async function fetchInitialData() {
-            await Promise.all([
-                fetchUserProfile(),
-                fetchAdminData() // Chamada para buscar a configuração do admin
-            ]).catch(error => {
-                 console.error("[DIAGNÓSTICO] Erro em uma das chamadas iniciais:", error);
-                 // O tratamento de erro principal está em fetchUserProfile
-            });
-        }
-        
-        // --- Lógica de Carregamento da Configuração do Admin (NOVA FUNÇÃO) ---
-        async function fetchAdminData() {
-            try {
-                // Endpoint público que agora retorna a comissão diária (modificação necessária no controllers.js)
-                const response = await fetch(`${BACKEND_URL}/api/deposit-config`);
-                if (!response.ok) {
-                    throw new Error(`Status ${response.status}`);
-                }
-                const data = await response.json();
-                const config = data.config;
-                
-                if (config && config.commissionOnDailyProfit !== undefined) {
-                    dailyCommissionRate = config.commissionOnDailyProfit; // Salva a taxa
-                    updateInviteBannerText(); // Atualiza o texto do banner
-                }
+        // Removida: fetchInitialData e fetchAdminData
+        // Removida: updateInviteBannerText
 
-            } catch (error) {
-                console.error('[DIAGNÓSTICO] ERRO ao buscar config do admin:', error);
-            }
-        }
-
-
-        // --- Lógica de Carregamento do Perfil do Usuário (MANTER) ---
+        // --- Lógica de Carregamento do Perfil do Usuário (AJUSTADA) ---
         async function fetchUserProfile() {
             const token = localStorage.getItem('token');
             const userPhoneNumberElem = document.getElementById('userPhoneNumber');
@@ -520,22 +530,17 @@
             const profileLoadMessage = document.getElementById('profileLoadMessage');
 
             if (!token) {
-                console.warn(translations[currentLang].notLoggedIn);
                 if (userPhoneNumberElem) userPhoneNumberElem.textContent = 'Não Logado';
                 if (userBalanceElem) userBalanceElem.textContent = '0.00 MT';
                 if (activeInvestmentNameElem) activeInvestmentNameElem.textContent = translations[currentLang].noActiveInvestment;
                 return;
             }
 
-            // Define os placeholders de "Carregando..."
             if (userPhoneNumberElem) userPhoneNumberElem.textContent = 'Carregando...';
             if (userBalanceElem) userBalanceElem.textContent = 'Carregando...';
-            if (activeInvestmentNameElem) activeInvestmentNameElem.textContent = 'Carregando...'; // Temporário para dar feedback
+            if (activeInvestmentNameElem) activeInvestmentNameElem.textContent = 'Carregando...'; 
             if (profileLoadMessage) profileLoadMessage.classList.add('hidden');
 
-
-            // 3. Chamada da API
-            console.log(`%c[DIAGNÓSTICO] Tentando buscar perfil em: ${BACKEND_URL}/api/profile`, 'color: orange; font-weight: bold;');
             try {
                 const response = await fetch(`${BACKEND_URL}/api/profile`, {
                     method: 'GET',
@@ -545,24 +550,16 @@
                     }
                 });
                 
-                console.log(`%c[DIAGNÓSTICO] Resposta da API - Status: ${response.status}`, 'color: cyan; font-weight: bold;');
-
                 if (response.status === 401 || response.status === 403) {
-                    const errorData = await response.json().catch(() => ({ message: 'Sem detalhes de erro na resposta.' }));
-                    console.error(`[DIAGNÓSTICO] FALHA CRÍTICA: Token inválido, expirado ou acesso negado. Status ${response.status}. Mensagem: ${errorData.message}`);
                     localStorage.removeItem('token');
-                    alert(translations[currentLang].sessionExpired);
-                    window.location.href = 'login.html';
+                    showToast(translations[currentLang].sessionExpired, 'error');
+                    setTimeout(() => window.location.href = 'login.html', 1500);
                     return;
                 }
                 
                 if (response.ok) {
                     const data = await response.json();
                     const user = data.user;
-                    
-                    console.log('%c[DIAGNÓSTICO] DADOS RECEBIDOS (SUCESSO):', 'color: lightgreen; font-weight: bold;', user);
-                    
-                    // --- BLOCO CRÍTICO DE ATUALIZAÇÃO DE DADOS ---
                     
                     // 1. Número de Telefone
                     const tel = user.phoneNumber || 'N/A';
@@ -573,35 +570,20 @@
                     const balanceText = `${balanceValue.toFixed(2)} MT`; 
                     if (userBalanceElem) userBalanceElem.textContent = balanceText; 
 
-                    // 3. Investimento Ativo (Planos podem ser vazios)
+                    // 3. Investimento Ativo
                     let investmentName = translations[currentLang].noActiveInvestment;
                     const activeInv = user.activeInvestments && user.activeInvestments.length > 0 ? user.activeInvestments[0] : null;
 
                     if (activeInv && activeInv.planId && activeInv.planId.name) {
-                        // Se for um objeto populado (com o nome)
                         investmentName = activeInv.planId.name;
-                    } else if (activeInv && activeInv.planId) {
-                        // Se não for populado, pode ser apenas o ID do objeto
-                        investmentName = `ID Plano: ${activeInv.planId}`;
                     }
 
                     if (activeInvestmentNameElem) activeInvestmentNameElem.textContent = investmentName;
 
-                    // --- FIM DO BLOCO CRÍTICO ---
-                    
-                    console.log(`%c[DIAGNÓSTICO] VALORES ATRIBUÍDOS AO DOM:`, 'color: yellow; font-weight: bold;');
-                    console.log(`[D] Telefone: ${tel}`);
-                    console.log(`[D] Saldo: ${balanceText}`);
-                    console.log(`[D] Investimento: ${investmentName}`);
-
-
                 } else {
-                    // Se o status for 500, 404, etc.
-                    const errorData = await response.json().catch(() => ({ message: `Falha ao processar JSON. Status: ${response.status}.` }));
-                    console.error(`[DIAGNÓSTICO] FALHA NA RESPOSTA (Status: ${response.status}):`, errorData);
-                    
+                    const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido.' }));
                     if (profileLoadMessage) {
-                        profileLoadMessage.textContent = `${translations[currentLang].profileLoadError} ${errorData.message || 'Erro desconhecido.'} (Status: ${response.status})`;
+                        profileLoadMessage.textContent = `${translations[currentLang].profileLoadError} ${errorData.message || 'Erro desconhecido.'}`;
                         profileLoadMessage.classList.remove('hidden');
                     }
                     if (userPhoneNumberElem) userPhoneNumberElem.textContent = 'Erro';
@@ -609,10 +591,8 @@
                     if (activeInvestmentNameElem) activeInvestmentNameElem.textContent = 'Erro';
                 }
             } catch (error) {
-                console.error('[DIAGNÓSTICO] ERRO DE REDE/FETCH GERAL (CORS/Servidor Inativo):', error);
-                
                 if (profileLoadMessage) {
-                    profileLoadMessage.textContent = `${translations[currentLang].networkError} (Verifique o console para mais detalhes)`;
+                    profileLoadMessage.textContent = `${translations[currentLang].networkError}`;
                     profileLoadMessage.classList.remove('hidden');
                 }
 
@@ -666,7 +646,6 @@
 
                 if (marketsTable) marketsTable.classList.remove('hidden');
             } catch (error) {
-                console.error('Erro ao buscar dados de mercado:', error);
                 if (errorElement) {
                     errorElement.textContent = translations[currentLang].marketsLoadingError;
                     errorElement.classList.remove('hidden');
@@ -686,10 +665,10 @@
                 'invite': 'invite.html',
                 'pool': 'pool.html',
                 'income': 'income.html',
-                'invest': 'pool.html', // Corrigido para pool.html
+                'invest': 'pool.html', 
                 'app': 'app.html',
                 'task': 'task.html',
-                'team': 'team.html',
+                'team': 'referred-users.html', // Corrigido para a página de usuários referidos
                 'about': 'about.html',
                 'holding': 'holding.html',
                 'support': 'support.html'
@@ -699,7 +678,7 @@
             if (targetPage) {
                 window.location.href = targetPage;
             } else {
-                alert(translations[currentLang].pageNotConfigured.replace('{page}', page));
+                showToast(translations[currentLang].pageNotConfigured.replace('{page}', page), 'error');
             }
         }
 
@@ -707,10 +686,14 @@
         function logout() {
             if (confirm(translations[currentLang].logoutConfirm)) {
                 localStorage.removeItem('token');
-                alert(translations[currentLang].loggedOutSuccess);
-                window.location.href = 'login.html';
+                showToast(translations[currentLang].loggedOutSuccess, 'success');
+                setTimeout(() => window.location.href = 'login.html', 1500);
             }
         }
+        
+        // Expor funções globais
+        window.logout = logout;
+        window.navigateTo = navigateTo;
     </script>
 </body>
 </html>

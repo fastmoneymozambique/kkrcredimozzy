@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KKR Credit | Registrar</title>
-    <!-- Favicon - certifique-se de ter um arquivo favicon.ico na raiz do seu projeto -->
+    <!-- Favicon -->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <!-- Google Fonts - Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome (para o ícone de spinner) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    <!-- CSS EMBUTIDO AQUI -->
     <style>
-        /* Variáveis CSS para fácil modificação de cores */
+        /* Variáveis CSS */
         :root {
             --primary-purple: #6a0dad;
             --light-purple: #9b59b6;
@@ -20,13 +21,13 @@
             --text-medium: #666;
             --text-light: #555;
             --border-light: #e0e0e0;
-            --white-transparent-60: rgba(255, 255, 255, 0.6); /* 40% transparente */
-            --white-transparent-80: rgba(255, 255, 255, 0.8); /* Fundo para abas */
+            --white-transparent-60: rgba(255, 255, 255, 0.6);
+            --white-transparent-80: rgba(255, 255, 255, 0.8);
             --error-red: #e74c3c;
-            --white: #ffffff; /* Definindo white para consistência */
+            --white: #ffffff;
         }
 
-        /* Reset básico e fontes */
+        /* Reset e Base */
         * {
             margin: 0;
             padding: 0;
@@ -42,29 +43,28 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
-            position: relative; /* Para posicionar os pseudo-elementos */
-            overflow: hidden; /* Evita barras de rolagem se o blur for muito grande */
-            background-color: #f7faff; /* Cor de fallback caso a imagem não carregue */
+            position: relative;
+            overflow: hidden;
+            background-color: #f7faff;
         }
 
-        /* Pseudo-elemento para a imagem de fundo desfocada */
+        /* Background com Blur */
         body::before {
             content: '';
-            position: fixed; /* Fixa a imagem no viewport */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('https://i.ibb.co/DHK1ZFVC/copilot-image-1769980471288.png'); /* URL da imagem fornecida */
+            background-image: url('https://i.ibb.co/DHK1ZFVC/copilot-image-1769980471288.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            filter: blur(8px); /* Desfoque aplicado à imagem */
-            z-index: -2; /* Atrás do overlay e do conteúdo */
-            transform: scale(1.02); /* Escala um pouco para evitar bordas visíveis após o blur */
+            filter: blur(8px);
+            z-index: -2;
+            transform: scale(1.02);
         }
 
-        /* Pseudo-elemento para o overlay escuro sobre a imagem desfocada */
         body::after {
             content: '';
             position: fixed;
@@ -72,40 +72,37 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.45); /* Overlay escuro para melhorar o contraste */
-            z-index: -1; /* Entre a imagem e o conteúdo */
+            background-color: rgba(0, 0, 0, 0.45);
+            z-index: -1;
         }
 
-        /* Contêiner principal do formulário */
+        /* Container Principal */
         .registration-container {
             max-width: 420px;
             width: 100%;
-            background: var(--white-transparent-60); /* Fundo do card 40% transparente */
-            border-radius: 20px; /* Bordas mais arredondadas */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35); /* Sombra mais forte para o fundo escuro */
+            background: var(--white-transparent-60);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
             text-align: center;
             position: relative;
-            overflow: hidden; /* Garante que o conteúdo siga as bordas arredondadas */
-            backdrop-filter: blur(10px); /* Efeito de vidro fosco para o card */
-            -webkit-backdrop-filter: blur(10px); /* Para compatibilidade com Safari */
-            z-index: 10; /* Garante que o container esteja acima dos pseudo-elementos de fundo */
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 10;
         }
 
-        /* Cabeçalho com botões de login/registro (area da "parede" dos botões) */
+        /* Abas de Navegação */
         .auth-tabs {
             display: flex;
             width: 100%;
-            background-color: var(--white-transparent-80); /* Fundo das abas ligeiramente mais opaco */
-            border-bottom: 1px solid rgba(224, 224, 224, 0.7); /* Borda inferior sutil */
-            
-            /* Bordas arredondadas do container dos botões, top e bottom */
+            background-color: var(--white-transparent-80);
+            border-bottom: 1px solid rgba(224, 224, 224, 0.7);
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
-            
-            overflow: hidden; /* Importante para que os filhos sigam o arredondamento */
-            position: relative; /* Para z-index do botão ativo */
+            overflow: hidden;
+            position: relative;
         }
 
         .tab-button {
@@ -120,22 +117,17 @@
             border: none;
             background: none;
             text-align: center;
-            /* Botões internos não devem ter bordas arredondadas no bottom para se misturar,
-               mas aqui o parent auth-tabs já tem. O active tab vai sobrescrever */
-            border-radius: 0; 
         }
 
         .tab-button.active {
             background-color: var(--primary-purple);
             color: var(--white);
             position: relative;
-            z-index: 1; /* Para sobrepor a borda inferior do .auth-tabs se necessário */
-            box-shadow: 0 5px 10px rgba(0,0,0,0.3); /* Sombra para o botão ativo */
-
-            /* Estende o botão ativo para baixo e arredonda suas bordas inferiores */
-            padding-bottom: 25px; /* Aumenta o padding para estender verticalmente */
-            margin-bottom: -10px; /* Puxa o botão ligeiramente para baixo para cobrir a borda inferior do auth-tabs */
-            border-radius: 0 0 20px 20px; /* Bordas arredondadas na parte inferior, iguais ao container principal */
+            z-index: 1;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            padding-bottom: 25px;
+            margin-bottom: -10px;
+            border-radius: 0 0 20px 20px;
         }
         
         .tab-button:not(.active):hover {
@@ -143,23 +135,18 @@
             background-color: rgba(247, 250, 255, 0.9);
         }
 
-        /* Conteúdo do card (formulário e texto) */
         .registration-card-content {
             padding: 30px 40px;
         }
 
-        /* Logo */
-        .logo {
-            margin-bottom: 20px;
-        }
-
+        .logo { margin-bottom: 20px; }
         .logo h2 {
             font-size: 2.2em;
             color: var(--primary-purple);
             font-weight: 700;
         }
 
-        /* Grupo de input */
+        /* Inputs */
         .input-group {
             margin-bottom: 18px;
             text-align: left;
@@ -173,53 +160,43 @@
             font-weight: 500;
         }
 
-        .input-group input[type="tel"],
-        .input-group input[type="password"],
-        .input-group input[type="text"] {
+        .input-group input {
             width: 100%;
             padding: 12px 16px;
             border: 1px solid var(--border-light);
-            border-radius: 12px; /* Bordas mais arredondadas nos campos de input */
+            border-radius: 12px;
             font-size: 0.95em;
             color: var(--text-dark);
             background-color: rgba(255, 255, 255, 0.9);
-            transition: all 0.3s ease-out; /* Adiciona transition para todas as propriedades */
-            position: relative; /* Garante que o z-index funcione se houver sobreposição */
-            z-index: 1; /* Mantém o input acima de qualquer sombra "inferior" */
+            transition: all 0.3s ease-out;
         }
 
-        /* NOVO EFEITO DE FOCO PARA OS CAMPOS DE INPUT */
         .input-group input:focus {
-            border-color: var(--primary-purple); /* Cor da borda principal ao focar */
-            outline: none; /* Remove o outline padrão do navegador */
-            transform: translateY(-2px); /* Eleva o input sutilmente */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), /* Sombra padrão para o 'lift' */
-                        0 0 0 6px rgba(106, 13, 173, 0.1); /* Uma 'aura' roxa sutil e espalhada */
-            background-color: var(--white); /* Torna o fundo opaco ao focar para melhor contraste */
-        }
-        
-        /* Input preenchido automaticamente por ref-link */
-        .input-group input[readonly] {
-            background-color: var(--card-bg-light); /* Cor de fundo diferente para indicar que foi preenchido */
-            cursor: default;
-            font-weight: 600;
+            border-color: var(--primary-purple);
+            outline: none;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), 0 0 0 6px rgba(106, 13, 173, 0.1);
+            background-color: var(--white);
         }
 
-
-        /* Botão primário */
+        /* Botão */
         .btn-primary {
             width: 100%;
             padding: 14px;
             background-color: var(--primary-purple);
             color: var(--white);
             border: none;
-            border-radius: 8px; /* Mantido em 8px para diferenciar dos inputs e dar um toque diferente */
+            border-radius: 8px;
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.1s ease;
             letter-spacing: 0.5px;
             margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
         }
 
         .btn-primary:hover {
@@ -227,12 +204,22 @@
             transform: translateY(-2px);
         }
 
-        .btn-primary:active {
-            transform: translateY(0);
+        .spinner {
+            display: none;
+            font-size: 1.2em;
+            margin-right: 8px;
+            animation: spin 1s linear infinite;
         }
 
-        /* Link de login (abaixo do formulário) */
-        .login-link {
+        .btn-primary.loading .spinner { display: inline-block; }
+        .btn-primary.loading .button-text { display: none; }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .login-link { 
             margin-top: 20px;
             font-size: 0.9em;
             color: var(--text-medium);
@@ -242,28 +229,65 @@
             color: var(--primary-purple);
             text-decoration: none;
             font-weight: 600;
-            transition: color 0.3s ease;
         }
 
-        .login-link a:hover {
-            color: var(--hover-purple);
-            text-decoration: underline;
-        }
-
-        /* Mensagens de erro */
         .error-message {
             color: var(--error-red);
             font-size: 0.85em;
             margin-top: -8px;
             margin-bottom: 12px;
-            text-align: center;
             font-weight: 500;
+        }
+
+        /* Modal de Sucesso Quadrado */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.65);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .success-modal {
+            width: 180px;
+            height: 180px;
+            background-color: var(--white);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes bounceIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .success-icon {
+            font-size: 60px;
+            color: var(--primary-purple);
+            margin-bottom: 5px;
+            line-height: 1;
+        }
+
+        .success-modal p {
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
     <div class="registration-container">
-        <!-- Botões de Login/Registro no topo do card -->
         <div class="auth-tabs">
             <a href="login.html" class="tab-button" id="loginTab">Login</a>
             <a href="register.html" class="tab-button active" id="registerTab">Registrar</a>
@@ -274,134 +298,101 @@
                 <h2>KKR Credit</h2>
             </div>
             
-            <form id="registrationForm">
+            <form id="registerForm">
                 <div class="input-group">
                     <label for="phoneNumber">Número de Telefone</label>
-                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="Ex: 841234567" required pattern="^\d{9}$" title="Por favor, insira um número de telefone de 9 dígitos.">
+                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="Ex: 841234567" required pattern="^\d{9}$">
                 </div>
 
                 <div class="input-group">
                     <label for="password">Senha</label>
-                    <input type="password" id="password" name="password" placeholder="Mínimo de 6 caracteres" required minlength="6">
+                    <input type="password" id="password" name="password" placeholder="Mínimo 6 caracteres" required minlength="6">
                 </div>
-
+                
                 <div class="input-group">
-                    <label for="referralCode">Código de Indicação</label>
-                    <!-- Adicionado 'readonly' e 'data-autofilled' para indicar preenchimento automático -->
-                    <input type="text" id="referralCode" name="referralCode" placeholder="Se você foi indicado, digite o código aqui">
+                    <label for="inviteCode">Código de Convite</label>
+                    <input type="text" id="inviteCode" name="inviteCode" placeholder="Insira o código (opcional)">
                 </div>
 
-                <input type="hidden" id="visitorId" name="visitorId">
                 <p id="error-message" class="error-message"></p>
                 
-                <button type="submit" class="btn-primary">Registrar</button>
+                <button type="submit" class="btn-primary" id="registerButton">
+                    <i class="fas fa-spinner spinner"></i>
+                    <span class="button-text">Criar Conta</span>
+                </button>
             </form>
 
-            <p class="login-link">Já tem uma conta? <a href="login.html">Acesse sua conta</a></p>
+            <p class="login-link">Já tem uma conta? <a href="login.html">Faça Login</a></p>
         </div>
     </div>
 
-    <!-- Script para FingerprintJS e lógica do formulário EMBUTIDO AQUI -->
-    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
+    <!-- Modal de Sucesso -->
+    <div id="successModalOverlay" class="modal-overlay">
+        <div class="success-modal">
+            <span class="success-icon">&#10003;</span>
+            <p>Registro Feito!</p>
+        </div>
+    </div>
+
     <script>
-        // URL do Backend
         const BACKEND_URL = 'https://backend-cjl7.onrender.com';
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. Lógica para gerar o visitorId com FingerprintJS
-            (async () => {
-                try {
-                    const fp = await FingerprintJS.load();
-                    const result = await fp.get();
-                    const visitorId = result.visitorId;
-                    document.getElementById('visitorId').value = visitorId;
-                    console.log('Visitor ID carregado:', visitorId);
-                } catch (e) {
-                    console.error('Falha ao carregar FingerprintJS:', e);
-                    // Fallback para um ID baseado em tempo se o FPJS falhar
-                    document.getElementById('visitorId').value = 'fallback_' + Date.now();
-                }
-            })();
-
-            // 2. Lógica para pré-preencher o código de indicação da URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const refCode = urlParams.get('ref');
-            const referralCodeInput = document.getElementById('referralCode');
-
-            if (refCode) {
-                // Preenche o campo
-                referralCodeInput.value = refCode;
-                // Define como somente leitura para evitar que o usuário mude o código do link
-                referralCodeInput.setAttribute('readonly', true);
-                // Opcional: Adiciona um título informativo
-                referralCodeInput.title = 'Preenchido automaticamente via link de convite.';
-            }
-
-            // 3. Configuração do Formulário de Registro
-            document.getElementById('registrationForm').addEventListener('submit', handleRegistration);
-        });
-
-
-        // Lógica de submissão do formulário
-        async function handleRegistration(event) {
+        // Lógica para gerar ou recuperar o visitorId exigido pelo backend
+        let visitorId = localStorage.getItem('visitorId');
+        if (!visitorId) {
+            visitorId = 'v-' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+            localStorage.setItem('visitorId', visitorId);
+        }
+        
+        document.getElementById('registerForm').addEventListener('submit', async (event) => {
             event.preventDefault();
 
             const phoneNumber = document.getElementById('phoneNumber').value;
             const password = document.getElementById('password').value;
-            const referralCode = document.getElementById('referralCode').value.trim();
-            const visitorId = document.getElementById('visitorId').value;
+            const inviteCode = document.getElementById('inviteCode').value;
+            
             const errorMessage = document.getElementById('error-message');
-            const button = event.target.querySelector('button[type="submit"]');
+            const button = document.getElementById('registerButton');
 
-            errorMessage.textContent = ''; 
+            errorMessage.textContent = '';
             button.disabled = true;
-            button.textContent = 'Registrando...';
-
-            // Garante que o visitorId foi carregado (mesmo que seja fallback)
-            if (!visitorId || visitorId.includes('...')) {
-                errorMessage.textContent = 'Aguarde o carregamento do dispositivo (Visitor ID). Tente novamente em 2 segundos.';
-                button.disabled = false;
-                button.textContent = 'Registrar';
-                return;
-            }
+            button.classList.add('loading');
 
             try {
-                const payload = {
-                    phoneNumber,
-                    password,
-                    visitorId,
-                    // Envia invitedBy apenas se houver um código
-                    invitedBy: referralCode || undefined 
-                };
-                
-                console.log('Dados a serem enviados para registro:', payload);
-
                 const response = await fetch(`${BACKEND_URL}/api/register`, { 
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload),
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        phoneNumber, 
+                        password, 
+                        inviteCode,
+                        visitorId // Enviando o visitorId para corrigir o erro
+                    }),
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    // O backend retorna o token, mas para registro, geralmente redirecionamos para o login
-                    // ou dashboard. Como você está seguindo o fluxo Login -> Dashboard, redirecionamos para Login.
-                    alert('Registro bem-sucedido! Redirecionando para o Login.');
-                    window.location.href = 'login.html'; 
+                    if (data.token) localStorage.setItem('token', data.token);
+                    
+                    button.classList.remove('loading');
+                    document.getElementById('successModalOverlay').style.display = 'flex';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+
                 } else {
                     errorMessage.textContent = data.message || 'Erro no registro.';
+                    button.disabled = false;
+                    button.classList.remove('loading');
                 }
             } catch (error) {
-                console.error('Erro na requisição de registro:', error);
-                errorMessage.textContent = 'Ocorreu um erro de rede ou o servidor está indisponível.';
-            } finally {
+                errorMessage.textContent = 'Erro de conexão com o servidor.';
                 button.disabled = false;
-                button.textContent = 'Registrar';
+                button.classList.remove('loading');
             }
-        }
+        });
     </script>
 </body>
 </html>

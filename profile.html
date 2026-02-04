@@ -28,6 +28,7 @@
             --success-green: #2ecc71;
             --error-red: #e74c3c;
             --app-background: #e0e6ec; /* Fundo cinza claro para o corpo do app */
+            --info-blue: #3498db;
         }
 
         /* Reset básico e fontes */
@@ -160,6 +161,7 @@
         .profile-detail-item .value.status-blocked {
             color: var(--error-red);
         }
+        /* Animação de Cópia (para o código de indicação) */
         .profile-detail-item .value.copied {
             color: var(--primary-purple);
             animation: flashCopy 0.3s ease-in-out;
@@ -263,9 +265,54 @@
         .text-center { text-align: center; }
         .text-muted { color: var(--text-medium); font-size: 0.9em; }
 
+        /* --- Estilo para Toast Notification --- */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            width: 90%;
+            max-width: 400px;
+            pointer-events: none; 
+        }
+        .toast {
+            background-color: var(--white);
+            color: var(--text-dark);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            transform: translateY(-20px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast.success { border-left: 5px solid var(--success-green); }
+        .toast.error { border-left: 5px solid var(--error-red); }
+        .toast.info { border-left: 5px solid var(--info-blue); }
+        .toast i { font-size: 1.2em; }
+        .toast.success i { color: var(--success-green); }
+        .toast.error i { color: var(--error-red); }
+        .toast.info i { color: var(--info-blue); }
+
     </style>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div class="toast-container">
+        <div id="appToast" class="toast hidden">
+            <i class="fas fa-info-circle"></i>
+            <span id="toastMessage">Mensagem</span>
+        </div>
+    </div>
+    <!-- FIM Toast Container -->
+    
     <div class="page-wrapper">
         <!-- Header -->
         <header class="app-header">
@@ -297,17 +344,17 @@
                     <span class="label" data-translate-key="availableBalance">Saldo Disponível:</span>
                     <span class="value" id="profileBalance">--.-- MT</span>
                 </div>
-                <div class="profile-detail-item">
-                    <span class="label" data-translate-key="bonusBalance">Saldo de Bônus:</span>
-                    <span class="value" id="profileBonusBalance">--.-- MT</span>
-                </div>
+                <!-- REMOVIDO: Saldo de Bônus -->
                 <div class="profile-detail-item">
                     <span class="label" data-translate-key="accountStatus">Status da Conta:</span>
                     <span class="value" id="profileStatus">--.--</span>
                 </div>
                 <div class="profile-detail-item">
                     <span class="label" data-translate-key="referralCode">Código de Indicação:</span>
-                    <span class="value" id="profileReferralCode" onclick="copyToClipboard('profileReferralCode')">--.-- <i class="far fa-copy"></i></span>
+                    <span class="value" id="profileReferralCode" onclick="copyToClipboard('profileReferralCode')">
+                        --.-- 
+                        <i class="far fa-copy"></i>
+                    </span>
                 </div>
                 <div class="profile-detail-item">
                     <span class="label" data-translate-key="invitedBy">Convidado Por:</span>
@@ -349,7 +396,7 @@
             </div>
             <div class="nav-item" onclick="navigateTo('pool');">
                 <i class="fas fa-coins"></i>
-                <span data-translate-key="navPool">Pool</span>
+                <span data-translate-key="navPool">Pacotes</span>
             </div>
             <div class="nav-item" onclick="navigateTo('income');">
                 <i class="fas fa-chart-line"></i>
@@ -375,129 +422,23 @@
         const translations = {
             en: {
                 // Dashboard keys (mantidos por consistência e reutilização)
-                dashboardTitle: 'KKR Credit | Dashboard',
-                logoutButtonAlt: 'Logout',
-                mainCardTitle: 'KKR Credit Arbitrage',
-                earnMoreText: 'Earn more KKR Balance',
-                yourNumber: 'Your Number:',
-                availableBalance: 'Available Balance:',
-                activeInvestment: 'Active Investment:',
-                noActiveInvestment: 'None',
-                safeAndReliable: 'Safe and Reliable',
-                actionApp: 'App',
-                actionTask: 'Task',
-                actionInvite: 'Invite',
-                actionTeam: 'Team',
-                actionAbout: 'About',
-                actionHolding: 'Holding',
-                actionWallet: 'Wallet',
-                actionSupport: 'Support',
-                inviteBannerTitle: 'Invite friends, earn bonus!',
-                inviteBannerText: 'Enjoy steady 3% earnings on your referred users\' profits.',
-                inviteNowButton: 'Invite Now',
-                marketsTitle: 'Markets',
-                investNowButton: 'Invest Now',
-                marketHeaderAsset: 'Asset',
-                marketHeaderPrice: 'Price',
-                marketHeader24h: '24h',
-                marketsLoading: 'Loading markets...',
-                marketsLoadingError: 'Error loading markets. Please try again.',
-                navHome: 'Home',
-                navPool: 'Pool',
-                navIncome: 'Income',
-                navWallet: 'Wallet',
-                navProfile: 'Profile',
-                logoutConfirm: 'Are you sure you want to log out?',
-                loggedOutSuccess: 'You have been successfully logged out.',
-                notLoggedIn: 'You are not logged in. Redirecting to login page.',
-                sessionExpired: 'Session expired or unauthorized. Please log in again.',
-                networkError: 'A network error occurred. Check your connection or try again later.',
-                languageChanged: 'Language changed to: ',
-                pageNotConfigured: 'Page "{page}" not configured for navigation. Create the corresponding HTML file.',
+                dashboardTitle: 'KKR Credit | Dashboard', logoutButtonAlt: 'Logout', mainCardTitle: 'KKR Credit Arbitrage', earnMoreText: 'Earn more KKR Balance', yourNumber: 'Your Number:', availableBalance: 'Available Balance:', activeInvestment: 'Active Investment:', noActiveInvestment: 'None', safeAndReliable: 'Safe and Reliable', actionApp: 'App', actionTask: 'Task', actionInvite: 'Invite', actionTeam: 'Team', actionAbout: 'About', actionHolding: 'Holding', actionWallet: 'Wallet', actionSupport: 'Support', marketsTitle: 'Markets', investNowButton: 'Invest Now', marketHeaderAsset: 'Asset', marketHeaderPrice: 'Price', marketHeader24h: '24h', marketsLoading: 'Loading markets...', marketsLoadingError: 'Error loading markets. Please try again.', navHome: 'Home', navPool: 'Packages', navIncome: 'Income', navWallet: 'Wallet', navProfile: 'Profile', logoutConfirm: 'Are you sure you want to log out?', loggedOutSuccess: 'You have been successfully logged out.', notLoggedIn: 'You are not logged in. Redirecting to login page.', sessionExpired: 'Session expired or unauthorized. Please log in again.', networkError: 'A network error occurred. Check your connection or try again later.', languageChanged: 'Language changed to: ', pageNotConfigured: 'Page "{page}" not configured for navigation. Create the corresponding HTML file.',
 
                 // Profile-specific keys
-                profileTitle: 'KKR Credit | Profile',
-                backButtonAlt: 'Back',
-                myProfileTitle: 'My Profile',
-                profileLoadingError: 'Error loading profile. Please try again.',
-                bonusBalance: 'Bonus Balance:',
-                accountStatus: 'Account Status:',
-                referralCode: 'Referral Code:',
-                invitedBy: 'Invited By:',
-                dateJoined: 'Date Joined:',
-                lastLogin: 'Last Login:',
-                depositHistoryButton: 'Deposit History',
-                withdrawalHistoryButton: 'Withdrawal History',
-                investmentHistoryButton: 'Investment History',
-                referredUsersButton: 'Referred Users',
-                statusActive: 'Active',
-                statusBlocked: 'Blocked',
-                copySuccess: 'Copied!',
-                noInviter: 'N/A',
-                noLastLogin: 'Never logged in',
+                profileTitle: 'KKR Credit | Profile', backButtonAlt: 'Back', myProfileTitle: 'My Profile', profileLoadingError: 'Error loading profile. Please try again.',
+                accountStatus: 'Account Status:', referralCode: 'Referral Code:', invitedBy: 'Invited By:', dateJoined: 'Date Joined:', lastLogin: 'Last Login:',
+                depositHistoryButton: 'Deposit History', withdrawalHistoryButton: 'Withdrawal History', investmentHistoryButton: 'Investment History', referredUsersButton: 'Referred Users',
+                statusActive: 'Active', statusBlocked: 'Blocked', copySuccess: 'Code Copied!', noInviter: 'N/A', noLastLogin: 'Never logged in',
             },
             pt: {
                 // Dashboard keys
-                dashboardTitle: 'KKR Credit | Dashboard',
-                logoutButtonAlt: 'Sair',
-                mainCardTitle: 'KKR Credit Arbitrage',
-                earnMoreText: 'Ganhe mais Saldo KKR',
-                yourNumber: 'Seu Número:',
-                availableBalance: 'Saldo Disponível:',
-                activeInvestment: 'Investimento Ativo:',
-                noActiveInvestment: 'Nenhum',
-                safeAndReliable: 'Seguro e Confiável',
-                actionApp: 'App',
-                actionTask: 'Tarefas',
-                actionInvite: 'Convidar',
-                actionTeam: 'Equipe',
-                actionAbout: 'Sobre',
-                actionHolding: 'Holding',
-                actionWallet: 'Carteira',
-                actionSupport: 'Suporte',
-                inviteBannerTitle: 'Convide amigos, ganhe bônus!',
-                inviteBannerText: 'Desfrute de ganhos constantes de 3% sobre os lucros de seus referidos.',
-                inviteNowButton: 'Convidar Agora',
-                marketsTitle: 'Mercados',
-                investNowButton: 'Investir Agora',
-                marketHeaderAsset: 'Ativo',
-                marketHeaderPrice: 'Preço',
-                marketHeader24h: '24h',
-                marketsLoading: 'Carregando mercados...',
-                marketsLoadingError: 'Erro ao carregar mercados. Por favor, tente novamente.',
-                navHome: 'Home',
-                navPool: 'Pool',
-                navIncome: 'Renda',
-                navWallet: 'Carteira',
-                navProfile: 'Perfil',
-                logoutConfirm: 'Tem certeza que deseja sair?',
-                loggedOutSuccess: 'Você foi desconectado com sucesso.',
-                notLoggedIn: 'Você não está logado. Redirecionando para a página de login.',
-                sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.',
-                networkError: 'Ocorreu um erro de rede. Verifique sua conexão ou tente novamente mais tarde.',
-                languageChanged: 'Idioma alterado para: ',
-                pageNotConfigured: 'Página "{page}" não configurada para navegação. Crie o arquivo HTML correspondente.',
+                dashboardTitle: 'KKR Credit | Dashboard', logoutButtonAlt: 'Sair', mainCardTitle: 'KKR Credit Arbitrage', earnMoreText: 'Ganhe mais Saldo KKR', yourNumber: 'Seu Número:', availableBalance: 'Saldo Disponível:', activeInvestment: 'Investimento Ativo:', noActiveInvestment: 'Nenhum', safeAndReliable: 'Seguro e Confiável', actionApp: 'App', actionTask: 'Tarefas', actionInvite: 'Convidar', actionTeam: 'Equipe', actionAbout: 'Sobre', actionHolding: 'Holding', actionWallet: 'Carteira', actionSupport: 'Suporte', marketsTitle: 'Mercados', investNowButton: 'Investir Agora', marketHeaderAsset: 'Ativo', marketHeaderPrice: 'Preço', marketHeader24h: '24h', marketsLoading: 'Carregando mercados...', marketsLoadingError: 'Erro ao carregar mercados. Por favor, tente novamente.', navHome: 'Home', navPool: 'Pacotes', navIncome: 'Renda', navWallet: 'Carteira', navProfile: 'Perfil', logoutConfirm: 'Tem certeza que deseja sair?', loggedOutSuccess: 'Você foi desconectado com sucesso.', notLoggedIn: 'Você não está logado. Redirecionando para a página de login.', sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.', networkError: 'Ocorreu um erro de rede. Verifique sua conexão ou tente novamente mais tarde.', languageChanged: 'Idioma alterado para: ', pageNotConfigured: 'Página "{page}" não configurada para navegação. Crie o arquivo HTML correspondente.',
 
                 // Profile-specific keys
-                profileTitle: 'KKR Credit | Perfil',
-                backButtonAlt: 'Voltar',
-                myProfileTitle: 'Meu Perfil',
-                profileLoadingError: 'Erro ao carregar perfil. Por favor, tente novamente.',
-                bonusBalance: 'Saldo de Bônus:',
-                accountStatus: 'Status da Conta:',
-                referralCode: 'Código de Indicação:',
-                invitedBy: 'Convidado Por:',
-                dateJoined: 'Data de Registro:',
-                lastLogin: 'Último Login:',
-                depositHistoryButton: 'Histórico de Depósitos',
-                withdrawalHistoryButton: 'Histórico de Saques',
-                investmentHistoryButton: 'Histórico de Investimentos',
-                referredUsersButton: 'Usuários Indicados',
-                statusActive: 'Ativa',
-                statusBlocked: 'Bloqueada',
-                copySuccess: 'Copiado!',
-                noInviter: 'N/A',
-                noLastLogin: 'Nunca logado',
+                profileTitle: 'KKR Credit | Perfil', backButtonAlt: 'Voltar', myProfileTitle: 'Meu Perfil', profileLoadingError: 'Erro ao carregar perfil. Por favor, tente novamente.',
+                accountStatus: 'Status da Conta:', referralCode: 'Código de Indicação:', invitedBy: 'Convidado Por:', dateJoined: 'Data de Registro:', lastLogin: 'Último Login:',
+                depositHistoryButton: 'Histórico de Depósitos', withdrawalHistoryButton: 'Histórico de Saques', investmentHistoryButton: 'Histórico de Investimentos', referredUsersButton: 'Usuários Indicados',
+                statusActive: 'Ativa', statusBlocked: 'Bloqueada', copySuccess: 'Código Copiado!', noInviter: 'N/A', noLastLogin: 'Nunca logado',
             }
         };
 
@@ -509,13 +450,56 @@
             fetchUserProfile();
         });
 
+        // Expondo para o HTML
+        window.copyToClipboard = copyToClipboard;
+        window.logout = logout;
+        window.navigateTo = navigateTo;
+
+
+        // --- UI/Toast ---
+        
+        /**
+         * Exibe uma notificação Toast no topo da página.
+         */
+        function showToast(message, type = 'info') {
+            const toastElement = document.getElementById('appToast');
+            const toastMessage = document.getElementById('toastMessage');
+            const icon = toastElement.querySelector('i');
+
+            if (!toastElement || !toastMessage || !icon) return;
+
+            toastElement.classList.remove('show', 'success', 'error', 'info');
+            toastElement.classList.add('hidden');
+
+            toastElement.className = 'toast show';
+            icon.className = 'fas';
+            
+            if (type === 'success') {
+                toastElement.classList.add('success');
+                icon.classList.add('fa-check-circle');
+            } else if (type === 'error') {
+                toastElement.classList.add('error');
+                icon.classList.add('fa-times-circle');
+            } else {
+                toastElement.classList.add('info');
+                icon.classList.add('fa-info-circle');
+            }
+
+            toastMessage.textContent = message;
+            toastElement.classList.remove('hidden');
+
+            setTimeout(() => {
+                toastElement.classList.remove('show');
+                setTimeout(() => toastElement.classList.add('hidden'), 300); 
+            }, 3000); 
+        }
+
         // --- Lógica de Idioma (consistente com dashboard) ---
         function loadLanguagePreference() {
             const savedLang = localStorage.getItem('langPreference');
             if (savedLang) {
                 const { lang, flag } = JSON.parse(savedLang);
-                currentLang = lang; // Define a linguagem global
-                // No perfil não temos seletor de idioma no header, então não precisamos atualizar currentFlag/currentLangText
+                currentLang = lang; 
             }
         }
 
@@ -525,11 +509,11 @@
                 if (translations[lang] && translations[lang][key]) {
                     if (element.tagName === 'TITLE') {
                         document.title = translations[lang][key];
-                    } else if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
-                        element.placeholder = translations[lang][key];
-                    } else if (element.tagName === 'BUTTON' && element.hasAttribute('data-translate-key') && (key === 'logoutButtonAlt' || key === 'backButtonAlt')) {
-                        // Não muda o textContent do botão de logout/voltar que tem um <i>
-                    } else {
+                    } else if (element.tagName === 'BUTTON' || element.tagName === 'A') {
+                        const icon = element.querySelector('i');
+                        const iconHtml = icon ? icon.outerHTML : '';
+                        element.innerHTML = `${iconHtml} ${translations[lang][key]}`;
+                    } else if (element.tagName !== 'I') {
                         element.textContent = translations[lang][key];
                     }
                 }
@@ -540,8 +524,8 @@
         async function fetchUserProfile() {
             const token = localStorage.getItem('token');
             if (!token) {
-                alert(translations[currentLang].notLoggedIn);
-                window.location.href = 'login.html';
+                showToast(translations[currentLang].notLoggedIn, 'error');
+                setTimeout(() => window.location.href = 'login.html', 1500);
                 return;
             }
 
@@ -566,10 +550,9 @@
                     const data = await response.json();
                     const user = data.user;
 
-                    // Preenche os detalhes do perfil
+                    // Preenche os detalhes do perfil (removido bonusBalance)
                     document.getElementById('profilePhoneNumber').textContent = user.phoneNumber || translations[currentLang].noInviter;
                     document.getElementById('profileBalance').textContent = `${user.balance ? user.balance.toFixed(2) : '0.00'} MT`;
-                    document.getElementById('profileBonusBalance').textContent = `${user.bonusBalance ? user.bonusBalance.toFixed(2) : '0.00'} MT`;
                     
                     const statusElem = document.getElementById('profileStatus');
                     if (statusElem) {
@@ -577,28 +560,31 @@
                         statusElem.className = `value status-${user.status}`; // Adiciona classe para estilização de status
                     }
                     
-                    document.getElementById('profileReferralCode').childNodes[0].nodeValue = user.referralCode || translations[currentLang].noInviter; // Pega o textNode antes do <i>
+                    // Lógica para Código de Indicação (incluindo o ícone de cópia)
+                    const refCodeElement = document.getElementById('profileReferralCode');
+                    const refCodeText = user.referralCode || translations[currentLang].noInviter;
+                    
+                    // Coloca o texto e o ícone de volta
+                    refCodeElement.innerHTML = `${refCodeText} <i class="far fa-copy"></i>`;
+
                     document.getElementById('profileInvitedBy').textContent = user.invitedBy || translations[currentLang].noInviter;
                     document.getElementById('profileCreatedAt').textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString(currentLang) : translations[currentLang].noInviter;
                     document.getElementById('profileLastLogin').textContent = user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString(currentLang) : translations[currentLang].noLastLogin;
 
                     if (profileDetailsDiv) profileDetailsDiv.classList.remove('hidden');
-                    console.log('Dados do perfil do usuário:', user);
 
                 } else if (response.status === 401 || response.status === 403) {
-                    alert(translations[currentLang].sessionExpired);
+                    showToast(translations[currentLang].sessionExpired, 'error');
                     localStorage.removeItem('token');
-                    window.location.href = 'login.html';
+                    setTimeout(() => window.location.href = 'login.html', 1500);
                 } else {
                     const errorData = await response.json();
                     if (profileError) {
                         profileError.textContent = `${translations[currentLang].profileLoadingError} ${errorData.message || translations[currentLang].networkError}`;
                         profileError.classList.remove('hidden');
                     }
-                    console.error('Erro ao buscar perfil:', errorData);
                 }
             } catch (error) {
-                console.error('Erro de rede ao buscar perfil:', error);
                 if (profileError) {
                     profileError.textContent = translations[currentLang].networkError;
                     profileError.classList.remove('hidden');
@@ -611,25 +597,17 @@
         // --- Lógica de Navegação para Páginas Reais (consistente com dashboard) ---
         function navigateTo(page) {
             const pageMap = {
-                'home': 'dashboard.html',
-                'wallet': 'wallet.html',
-                'profile': 'profile.html',
-                'invite': 'invite.html',
-                'pool': 'pool.html',
-                'income': 'income.html',
-                'invest': 'invest.html',
-                'deposit-history': 'deposit-history.html', // Nova página
-                'withdrawal-history': 'withdrawal-history.html', // Nova página
-                'investment-history': 'investment-history.html', // Nova página
-                'referred-users': 'referred-users.html', // Nova página
-                // ... adicione outras páginas aqui conforme necessário
+                'home': 'dashboard.html', 'wallet': 'wallet.html', 'profile': 'profile.html', 'pool': 'pool.html', 'income': 'income.html',
+                'deposit-history': 'deposit-history.html', 'withdrawal-history': 'withdrawal-history.html', 
+                'investment-history': 'holding.html', // Usando holding.html como histórico de investimento
+                'referred-users': 'referred-users.html',
             };
 
             const targetPage = pageMap[page];
             if (targetPage) {
                 window.location.href = targetPage;
             } else {
-                alert(translations[currentLang].pageNotConfigured.replace('{page}', page));
+                showToast(translations[currentLang].pageNotConfigured.replace('{page}', page), 'error');
             }
         }
 
@@ -637,32 +615,35 @@
         function logout() {
             if (confirm(translations[currentLang].logoutConfirm)) {
                 localStorage.removeItem('token');
-                alert(translations[currentLang].loggedOutSuccess);
-                window.location.href = 'login.html';
+                showToast(translations[currentLang].loggedOutSuccess, 'success');
+                setTimeout(() => window.location.href = 'login.html', 1500);
             }
         }
 
-        // --- Função para Copiar Código de Indicação ---
+        // --- Função para Copiar Código de Indicação (com Toast) ---
         async function copyToClipboard(elementId) {
             const element = document.getElementById(elementId);
-            const textToCopy = element.childNodes[0].nodeValue.trim(); // Pega o valor do texto, ignorando o ícone
+            // O código está no primeiro nó de texto do elemento
+            const textToCopy = element.childNodes[0].nodeValue ? element.childNodes[0].nodeValue.trim() : ''; 
+            const iconElement = element.querySelector('i');
+            
+            if (textToCopy === translations[currentLang].noInviter) return; // Não copia "N/A"
             
             try {
                 await navigator.clipboard.writeText(textToCopy);
-                const originalText = element.childNodes[0].nodeValue;
-                const originalClasses = element.className;
-
-                // Animação de feedback
-                element.childNodes[0].nodeValue = translations[currentLang].copySuccess;
+                
+                // Animação de feedback CSS
                 element.classList.add('copied');
+                if(iconElement) iconElement.className = 'fas fa-check-circle';
+
+                showToast(translations[currentLang].copySuccess, 'success');
 
                 setTimeout(() => {
-                    element.childNodes[0].nodeValue = originalText;
                     element.classList.remove('copied');
-                }, 1000); // Volta ao normal após 1 segundo
+                    if(iconElement) iconElement.className = 'far fa-copy';
+                }, 1000); 
             } catch (err) {
-                console.error('Falha ao copiar:', err);
-                alert('Erro ao copiar código. Por favor, copie manualmente.');
+                showToast('Falha ao copiar código. Tente manualmente.', 'error');
             }
         }
     </script>

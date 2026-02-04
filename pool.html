@@ -25,10 +25,15 @@
             --border-light: #e0e0e0;
             --white: #ffffff;
             --card-bg-light: #f7faff;
-            --success-green: #2ecc71;
+            --success-green: #2ecc71; /* Manter para ícones de sucesso no modal */
             --error-red: #e74c3c;
             --app-background: #e0e6ec;
             --info-blue: #3498db;
+            /* Cores Ajustadas para Roxo/Branco/Vermelho */
+            --accent-main: var(--primary-purple); 
+            --accent-contrast: var(--white); 
+            --vip-badge: var(--light-purple);
+            --profit-color: var(--primary-purple); 
         }
 
         /* Reset e Base */
@@ -96,109 +101,116 @@
         #plansList {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
 
-        /* Card de Opção de Investimento */
+        /* --- NOVO CARD DE PLANO (BASEADO NO DESIGN) --- */
         .plan-card {
             background-color: var(--white);
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 8px; /* Mais angular */
+            padding: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: transform 0.2s ease;
-            position: relative;
-            text-align: center; /* Centraliza a imagem/conteúdo principal */
         }
         .plan-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
-
-        .plan-image {
-            width: 100%;
-            max-height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-
-        .plan-card h3 {
-            font-size: 1.4em;
-            color: var(--dark-background);
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-        .plan-card h3 .rate {
-            color: var(--success-green);
-            font-size: 1.1em;
-            font-weight: 700;
-        }
-
-        .plan-card .details-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        .detail-item {
+        .plan-header {
             display: flex;
-            flex-direction: column;
-            padding: 8px 0;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .plan-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px; /* Mais angular */
+            margin-right: 15px;
+        }
+        .plan-title-group {
+            flex-grow: 1;
+        }
+        .plan-name {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .vip-badge {
+            display: inline-block;
+            background-color: var(--vip-badge);
+            color: var(--white); 
+            font-size: 0.8em;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        .vip-badge i { color: var(--white); } /* Ícone de diamante em branco */
+
+        .plan-details-grid {
+            display: grid;
+            grid-template-columns: 1fr max-content; 
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
             border-bottom: 1px solid var(--border-light);
         }
-        .detail-item .label {
-            font-size: 0.8em;
-            color: var(--text-medium);
-            font-weight: 500;
-        }
-        .detail-item .value {
-            font-size: 0.95em;
-            color: var(--text-dark);
-            font-weight: 600;
-        }
-
-        /* Área de Preço Fixo e Botão */
-        .activation-area {
-            padding-top: 15px;
-            border-top: 1px dashed var(--border-light);
-        }
-        .fixed-price-label {
-            display: block;
-            margin-bottom: 8px;
+        .detail-label {
             font-size: 0.9em;
-            color: var(--primary-purple);
-            font-weight: 600;
+            color: var(--text-medium);
+            text-align: left;
         }
-        .fixed-price-value {
-             font-size: 2em;
-             font-weight: 800;
-             color: var(--dark-background);
-             margin-bottom: 15px;
-        }
-        
-        /* Botão de Ativação */
-        .activate-btn {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--primary-purple);
-            color: var(--white);
-            border: none;
-            border-radius: 8px;
+        .detail-value {
             font-size: 1em;
             font-weight: 600;
+            color: var(--primary-purple); 
+            text-align: right;
+        }
+        .detail-value.total-profit {
+            font-weight: 700;
+            color: var(--profit-color); 
+        }
+
+        /* Área de Ativação/Upgrade (Ajustado para cores roxas e angular) */
+        .activation-area {
+            display: flex;
+            border-radius: 8px; /* Angular */
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .price-label {
+            flex: 0 0 35%; 
+            background-color: var(--card-bg-light);
+            color: var(--text-dark);
+            font-size: 1.1em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 5px;
+            border-right: 1px solid var(--border-light);
+        }
+        .activate-btn {
+            flex: 1; 
+            background-color: var(--accent-main); /* Roxo Principal */
+            color: var(--white);
+            border: none;
+            padding: 10px 15px;
+            font-size: 1.1em;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.1s ease;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .activate-btn:hover {
-            background-color: var(--hover-purple);
-            transform: translateY(-1px);
+        .activate-btn:hover { background-color: var(--hover-purple); }
+        .activate-btn:disabled { background-color: var(--text-medium); cursor: not-allowed; }
+        .activate-btn i {
+            margin-right: 5px;
         }
-        .activate-btn:disabled {
-            background-color: var(--text-medium);
-            cursor: not-allowed;
-        }
+        /* --- FIM NOVO CARD DE PLANO --- */
 
         /* Mensagens */
         .message {
@@ -218,12 +230,7 @@
             border: 1px solid var(--error-red);
             background-color: rgba(231, 76, 60, 0.1);
         }
-        .success-message {
-            color: var(--success-green);
-            border: 1px solid var(--success-green);
-            background-color: rgba(46, 204, 113, 0.1);
-        }
-        .info-message { /* Nova classe para mensagem de "Sem opções" */
+        .info-message {
             color: var(--info-blue);
             border: 1px solid var(--info-blue);
             background-color: rgba(52, 152, 219, 0.1);
@@ -231,7 +238,7 @@
         .hidden { display: none !important; }
 
 
-        /* Botão de Navegação Inferior (Consistente com Dashboard) */
+        /* Bottom Navigation Bar (Consistente com Dashboard) */
         .bottom-nav {
             display: flex;
             justify-content: space-around;
@@ -270,9 +277,72 @@
         .nav-item:hover {
             color: var(--primary-purple);
         }
+
+        /* --- Modal de Sucesso / Toast --- */
+        .toast-container {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; width: 90%; max-width: 400px; pointer-events: none; 
+        }
+        .toast { background-color: var(--white); color: var(--text-dark); padding: 15px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); opacity: 0; transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; transform: translateY(-20px); display: flex; align-items: center; gap: 10px; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { border-left: 5px solid var(--success-green); }
+        .toast.error { border-left: 5px solid var(--error-red); }
+        .toast.info { border-left: 5px solid var(--info-blue); }
+        .toast i { font-size: 1.2em; }
+        .toast.success i { color: var(--success-green); }
+        .toast.error i { color: var(--error-red); }
+        .toast.info i { color: var(--info-blue); }
+
+        .success-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6);
+            display: flex; justify-content: center; align-items: center; z-index: 10000; opacity: 0; transition: opacity 0.3s ease-in-out;
+        }
+        .success-modal.show { opacity: 1; }
+        .modal-content-box {
+            background-color: var(--white); border-radius: 15px; padding: 30px; width: 80%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .success-modal.show .modal-content-box { transform: scale(1); }
+        .success-icon { font-size: 4em; color: var(--success-green); margin-bottom: 15px; animation: pulse 1s infinite; }
+        .modal-content-box h3 { color: var(--text-dark); margin-bottom: 10px; }
+        .modal-content-box p { color: var(--text-medium); margin-bottom: 20px; font-size: 0.9em; }
+        .modal-content-box button { background-color: var(--success-green); color: var(--white); border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+
+        /* Estilo para animação de botão (Feedback de Sucesso e Erro) */
+        .activate-btn.success-animate {
+            background-color: var(--success-green) !important;
+            transition: all 0.1s ease-in-out;
+        }
+        .activate-btn.error-animate {
+            background-color: var(--error-red) !important;
+            transition: all 0.1s ease-in-out;
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
     </style>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div class="toast-container">
+        <div id="appToast" class="toast hidden">
+            <i class="fas fa-info-circle"></i>
+            <span id="toastMessage">Mensagem</span>
+        </div>
+    </div>
+    
+    <!-- Modal de Sucesso -->
+    <div id="successModal" class="success-modal hidden">
+        <div class="modal-content-box">
+            <i class="fas fa-check-circle success-icon"></i>
+            <h3 id="modalTitle">Sucesso!</h3>
+            <p id="modalText">Investimento ativado com sucesso.</p>
+            <button onclick="closeSuccessModal()">Ver Renda</button>
+        </div>
+    </div>
+    
     <div class="page-wrapper">
         <!-- Header -->
         <header class="app-header">
@@ -287,13 +357,14 @@
         <main class="main-content">
             <h1 class="page-title" data-translate-key="poolHeader">Pacotes de Investimento</h1>
 
+            <p id="loadingMessage" class="message loading-message" data-translate-key="loadingPlans">Carregando opções de investimento...</p>
+            <p id="errorMessage" class="message error-message hidden"></p>
+
             <div id="plansList">
                 <!-- As opções serão injetadas aqui pelo JavaScript -->
             </div>
             
-            <p id="loadingMessage" class="message loading-message hidden" data-translate-key="loadingPlans">Carregando opções de investimento...</p>
-            <p id="errorMessage" class="message error-message hidden"></p>
-            <p id="successMessage" class="message success-message hidden"></p>
+            <p id="noActivePlansMessage" class="message info-message hidden" data-translate-key="noActivePlans">Sem pacotes de investimento ativos no momento.</p>
 
         </main> <!-- Fim do main-content -->
 
@@ -327,74 +398,166 @@
     <script>
         const BACKEND_URL = 'https://backend-cjl7.onrender.com';
 
+        // Variáveis de estado do usuário
+        let currentUserBalance = 0;
+        let currentUserActiveInvestment = null; // Armazena o objeto de investimento ativo
+
         // Objeto de traduções (TERMINOLOGIA ATUALIZADA)
         const translations = {
             en: {
-                poolTitle: 'KKR Credit | Investment Packages',
-                backButtonAlt: 'Back',
-                poolHeader: 'Investment Packages Available',
-                loadingPlans: 'Loading investment packages...',
-                planDuration: 'Duration',
-                planFixedAmount: 'Fixed Price', // Chave atualizada
-                planProfitRate: 'Daily Profit Rate',
-                durationDays: 'days',
-                amountMT: 'MT',
-                activateButton: 'Activate Package',
-                activationSuccess: 'Investment activated successfully! Redirecting to Income...',
-                activationError: 'Activation failed:',
-                insufficientBalance: 'Insufficient balance ({amount} MT) to activate this package.',
+                poolTitle: 'KKR Credit | Investment Packages', backButtonAlt: 'Back', poolHeader: 'Investment Packages Available',
+                loadingPlans: 'Loading investment packages...', planDuration: 'Duration', planFixedAmount: 'Price', planProfitRate: 'Daily Rate',
+                totalReturn: 'Total Return', totalProfit: 'Total Profit', days: 'Days', amountMT: 'MT',
+                activateButton: 'Invest Now', upgradeButton: 'Upgrade for {diff} MT',
+                activationSuccess: 'Package activated successfully!', upgradeSuccess: 'Upgrade successful! New plan is active.',
+                activationError: 'Activation failed:', insufficientBalance: 'Insufficient balance: {amount} MT needed.',
+                upgradeInvalid: 'Cannot upgrade. New package price must be higher.',
                 noActivePlans: 'No active investment packages found. Please check back later.', 
                 sessionExpired: 'Session expired or unauthorized. Please log in again.',
-                navHome: 'Home', navPool: 'Pacotes', navIncome: 'Income', navWallet: 'Wallet', navProfile: 'Profile',
+                navHome: 'Home', navPool: 'Packages', navIncome: 'Income', navWallet: 'Wallet', navProfile: 'Profile',
+                modalTitleActive: 'Investimento Ativado', modalTitleUpgrade: 'Upgrade Concluído',
+                modalTextActive: 'O pacote {name} foi ativado com sucesso! Comece a acompanhar sua renda.',
+                modalTextUpgrade: 'O pacote foi atualizado para {name} com sucesso. Seu ciclo de {days} dias foi reiniciado.',
             },
             pt: {
-                poolTitle: 'KKR Credit | Pacotes de Investimento',
-                backButtonAlt: 'Voltar',
-                poolHeader: 'Pacotes de Investimento Disponíveis',
-                loadingPlans: 'Carregando pacotes de investimento...',
-                planDuration: 'Duração',
-                planFixedAmount: 'Preço Fixo', // Chave atualizada
-                planProfitRate: 'Taxa de Lucro Diário',
-                durationDays: 'dias',
-                amountMT: 'MT',
-                activateButton: 'Ativar Pacote',
-                activationSuccess: 'Investimento ativado com sucesso! Redirecionando para a Renda...',
-                activationError: 'Falha na ativação:',
-                insufficientBalance: 'Saldo insuficiente ({amount} MT) para ativar este pacote.',
+                poolTitle: 'KKR Credit | Pacotes de Investimento', backButtonAlt: 'Voltar', poolHeader: 'Pacotes de Investimento Disponíveis',
+                loadingPlans: 'Carregando pacotes de investimento...', planDuration: 'Duração', planFixedAmount: 'Preço Fixo', planProfitRate: 'Taxa Diária',
+                totalReturn: 'Retorno Total', totalProfit: 'Lucro Total', days: 'Dias', amountMT: 'MT',
+                activateButton: 'Investir Agora', upgradeButton: 'Upgrade por {diff} MT',
+                activationSuccess: 'Pacote ativado com sucesso!', upgradeSuccess: 'Upgrade concluído! Novo plano está ativo.',
+                activationError: 'Falha na ativação:', insufficientBalance: 'Saldo insuficiente: {amount} MT necessários.',
+                upgradeInvalid: 'Não é possível fazer upgrade. O novo pacote deve ter um preço maior.',
                 noActivePlans: 'Sem pacotes de investimento ativos no momento.',
                 sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.',
                 navHome: 'Home', navPool: 'Pacotes', navIncome: 'Renda', navWallet: 'Carteira', navProfile: 'Perfil',
+                modalTitleActive: 'Investimento Ativado', modalTitleUpgrade: 'Upgrade Concluído',
+                modalTextActive: 'O pacote {name} foi ativado com sucesso! Comece a acompanhar sua renda.',
+                modalTextUpgrade: 'O pacote foi atualizado para {name} com sucesso. Seu ciclo de {days} dias foi reiniciado.',
             }
         };
 
         let currentLang = 'pt';
-        let currentUserBalance = 0; // Para checagem de saldo
+        let allPlans = [];
 
         document.addEventListener('DOMContentLoaded', () => {
             loadLanguagePreference();
             applyTranslations(currentLang);
-            fetchPlansAndUserBalance();
+            fetchPlansAndUserStatus();
         });
 
-        // --- Funções Auxiliares de UI ---
-        function setActionMessage(id, message, type = 'error') {
-            const messageElement = document.getElementById(id);
-            if (messageElement) {
-                messageElement.classList.remove('hidden', 'loading-message', 'error-message', 'success-message', 'info-message');
-                messageElement.textContent = message;
-                messageElement.classList.add(`${type}-message`);
-                if (type === 'success') {
-                     setTimeout(() => messageElement.classList.add('hidden'), 3000);
-                }
+        // Expondo as funções de ação para o HTML
+        window.handleInvestmentAction = handleInvestmentAction;
+        window.closeSuccessModal = closeSuccessModal;
+        window.navigateTo = navigateTo;
+
+
+        // --- UI/Animação/Toast/Modal ---
+        
+        /**
+         * Exibe uma notificação Toast no topo da página.
+         */
+        function showToast(message, type = 'info') {
+            const toastElement = document.getElementById('appToast');
+            const toastMessage = document.getElementById('toastMessage');
+            const icon = toastElement.querySelector('i');
+
+            if (!toastElement || !toastMessage || !icon) return;
+
+            toastElement.classList.remove('show', 'success', 'error', 'info');
+            toastElement.classList.add('hidden');
+
+            toastElement.className = 'toast show';
+            icon.className = 'fas';
+            
+            if (type === 'success') {
+                toastElement.classList.add('success');
+                icon.classList.add('fa-check-circle');
+            } else if (type === 'error') {
+                toastElement.classList.add('error');
+                icon.classList.add('fa-times-circle');
+            } else {
+                toastElement.classList.add('info');
+                icon.classList.add('fa-info-circle');
+            }
+
+            toastMessage.textContent = message;
+            toastElement.classList.remove('hidden');
+
+            setTimeout(() => {
+                toastElement.classList.remove('show');
+                setTimeout(() => toastElement.classList.add('hidden'), 300); 
+            }, 3000); 
+        }
+        
+        /**
+         * Anima o botão para indicar carregamento ou erro.
+         */
+        function animateButton(button, type, originalText) {
+            const iElement = button.querySelector('i');
+            
+            // Função auxiliar para obter a classe original do botão (activate-btn)
+            function originalClass(btn) {
+                return 'activate-btn';
+            }
+
+            button.className = originalClass(button); // Reset classes de animação
+            // No pool, usamos o data-original-text para restaurar o texto e o ícone
+            button.innerHTML = `<i class="fas fa-coins"></i> ${originalText}`; 
+
+            if (type === 'loading') {
+                button.disabled = true;
+                button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Processando...`;
+            } else if (type === 'success') {
+                button.disabled = true;
+                button.classList.add('success-animate');
+                button.innerHTML = `<i class="fas fa-check-circle"></i> Sucesso!`;
+                setTimeout(() => { 
+                    // A desabilitação é controlada pelo fetchPlansAndUserStatus após o modal
+                }, 1500);
+            } else if (type === 'error') {
+                button.disabled = true;
+                button.classList.add('error-animate');
+                button.innerHTML = `<i class="fas fa-times-circle"></i> Erro!`;
+                
+                setTimeout(() => {
+                    button.disabled = false;
+                    button.innerHTML = `<i class="fas fa-coins"></i> ${originalText}`;
+                    button.className = 'activate-btn';
+                }, 1500);
             }
         }
+        
+        /**
+         * Exibe o modal de sucesso.
+         */
+        function showSuccessModal(type, planName, durationDays = 0) {
+            const modal = document.getElementById('successModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalText = document.getElementById('modalText');
+            
+            modalTitle.textContent = translations[currentLang][`modalTitle${type}`];
+            
+            let text = translations[currentLang][`modalText${type}`]
+                .replace('{name}', planName)
+                .replace('{days}', durationDays);
 
-        function clearActionMessages() {
-            document.getElementById('errorMessage').classList.add('hidden');
-            document.getElementById('successMessage').classList.add('hidden');
+            modalText.textContent = text;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.add('show'), 10);
         }
 
-        // --- Lógica de Idioma e Navegação (Consistente com Dashboard) ---
+        function closeSuccessModal() {
+            const modal = document.getElementById('successModal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                // Redireciona para a página de Renda após sucesso
+                navigateTo('income'); 
+            }, 300);
+        }
+        
+        // --- Lógica de Idioma e Navegação (Consistente) ---
         function loadLanguagePreference() {
             const savedLang = localStorage.getItem('langPreference');
             if (savedLang) {
@@ -409,11 +572,11 @@
                 if (translations[lang] && translations[lang][key]) {
                     if (element.tagName === 'TITLE') {
                         document.title = translations[lang][key];
-                    } else if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
-                        // Ignora
-                    } else if (element.tagName === 'INPUT' && element.hasAttribute('type', 'number')) {
-                        // Ignora
-                    } else {
+                    } else if (element.tagName === 'BUTTON' || element.tagName === 'A') {
+                        const icon = element.querySelector('i');
+                        const iconHtml = icon ? icon.outerHTML : '';
+                        element.innerHTML = `${iconHtml} ${translations[lang][key]}`;
+                    } else if (element.tagName !== 'I') {
                         element.textContent = translations[lang][key];
                     }
                 }
@@ -422,64 +585,70 @@
 
         function navigateTo(page) {
             const pageMap = {
-                'home': 'dashboard.html',
-                'pool': 'pool.html',
-                'income': 'income.html',
-                'wallet': 'wallet.html',
-                'profile': 'profile.html',
+                'home': 'dashboard.html', 'pool': 'pool.html', 'income': 'income.html',
+                'wallet': 'wallet.html', 'profile': 'profile.html',
             };
             const targetPage = pageMap[page];
             if (targetPage) {
                 window.location.href = targetPage;
             }
         }
-
-        // --- 1. Busca Saldo do Usuário e Opções ---
-        async function fetchPlansAndUserBalance() {
+        
+        // --- 1. Busca Saldo do Usuário, Investimento Ativo e Opções ---
+        async function fetchPlansAndUserStatus() {
             const token = localStorage.getItem('token');
             const loadingMessage = document.getElementById('loadingMessage');
             const plansList = document.getElementById('plansList');
+            const errorMessage = document.getElementById('errorMessage');
             
             if (!token) {
-                setActionMessage('errorMessage', translations[currentLang].sessionExpired, 'error');
-                setTimeout(() => window.location.href = 'login.html', 2000);
+                showToast(translations[currentLang].sessionExpired, 'error');
+                setTimeout(() => window.location.href = 'login.html', 1500);
                 return;
             }
 
-            clearActionMessages();
+            errorMessage.classList.add('hidden');
             loadingMessage.classList.remove('hidden');
             plansList.innerHTML = ''; 
 
             try {
-                // Busca o perfil para obter o saldo atual
-                const profileResponse = await fetch(`${BACKEND_URL}/api/profile`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
+                // Requisições paralelas
+                const [profileResponse, plansResponse] = await Promise.all([
+                    fetch(`${BACKEND_URL}/api/profile`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                    fetch(`${BACKEND_URL}/api/investmentplans`)
+                ]);
+
                 if (profileResponse.status === 401 || profileResponse.status === 403) {
                     throw new Error("sessionExpired");
                 }
-                const profileData = await profileResponse.json();
-                currentUserBalance = profileData.user.balance || 0; // Atualiza o saldo global
                 
-                // Busca as opções de investimento
-                const plansResponse = await fetch(`${BACKEND_URL}/api/investmentplans`);
+                const profileData = await profileResponse.json();
                 const plansData = await plansResponse.json();
+                
+                currentUserBalance = profileData.user.balance || 0; 
+                
+                // Pega o primeiro investimento ativo (populado com planId para ter o nome/valor)
+                currentUserActiveInvestment = profileData.user.activeInvestments && profileData.user.activeInvestments.length > 0
+                    ? profileData.user.activeInvestments[0]
+                    : null;
+                
+                allPlans = plansData.plans || [];
 
-                if (plansResponse.ok && plansData.plans && plansData.plans.length > 0) {
-                    renderPlans(plansData.plans);
+                if (plansData.plans && plansData.plans.length > 0) {
+                    renderPlans(allPlans);
                 } else {
-                    plansList.innerHTML = `<p class="message info-message">${translations[currentLang].noActivePlans}</p>`;
+                    document.getElementById('noActivePlansMessage').classList.remove('hidden');
                 }
 
             } catch (error) {
                 
                 if (error.message.includes("sessionExpired")) {
-                    setActionMessage('errorMessage', translations[currentLang].sessionExpired, 'error');
+                    showToast(translations[currentLang].sessionExpired, 'error');
                     localStorage.removeItem('token');
-                    setTimeout(() => window.location.href = 'login.html', 2000);
+                    setTimeout(() => window.location.href = 'login.html', 1500);
                 } else {
-                    setActionMessage('errorMessage', `${translations[currentLang].networkError}: ${error.message}`, 'error');
+                    errorMessage.textContent = `${translations[currentLang].networkError}: ${error.message}`;
+                    errorMessage.classList.remove('hidden');
                 }
             } finally {
                 loadingMessage.classList.add('hidden');
@@ -495,39 +664,81 @@
                 const card = document.createElement('div');
                 card.className = 'plan-card';
 
-                // Preço Fixo
                 const fixedAmount = plan.minAmount;
-                const fixedAmountText = fixedAmount.toFixed(2) + ' ' + translations[currentLang].amountMT;
+                const dailyRate = plan.dailyProfitRate;
+                const durationDays = plan.durationDays;
+                
+                // Cálculo de Lucro Total Estimado
+                const totalProfit = fixedAmount * dailyRate * durationDays;
+                const totalReturn = fixedAmount + totalProfit; // Capital + Lucro
+
+                // Variáveis de estado do botão
+                let buttonText = translations[currentLang].activateButton;
+                let buttonAction = `handleInvestmentAction(event, '${plan._id}', ${fixedAmount}, '${plan.name}', ${durationDays}, 'activate')`;
+                let priceDisplay = `${fixedAmount.toFixed(2)} ${translations[currentLang].amountMT}`;
+                let isDisabled = false;
+                
+                let currentPlanPrice = currentUserActiveInvestment ? currentUserActiveInvestment.investedAmount : 0;
+                let currentPlanName = currentUserActiveInvestment && currentUserActiveInvestment.planId ? currentUserActiveInvestment.planId.name : '';
+
+
+                if (currentUserActiveInvestment) {
+                    if (fixedAmount <= currentPlanPrice) {
+                        // Se for mais barato ou igual, desabilita para o upgrade
+                        buttonText = `Plano Atual: ${currentPlanName}`;
+                        buttonAction = ``;
+                        isDisabled = true;
+                        priceDisplay = `${fixedAmount.toFixed(2)} ${translations[currentLang].amountMT}`;
+                    } else {
+                        // É um upgrade
+                        const difference = fixedAmount - currentPlanPrice;
+                        buttonText = translations[currentLang].upgradeButton.replace('{diff}', difference.toFixed(2));
+                        buttonAction = `handleInvestmentAction(event, '${plan._id}', ${difference}, '${plan.name}', ${durationDays}, 'upgrade')`;
+                        priceDisplay = `${difference.toFixed(2)} ${translations[currentLang].amountMT}`;
+                        isDisabled = false;
+                    }
+                }
                 
                 // Imagem padrão de fallback
                 const imageUrl = plan.imageUrl && plan.imageUrl !== 'https://res.cloudinary.com/default-image-url' ? plan.imageUrl : 'https://i.ibb.co/6y45s10/placeholder-image.png';
 
+                // Conteúdo do botão (sem ícone de raio, usando ícone de moeda no JS)
+                const originalButtonContent = `<i class="fas fa-coins"></i> ${buttonText}`;
+
 
                 card.innerHTML = `
-                    <img src="${imageUrl}" alt="${plan.name}" class="plan-image">
-
-                    <h3>${plan.name}</h3>
-
-                    <div class="details-grid">
-                        <div class="detail-item">
-                            <span class="label">${translations[currentLang].planDuration}</span>
-                            <span class="value">${plan.durationDays} ${translations[currentLang].durationDays}</span>
+                    <div class="plan-header">
+                        <img src="${imageUrl}" alt="${plan.name}" class="plan-image">
+                        <div class="plan-title-group">
+                            <div class="plan-name">${plan.name}</div>
+                            <span class="vip-badge"><i class="fas fa-gem"></i> VIP1</span>
                         </div>
-                        <div class="detail-item">
-                            <span class="label">${translations[currentLang].planProfitRate}</span>
-                            <span class="value">${(plan.dailyProfitRate * 100).toFixed(2)}%</span>
-                        </div>
+                    </div>
+
+                    <div class="plan-details-grid">
+                        <span class="detail-label">${translations[currentLang].planDuration}</span>
+                        <span class="detail-value">${durationDays} ${translations[currentLang].days}</span>
+                        
+                        <span class="detail-label">${translations[currentLang].planProfitRate}</span>
+                        <span class="detail-value">${(dailyRate * 100).toFixed(2)}%</span>
+                        
+                        <span class="detail-label">${translations[currentLang].totalProfit}</span>
+                        <span class="detail-value total-profit">${totalProfit.toFixed(2)} ${translations[currentLang].amountMT}</span>
+
+                        <span class="detail-label">${translations[currentLang].totalReturn}</span>
+                        <span class="detail-value">${totalReturn.toFixed(2)} ${translations[currentLang].amountMT}</span>
                     </div>
                     
                     <div class="activation-area">
-                        <span class="fixed-price-label" data-translate-key="planFixedAmount">${translations[currentLang].planFixedAmount}:</span>
-                        <span class="fixed-price-value">${fixedAmountText}</span>
+                        <span class="price-label">${priceDisplay}</span>
 
                         <button class="activate-btn" 
                                 data-plan-id="${plan._id}" 
-                                data-fixed-amount="${fixedAmount}" 
-                                onclick="activatePlan(event)">
-                            ${translations[currentLang].activateButton}
+                                data-amount="${fixedAmount}"
+                                data-original-text="${buttonText}" 
+                                onclick="${buttonAction}"
+                                ${isDisabled ? 'disabled' : ''}>
+                            <i class="fas fa-coins"></i> ${buttonText}
                         </button>
                     </div>
                 `;
@@ -535,47 +746,57 @@
             });
         }
 
-        // --- 3. Função de Ativação do Pacote (SEM INPUT DE VALOR) ---
-        async function activatePlan(event) {
-            clearActionMessages();
+        // --- 3. Função de Ativação / Upgrade ---
+        async function handleInvestmentAction(event, planId, amount, planName, durationDays, actionType) {
             const button = event.currentTarget;
-            const planId = button.dataset.planId;
-            const fixedAmount = parseFloat(button.dataset.fixedAmount); // Pega o valor fixo
-
+            const originalButtonText = button.dataset.originalText;
+            
+            const actionVerb = actionType === 'activate' ? 'Ativar' : 'Upgrade';
+            const cost = actionType === 'activate' ? amount : amount; // Custo é o fixedAmount ou a diferença
+            
             // 1. Validação de Saldo
-            if (fixedAmount > currentUserBalance) {
-                const message = translations[currentLang].insufficientBalance.replace('{amount}', fixedAmount.toFixed(2));
-                setActionMessage('errorMessage', message, 'error');
+            if (cost > currentUserBalance) {
+                const required = cost.toFixed(2);
+                showToast(translations[currentLang].insufficientBalance.replace('{amount}', required), 'error');
+                animateButton(button, 'error', originalButtonText);
                 return;
             }
-            
-            if (!confirm(`Confirmar investimento de ${fixedAmount.toFixed(2)} MT?`)) {
+
+            if (!confirm(`Confirmar ${actionVerb} para o plano ${planName} por ${cost.toFixed(2)} MT?`)) {
                 return;
             }
 
             // 2. Inicia a requisição
-            button.disabled = true;
-            button.textContent = 'Ativando...';
+            animateButton(button, 'loading', originalButtonText);
 
             try {
                 const token = localStorage.getItem('token');
+                let endpoint = actionType === 'activate' ? `${BACKEND_URL}/api/investments` : `${BACKEND_URL}/api/investments/upgrade`;
                 
-                // OBS: Não enviamos o 'amount' no body, o controller usará o plan.minAmount
-                const response = await fetch(`${BACKEND_URL}/api/investments`, {
+                const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ planId }) 
+                    body: JSON.stringify({ planId: planId, newPlanId: planId }) // newPlanId é o planId na rota de upgrade
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    setActionMessage('successMessage', translations[currentLang].activationSuccess, 'success');
-                    currentUserBalance -= fixedAmount; // Atualiza o saldo local
-                    setTimeout(() => navigateTo('income'), 2000); 
+                    // 3. Sucesso
+                    animateButton(button, 'success', originalButtonText);
+                    
+                    // Atualiza o estado local
+                    currentUserBalance -= cost;
+                    
+                    // Mostra modal
+                    showSuccessModal(actionType === 'activate' ? 'Active' : 'Upgrade', planName, durationDays);
+                    
+                    // Recarrega a lista para atualizar a lógica de upgrade/desabilitação
+                    setTimeout(() => fetchPlansAndUserStatus(), 1000); 
+
                 } else if (response.status === 401 || response.status === 403) {
                     throw new Error("sessionExpired");
                 } else {
@@ -583,16 +804,14 @@
                 }
 
             } catch (error) {
+                animateButton(button, 'error', originalButtonText);
                 if (error.message.includes("sessionExpired")) {
-                    setActionMessage('errorMessage', translations[currentLang].sessionExpired, 'error');
+                    showToast(translations[currentLang].sessionExpired, 'error');
                     localStorage.removeItem('token');
-                    setTimeout(() => window.location.href = 'login.html', 2000);
+                    setTimeout(() => window.location.href = 'login.html', 1500);
                 } else {
-                    setActionMessage('errorMessage', `${error.message}`, 'error');
+                    showToast(`${translations[currentLang].activationError} ${error.message}`, 'error');
                 }
-            } finally {
-                button.disabled = false;
-                button.textContent = translations[currentLang].activateButton;
             }
         }
     </script>

@@ -52,7 +52,6 @@
         .balance-item:last-child { border-bottom: none; }
         .balance-item .label { font-size: 0.9em; font-weight: 500; }
         .balance-item .value { font-size: 1.4em; font-weight: 700; color: var(--success-green); }
-        .balance-item.bonus .value { color: var(--warning-yellow); font-size: 1.1em; }
 
         /* Abas e Formulários */
         .action-tabs { display: flex; margin-bottom: 25px; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -62,21 +61,23 @@
         .action-form { background-color: var(--white); border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; margin-bottom: 5px; font-size: 0.9em; color: var(--text-dark); font-weight: 500; }
-        .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 10px 15px; border: 1px solid var(--border-light); border-radius: 8px; font-size: 1em; transition: border-color 0.2s; }
-        .input-group input:focus, .input-group textarea:focus, .input-group select:focus { border-color: var(--primary-purple); outline: none; }
-        .input-group textarea { resize: vertical; min-height: 80px; }
-        .submit-btn { width: 100%; padding: 12px; color: var(--white); border: none; border-radius: 8px; font-size: 1em; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease, transform 0.1s ease; margin-top: 10px; }
+        .input-group input, .input-group select { width: 100%; padding: 10px 15px; border: 1px solid var(--border-light); border-radius: 8px; font-size: 1em; transition: border-color 0.2s; }
+        .input-group input:focus, .input-group select:focus { border-color: var(--primary-purple); outline: none; }
+        .submit-btn { width: 100%; padding: 12px; color: var(--white); border: none; border-radius: 8px; font-size: 1em; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease, transform 0.1s ease; margin-top: 10px; display: flex; align-items: center; justify-content: center; }
         .submit-btn.deposit { background-color: var(--deposit-color); }
         .submit-btn.deposit:hover { background-color: #0056b3; }
         .submit-btn.withdraw { background-color: var(--withdrawal-color); }
         .submit-btn.withdraw:hover { background-color: #b3001e; }
         .submit-btn:disabled { background-color: var(--text-medium); cursor: not-allowed; }
+        .submit-btn i { margin-right: 5px; }
 
-        /* Mensagens */
-        .message { text-align: center; padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: 500; }
-        .error-message { color: var(--error-red); border: 1px solid var(--error-red); background-color: rgba(231, 76, 60, 0.1); }
-        .success-message { color: var(--success-green); border: 1px solid var(--success-green); background-color: rgba(46, 204, 113, 0.1); }
-        .hidden { display: none !important; }
+        /* Estilo de Mensagem de Erro em linha (em substituição a error-message) */
+        .inline-error {
+            color: var(--error-red);
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: block;
+        }
 
         /* Navegação Inferior */
         .bottom-nav { display: flex; justify-content: space-around; align-items: center; padding: 10px 0; background-color: var(--white); border-top: 1px solid var(--border-light); box-shadow: 0 -5px 15px rgba(0,0,0,0.05); width: 100%; max-width: 480px; position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 100; }
@@ -94,10 +95,148 @@
             border-radius: 8px;
             margin-bottom: 15px;
             text-align: center;
+            border: 1px solid var(--border-light);
         }
+
+        /* --- NOVO: Estilo para Modal de Sucesso --- */
+        .success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .success-modal.show {
+            opacity: 1;
+        }
+        .modal-content-box {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 30px;
+            width: 80%;
+            max-width: 350px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animação elástica */
+        }
+        .success-modal.show .modal-content-box {
+            transform: scale(1);
+        }
+        .success-icon {
+            font-size: 4em;
+            color: var(--success-green);
+            margin-bottom: 15px;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.9); }
+            50% { transform: scale(1); }
+            100% { transform: scale(0.9); }
+        }
+        .modal-content-box h3 {
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+        .modal-content-box p {
+            color: var(--text-medium);
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        .modal-content-box button {
+            background-color: var(--success-green);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        /* --- FIM: Estilo para Modal de Sucesso --- */
+        
+        /* --- Estilo para Toast Notification --- */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            width: 90%;
+            max-width: 400px;
+            pointer-events: none; 
+        }
+        .toast {
+            background-color: var(--white);
+            color: var(--text-dark);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            transform: translateY(-20px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast.success { border-left: 5px solid var(--success-green); }
+        .toast.error { border-left: 5px solid var(--error-red); }
+        .toast.info { border-left: 5px solid var(--info-blue, #3498db); }
+        .toast i { font-size: 1.2em; }
+        .toast.success i { color: var(--success-green); }
+        .toast.error i { color: var(--error-red); }
+        .toast.info i { color: var(--info-blue, #3498db); }
+        /* --- FIM: Estilo para Toast Notification --- */
+        
+        /* Estilo para animação de botão (Feedback de Sucesso e Erro) */
+        .submit-btn.success-animate {
+            background-color: var(--success-green) !important;
+            transition: all 0.1s ease-in-out;
+        }
+        .submit-btn.error-animate {
+            background-color: var(--error-red) !important;
+            transition: all 0.1s ease-in-out;
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        .hidden { display: none !important; }
+
     </style>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div class="toast-container">
+        <div id="appToast" class="toast hidden">
+            <i class="fas fa-info-circle"></i>
+            <span id="toastMessage">Mensagem</span>
+        </div>
+    </div>
+    
+    <!-- NOVO: Modal de Sucesso -->
+    <div id="successModal" class="success-modal hidden">
+        <div class="modal-content-box">
+            <i class="fas fa-check-circle success-icon"></i>
+            <h3 id="modalTitle">Sucesso!</h3>
+            <p id="modalText">Sua transação foi processada com sucesso e será atualizada em breve.</p>
+            <button onclick="closeSuccessModal()">OK</button>
+        </div>
+    </div>
+    <!-- FIM NOVO: Modal de Sucesso -->
+    
     <div class="page-wrapper">
         <!-- Header -->
         <header class="app-header">
@@ -121,10 +260,6 @@
                     <span class="label" data-translate-key="availableBalance">Saldo Disponível:</span>
                     <span class="value" id="mainBalance">0.00 MT</span>
                 </div>
-                <div class="balance-item bonus">
-                    <span class="label" data-translate-key="bonusBalance">Saldo de Bônus:</span>
-                    <span class="value" id="bonusBalance">0.00 MT</span>
-                </div>
             </section>
 
             <!-- Abas de Ação -->
@@ -133,7 +268,7 @@
                 <button id="withdrawTab" class="tab-button" onclick="switchTab('withdraw')" data-translate-key="withdrawTab">Sacar</button>
             </section>
 
-            <!-- Formulário de Depósito (Redireciona para Checkout) -->
+            <!-- Formulário de Depósito -->
             <section id="depositFormContainer" class="action-form">
                 <h3 data-translate-key="depositHeader">Solicitar Depósito</h3>
                 <form id="depositForm">
@@ -147,22 +282,22 @@
                     <div class="input-group">
                         <label for="depositAmount" data-translate-key="amountLabel">Valor (MT)</label>
                         <input type="number" id="depositAmount" name="amount" placeholder="Mínimo 50 MT" min="50" step="any" required>
+                        <span id="depositError" class="inline-error hidden"></span>
                     </div>
-                    <p id="depositErrorMessage" class="message error-message hidden"></p>
-                    <p id="depositSuccessMessage" class="message success-message hidden"></p>
-                    <button type="submit" class="submit-btn deposit" data-translate-key="depositButton">Depositar</button>
+                    <button type="submit" class="submit-btn deposit" data-translate-key="depositButton">
+                        <i class="fas fa-download"></i> Depositar
+                    </button>
                 </form>
             </section>
 
             <!-- Formulário de Saque -->
-            <section id="withdrawFormContainer" class="action-form hidden">
+            <section id="withdrawFormContainer" class="action-form hidden"> 
                 <h3 data-translate-key="withdrawHeader">Solicitar Saque</h3>
                 
-                <!-- NOVO: Mensagem de Horário de Saque -->
+                <!-- Mensagem de Horário de Saque -->
                 <div id="withdrawalTimeInfo" class="withdrawal-info-message hidden">
                     <i class="fas fa-clock"></i> <span id="withdrawalTimeText">Carregando horário de saque...</span>
                 </div>
-                <!-- FIM NOVO -->
                 
                 <form id="withdrawForm">
                     <div class="input-group">
@@ -174,8 +309,8 @@
                     </div>
                     <div class="input-group">
                         <label for="withdrawAmount" data-translate-key="amountLabel">Valor (MT)</label>
-                        <!-- ID: withdrawAmount / Placeholder será definido dinamicamente -->
                         <input type="number" id="withdrawAmount" name="amount" min="1" step="any" required>
+                        <span id="withdrawError" class="inline-error hidden"></span>
                     </div>
                     <div class="input-group">
                         <label for="recipientName" data-translate-key="recipientNameLabel">Nome Completo do Destinatário</label>
@@ -186,9 +321,9 @@
                         <input type="tel" id="recipientPhoneNumber" name="recipientPhoneNumber" placeholder="Ex: 84xxxxxxx" required pattern="^\d{9}$">
                     </div>
                     
-                    <p id="withdrawErrorMessage" class="message error-message hidden"></p>
-                    <p id="withdrawSuccessMessage" class="message success-message hidden"></p>
-                    <button type="submit" class="submit-btn withdraw" data-translate-key="withdrawButton">Solicitar Saque</button>
+                    <button type="submit" class="submit-btn withdraw" data-translate-key="withdrawButton">
+                         <i class="fas fa-upload"></i> Solicitar Saque
+                    </button>
                 </form>
             </section>
 
@@ -233,58 +368,160 @@
             // Objeto de traduções
             const translations = {
                 en: {
-                    walletTitle: 'KKR Credit | Wallet', backButtonAlt: 'Back', walletHeader: 'My Wallet', balanceSummary: 'Balance Summary', loadingBalance: 'Loading balance...', availableBalance: 'Available Balance:', bonusBalance: 'Bonus Balance:', depositTab: 'Deposit', withdrawTab: 'Withdraw', depositHeader: 'Request Deposit', withdrawHeader: 'Request Withdrawal', amountLabel: 'Amount (MT)', confirmationLabel: 'Confirmation Proof', confirmationPlaceholder: 'Ex: Sender number, transaction ID (TXID)', paymentMethodLabel: 'Payment Method', walletAddressLabel: 'Payment Details', walletAddressPlaceholder: 'Ex: M-Pesa 84xxxxxxx', depositButton: 'Deposit', withdrawButton: 'Request Withdrawal', recipientNameLabel: 'Full Recipient Name', recipientPhoneLabel: 'Recipient Number', minAmountError: `The minimum deposit amount is ${MIN_DEPOSIT_AMOUNT} MT.`, minWithdrawalError: 'The minimum withdrawal amount is {min} MT.', maxWithdrawalError: 'The maximum withdrawal amount is {max} MT.', insufficientBalance: 'Insufficient available balance for this withdrawal.', depositSuccess: 'Deposit request sent for approval. Check profile history for status.', withdrawSuccess: 'Withdrawal request sent. Funds will be processed shortly. Check profile history for status.', requestFailed: 'Request failed:', networkError: 'A network error occurred. Check your connection or try again later.', sessionExpired: 'Session expired or unauthorized. Please log in again.', navHome: 'Home', navPool: 'Pacotes', navIncome: 'Income', navWallet: 'Wallet', navProfile: 'Profile',
-                    withdrawalTimeAllowed: 'Saques permitidos das {start} às {end} (MZ Time).',
-                    withdrawalTimeRestricted: 'O horário de saque é das {start} às {end} (MZ Time).',
-                    withdrawPlaceholder: 'Mín. {min} MT / Máx. {max} MT', /* NOVO */
+                    walletTitle: 'KKR Credit | Wallet', backButtonAlt: 'Back', walletHeader: 'My Wallet', balanceSummary: 'Balance Summary', loadingBalance: 'Loading balance...', availableBalance: 'Available Balance:', depositTab: 'Deposit', withdrawTab: 'Withdraw', depositHeader: 'Request Deposit', withdrawHeader: 'Request Withdrawal', amountLabel: 'Amount (MT)', paymentMethodLabel: 'Payment Method', depositButton: 'Deposit', withdrawButton: 'Request Withdrawal', recipientNameLabel: 'Full Recipient Name', recipientPhoneLabel: 'Recipient Number', minAmountError: `The minimum deposit amount is ${MIN_DEPOSIT_AMOUNT} MT.`, minWithdrawalError: 'The minimum withdrawal amount is {min} MT.', maxWithdrawalError: 'The maximum withdrawal amount is {max} MT.', insufficientBalance: 'Insufficient available balance for this withdrawal.', depositSuccess: 'Deposit request sent! Proceed to checkout.', withdrawSuccess: 'Withdrawal request sent for approval.', requestFailed: 'Request failed:', networkError: 'A network error occurred. Check your connection or try again later.', sessionExpired: 'Session expired or unauthorized. Please log in again.', navHome: 'Home', navPool: 'Packages', navIncome: 'Income', navWallet: 'Wallet', navProfile: 'Profile',
+                    withdrawalTimeAllowed: 'Withdrawals are allowed from {start} to {end} (MZ Time).',
+                    withdrawalTimeRestricted: 'Withdrawal time is from {start} to {end} (MZ Time).',
+                    withdrawPlaceholder: 'Min. {min} MT / Max. {max} MT',
+                    modalTitleDeposit: 'Depósito Solicitado',
+                    modalTitleWithdraw: 'Saque Solicitado',
+                    modalTextDeposit: 'Aguardando o comprovativo no Checkout. Redirecionando...',
+                    modalTextWithdraw: 'Aguardando aprovação. O saldo será creditado em sua conta de destino em breve.',
                 },
                 pt: {
-                    walletTitle: 'KKR Credit | Carteira', backButtonAlt: 'Voltar', walletHeader: 'Minha Carteira', balanceSummary: 'Resumo do Saldo', loadingBalance: 'Carregando saldo...', availableBalance: 'Saldo Disponível:', bonusBalance: 'Saldo de Bônus:', depositTab: 'Depositar', withdrawTab: 'Sacar', depositHeader: 'Solicitar Depósito', withdrawHeader: 'Solicitar Saque', amountLabel: 'Valor (MT)', confirmationLabel: 'Comprovativo de Confirmação', confirmationPlaceholder: 'Ex: Número do remetente, ID da transação (TXID)', paymentMethodLabel: 'Método de Pagamento', walletAddressLabel: 'Detalhes de Pagamento', walletAddressPlaceholder: 'Ex: M-Pesa 84xxxxxxx', depositButton: 'Depositar', withdrawButton: 'Solicitar Saque', recipientNameLabel: 'Nome Completo do Destinatário', recipientPhoneLabel: 'Número do Destinatário', minAmountError: `O valor mínimo de depósito é ${MIN_DEPOSIT_AMOUNT} MT.`, minWithdrawalError: 'O saque mínimo é {min} MT.', maxWithdrawalError: 'O saque máximo é {max} MT.', insufficientBalance: 'Saldo disponível insuficiente para este saque.', depositSuccess: 'Solicitação de depósito enviada para aprovação. Verifique o histórico no perfil.', withdrawSuccess: 'Solicitação de saque enviada. Os fundos serão processados em breve. Verifique o histórico no perfil.', requestFailed: 'Falha na solicitação:', networkError: 'Ocorreu um erro de rede. Verifique sua conexão ou tente novamente mais tarde.', sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.', navHome: 'Home', navPool: 'Pacotes', navIncome: 'Renda', navWallet: 'Carteira', navProfile: 'Perfil',
+                    walletTitle: 'KKR Credit | Carteira', backButtonAlt: 'Voltar', walletHeader: 'Minha Carteira', balanceSummary: 'Resumo do Saldo', loadingBalance: 'Carregando saldo...', availableBalance: 'Saldo Disponível:', depositTab: 'Depositar', withdrawTab: 'Sacar', depositHeader: 'Solicitar Depósito', withdrawHeader: 'Solicitar Saque', amountLabel: 'Valor (MT)', paymentMethodLabel: 'Método de Pagamento', depositButton: 'Depositar', withdrawButton: 'Solicitar Saque', recipientNameLabel: 'Nome Completo do Destinatário', recipientPhoneLabel: 'Número do Destinatário', minAmountError: `O valor mínimo de depósito é ${MIN_DEPOSIT_AMOUNT} MT.`, minWithdrawalError: 'O saque mínimo é {min} MT.', maxWithdrawalError: 'O saque máximo é {max} MT.', insufficientBalance: 'Saldo disponível insuficiente para este saque.', depositSuccess: 'Solicitação de depósito enviada! Prossiga para o checkout.', withdrawSuccess: 'Solicitação de saque enviada para aprovação.', requestFailed: 'Falha na solicitação:', networkError: 'Ocorreu um erro de rede. Verifique sua conexão ou tente novamente mais tarde.', sessionExpired: 'Sessão expirada ou não autorizada. Por favor, faça login novamente.', navHome: 'Home', navPool: 'Pacotes', navIncome: 'Renda', navWallet: 'Carteira', navProfile: 'Perfil',
                     withdrawalTimeAllowed: 'Saques permitidos das {start} às {end} (MZ Time).',
                     withdrawalTimeRestricted: 'O horário de saque é das {start} às {end} (MZ Time).',
-                    withdrawPlaceholder: 'Mín. {min} MT / Máx. {max} MT', /* NOVO */
-                    }
-                };
+                    withdrawPlaceholder: 'Mín. {min} MT / Máx. {max} MT', 
+                    modalTitleDeposit: 'Depósito Solicitado',
+                    modalTitleWithdraw: 'Saque Solicitado',
+                    modalTextDeposit: 'Aguardando o comprovativo no Checkout. Redirecionando...',
+                    modalTextWithdraw: 'Aguardando aprovação. O saldo será creditado em sua conta de destino em breve.',
+                }
+            };
 
 
             document.addEventListener('DOMContentLoaded', () => {
                 loadLanguagePreference(); 
                 applyTranslations(currentLang);
-                fetchInitialData(); // Busca saldo e config de saque
+                fetchInitialData(); 
                 
                 document.getElementById('depositForm').addEventListener('submit', handleInitialDepositRequest); 
                 document.getElementById('withdrawForm').addEventListener('submit', handleWithdrawalRequest);
             });
             
-            // --- FUNÇÕES EXPOSTAS PARA O HTML (CORREÇÃO CRÍTICA DO ESCOPO) ---
+            // --- FUNÇÕES EXPOSTAS PARA O HTML ---
             window.switchTab = switchTab;
             window.navigateTo = navigateTo;
+            window.closeSuccessModal = closeSuccessModal;
             
-            // --- Implementações de Funções (Consistentes) ---
+            // --- UI/Animação/Toast/Modal ---
             
-            function setActionMessage(containerId, message, type = 'error') {
-                const errorElement = document.getElementById(containerId + 'ErrorMessage');
-                const successElement = document.getElementById(containerId + 'SuccessMessage');
-                
-                if (errorElement) errorElement.classList.add('hidden');
-                if (successElement) successElement.classList.add('hidden');
+            /**
+             * Exibe uma notificação Toast no topo da página. (Reservado para Erros e Info)
+             * @param {string} message - A mensagem a ser exibida.
+             * @param {string} [type='info'] - O tipo de notificação ('success', 'error', 'info').
+             */
+            function showToast(message, type = 'info') {
+                const toastElement = document.getElementById('appToast');
+                const toastMessage = document.getElementById('toastMessage');
+                const icon = toastElement.querySelector('i');
 
-                if (type === 'success' && successElement) {
-                    successElement.textContent = message;
-                    successElement.classList.remove('hidden');
-                } else if (type === 'error' && errorElement) {
-                    errorElement.textContent = message;
-                    errorElement.classList.remove('hidden');
+                if (!toastElement || !toastMessage || !icon) return;
+
+                toastElement.classList.remove('show', 'success', 'error', 'info');
+                toastElement.classList.add('hidden');
+
+                toastElement.className = 'toast show';
+                icon.className = 'fas';
+                
+                if (type === 'success') {
+                    toastElement.classList.add('success');
+                    icon.classList.add('fa-check-circle');
+                } else if (type === 'error') {
+                    toastElement.classList.add('error');
+                    icon.classList.add('fa-times-circle');
+                } else {
+                    toastElement.classList.add('info');
+                    icon.classList.add('fa-info-circle');
+                }
+
+                toastMessage.textContent = message;
+                toastElement.classList.remove('hidden');
+
+                setTimeout(() => {
+                    toastElement.classList.remove('show');
+                    setTimeout(() => toastElement.classList.add('hidden'), 300); 
+                }, 3000); 
+            }
+            
+            /**
+             * Anima o botão para indicar carregamento ou erro.
+             * @param {HTMLElement} button - O elemento do botão.
+             * @param {string} type - 'loading', 'success', ou 'error'.
+             */
+            function animateButton(button, type) {
+                const iElement = button.querySelector('i');
+                const originalText = button.dataset.translateKey;
+                const originalIcon = iElement ? iElement.className : '';
+                
+                // Função auxiliar para obter a classe original do botão (deposit/withdraw)
+                function originalClass(btn) {
+                    return btn.classList.contains('deposit') ? 'submit-btn deposit' : 'submit-btn withdraw';
+                }
+
+                button.className = originalClass(button); // Reset classes de animação
+
+                if (type === 'loading') {
+                    button.disabled = true;
+                    button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${button.dataset.translateKey === 'depositButton' ? 'Processando...' : 'Enviando...'}`;
+                } else if (type === 'success') {
+                    button.disabled = true;
+                    button.classList.add('success-animate');
+                    iElement.className = 'fas fa-check-circle';
+                    
+                    setTimeout(() => {
+                        button.disabled = false;
+                        // Retorna ao estado original (reaplica a tradução)
+                        applyTranslations(currentLang); 
+                    }, 1500);
+                } else if (type === 'error') {
+                    button.disabled = true;
+                    button.classList.add('error-animate');
+                    iElement.className = 'fas fa-times-circle';
+                    
+                    setTimeout(() => {
+                        button.disabled = false;
+                        // Retorna ao estado original (reaplica a tradução)
+                        applyTranslations(currentLang);
+                    }, 1500);
                 }
             }
             
-            function clearActionMessages(containerId) {
-                const errorElement = document.getElementById(containerId + 'ErrorMessage');
-                const successElement = document.getElementById(containerId + 'SuccessMessage');
-                if (errorElement) errorElement.classList.add('hidden');
-                if (successElement) successElement.classList.add('hidden');
+            /**
+             * Exibe o modal de sucesso com a mensagem apropriada.
+             * @param {string} type - 'Withdraw'.
+             */
+            function showSuccessModal(type) {
+                const modal = document.getElementById('successModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalText = document.getElementById('modalText');
+                
+                modalTitle.textContent = translations[currentLang][`modalTitle${type}`];
+                modalText.textContent = translations[currentLang][`modalText${type}`];
+
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.add('show'), 10);
             }
 
+            function closeSuccessModal() {
+                const modal = document.getElementById('successModal');
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+            
+            function setInlineError(elementId, message, hide = false) {
+                 const errorElement = document.getElementById(elementId);
+                 if (errorElement) {
+                     errorElement.textContent = message;
+                     errorElement.classList.toggle('hidden', hide || message === '');
+                 }
+            }
+
+
+            // --- Implementações de Funções (Consistentes) ---
+            
             function loadLanguagePreference() {
                 const savedLang = localStorage.getItem('langPreference');
                 if (savedLang) {
@@ -299,16 +536,19 @@
                     if (translations[lang] && translations[lang][key]) {
                         if (element.tagName === 'TITLE') {
                             document.title = translations[lang][key];
-                        } else if (element.tagName !== 'BUTTON' && element.tagName !== 'I' && element.tagName !== 'TEXTAREA' && element.tagName !== 'INPUT' && element.tagName !== 'SELECT') {
+                        } else if (element.tagName === 'BUTTON' || element.tagName === 'A') {
+                            // Deixa os botões com ícones terem o texto atualizado pelo innerHTML
+                            const icon = element.querySelector('i');
+                            const iconHtml = icon ? icon.outerHTML : '';
+                            element.innerHTML = `${iconHtml} ${translations[lang][key]}`;
+                        } else if (element.tagName !== 'I' && element.tagName !== 'SELECT' && element.tagName !== 'INPUT') {
                             element.textContent = translations[lang][key];
                         }
                     }
                 });
-                // Colocando placeholders nos inputs dinamicamente (para evitar problemas de tradução)
                 if(document.getElementById('depositAmount')) document.getElementById('depositAmount').placeholder = `Mínimo ${MIN_DEPOSIT_AMOUNT} MT`;
-                
-                // Placeholder de saque é atualizado dinamicamente em fetchAdminWithdrawalConfig
             }
+
 
             function navigateTo(page) {
                 const pageMap = {
@@ -317,8 +557,6 @@
                     'income': 'income.html',
                     'wallet': 'wallet.html',
                     'profile': 'profile.html',
-                    'deposit-history': 'deposit-history.html', 
-                    'withdrawal-history': 'withdrawal-history.html', 
                 };
                 const targetPage = pageMap[page];
                 if (targetPage) {
@@ -332,8 +570,8 @@
                 const depositTabBtn = document.getElementById('depositTab');
                 const withdrawTabBtn = document.getElementById('withdrawTab');
 
-                clearActionMessages('depositForm');
-                clearActionMessages('withdrawForm');
+                setInlineError('depositError', '', true);
+                setInlineError('withdrawError', '', true);
 
                 if (tab === 'deposit') {
                     depositContainer.classList.remove('hidden');
@@ -383,10 +621,8 @@
                     const data = await response.json();
                     
                     currentAvailableBalance = data.user.balance || 0;
-                    const bonusBalance = data.user.bonusBalance || 0;
 
                     document.getElementById('mainBalance').textContent = `${currentAvailableBalance.toFixed(2)} MT`;
-                    document.getElementById('bonusBalance').textContent = `${bonusBalance.toFixed(2)} MT`;
 
                 } catch (error) {
                     const message = error.message.includes("sessionExpired") ? 
@@ -394,10 +630,10 @@
                         translations[currentLang].networkError;
                     
                     loadingMessage.textContent = message;
-                    loadingMessage.classList.add('error-message');
                     
                     if (error.message.includes("sessionExpired")) {
                         localStorage.removeItem('token');
+                        showToast(translations[currentLang].sessionExpired, 'error');
                         setTimeout(() => window.location.href = 'login.html', 2000);
                     }
                 } finally {
@@ -405,7 +641,7 @@
                 }
             }
 
-            // --- 2. Busca Configuração de Horário e Limites de Saque (ATUALIZADA) ---
+            // --- 2. Busca Configuração de Horário e Limites de Saque ---
             async function fetchAdminWithdrawalConfig() {
                 const infoElement = document.getElementById('withdrawalTimeInfo');
                 const textElement = document.getElementById('withdrawalTimeText');
@@ -430,8 +666,8 @@
                         .replace('{max}', max || 5000);
                         
                     withdrawInput.placeholder = placeholderText;
-                    withdrawInput.min = min || 1; // Define o min do HTML
-                    withdrawInput.max = max || 5000; // Define o max do HTML
+                    withdrawInput.min = min || 1; 
+                    withdrawInput.max = max || 5000; 
 
 
                     // 2. Atualiza Mensagem de Horário
@@ -445,17 +681,21 @@
 
                         textElement.innerHTML = timeText;
                         if (!isAllowed) {
-                           infoElement.classList.add('info-message'); 
+                           infoElement.classList.remove('info-message'); 
+                           infoElement.classList.add('error-message');
                            withdrawButton.disabled = true;
-                           withdrawButton.textContent = "Fora do Horário de Saque";
+                           withdrawButton.innerHTML = `<i class="fas fa-ban"></i> Fora do Horário de Saque`;
                         } else {
-                            infoElement.classList.remove('info-message');
+                            infoElement.classList.remove('error-message');
+                            infoElement.classList.add('info-message');
                             withdrawButton.disabled = false;
+                            applyTranslations(currentLang); // Reaplica a tradução para restaurar o ícone
                         }
 
                     } else {
                         textElement.textContent = "Horário de saque não configurado. Saques podem estar indisponíveis.";
-                        infoElement.classList.add('info-message');
+                        infoElement.classList.add('error-message');
+                        withdrawButton.disabled = true; 
                     }
 
 
@@ -463,7 +703,6 @@
                     textElement.textContent = "Erro ao carregar horário/limites de saque.";
                     infoElement.classList.add('error-message');
                     withdrawButton.disabled = true; 
-                    console.error("Erro ao buscar config de saque:", error);
                 }
             }
 
@@ -476,6 +715,7 @@
 
                 const parseTime = (timeStr) => {
                     const [hour, minute] = timeStr.split(':').map(Number);
+                    if (isNaN(hour) || isNaN(minute)) return -1; 
                     return hour * 60 + minute;
                 };
 
@@ -487,87 +727,96 @@
             }
 
 
-            // --- 3. Lida com a Solicitação de Depósito (Redireciona para Checkout) ---
-            function handleInitialDepositRequest(event) {
+            // --- 3. Lida com a Solicitação de Depósito (FLUXO FINAL) ---
+            async function handleInitialDepositRequest(event) {
                 event.preventDefault();
-                clearActionMessages('depositForm');
+                setInlineError('depositError', '', true);
 
+                const button = event.target.querySelector('.submit-btn');
+                
                 const amountInput = document.getElementById('depositAmount');
                 const methodInput = document.getElementById('paymentMethodDeposit');
                 
-                if (!amountInput || !methodInput) {
-                    console.error("[ERRO CRÍTICO] Input de valor ou método de pagamento não encontrado no DOM.");
-                    setActionMessage('depositForm', "Erro interno: Campo do formulário não encontrado.", 'error');
-                    return;
-                }
+                if (!amountInput || !methodInput) return;
 
                 const amount = parseFloat(amountInput.value);
                 const method = methodInput.value;
 
                 if (isNaN(amount) || amount < MIN_DEPOSIT_AMOUNT) {
-                    setActionMessage('depositForm', translations[currentLang].minAmountError);
+                    setInlineError('depositError', translations[currentLang].minAmountError);
+                    animateButton(button, 'error');
                     return;
                 }
                 
+                // 1. Animação de Carregamento
+                animateButton(button, 'loading');
+                
                 try {
+                    // Prepara o sessionStorage para o checkout
                     const depositData = { amount, method };
                     sessionStorage.setItem('depositData', JSON.stringify(depositData));
-                    window.location.href = 'deposit_checkout.html';
+                    
+                    // 2. Animação de Sucesso
+                    animateButton(button, 'success');
+                    
+                    // 3. Redirecionamento direto após a animação
+                    setTimeout(() => window.location.href = 'deposit_checkout.html', 1500);
                     
                 } catch (e) {
-                    console.error("[ERRO CRÍTICO DE SESSION/REDIRECIONAMENTO]", e);
-                    setActionMessage('depositForm', "Erro ao iniciar o checkout. Verifique o console.", 'error');
+                    animateButton(button, 'error');
+                    setInlineError('depositError', "Erro ao iniciar o checkout.", 'error');
                 }
             }
 
-            // --- 4. Lida com a Solicitação de Saque (Saque Detalhado - VALIDAÇÃO DE FRONTEND ATUALIZADA) ---
+            // --- 4. Lida com a Solicitação de Saque (FINAL) ---
             async function handleWithdrawalRequest(event) {
                 event.preventDefault();
                 const form = event.target;
                 const button = form.querySelector('.submit-btn');
-                clearActionMessages('withdrawForm');
+                setInlineError('withdrawError', '', true);
                 
                 const amount = parseFloat(document.getElementById('withdrawAmount').value);
                 const recipientName = document.getElementById('recipientName').value.trim();
                 const recipientPhoneNumber = document.getElementById('recipientPhoneNumber').value.trim();
                 const paymentMethod = document.getElementById('paymentMethodWithdraw').value;
 
-                // --- VALIDAÇÕES DE FRONT-END (Usando limites dinâmicos) ---
+                // --- VALIDAÇÕES DE FRONT-END ---
                 const min = withdrawalTimeConfig ? withdrawalTimeConfig.minWithdrawalAmount : 1;
                 const max = withdrawalTimeConfig ? withdrawalTimeConfig.maxWithdrawalAmount : Infinity;
 
                 if (isNaN(amount) || amount < min) {
-                    setActionMessage('withdrawForm', translations[currentLang].minWithdrawalError.replace('{min}', min));
+                    setInlineError('withdrawError', translations[currentLang].minWithdrawalError.replace('{min}', min));
+                    animateButton(button, 'error');
                     return;
                 }
                 if (amount > max) {
-                    setActionMessage('withdrawForm', translations[currentLang].maxWithdrawalError.replace('{max}', max));
+                    setInlineError('withdrawError', translations[currentLang].maxWithdrawalError.replace('{max}', max));
+                    animateButton(button, 'error');
                     return;
                 }
                 if (amount > currentAvailableBalance) {
-                    setActionMessage('withdrawForm', translations[currentLang].insufficientBalance);
+                    setInlineError('withdrawError', translations[currentLang].insufficientBalance);
+                    animateButton(button, 'error');
                     return;
                 }
                 if (recipientName.length < 3) {
-                    setActionMessage('withdrawForm', 'O Nome Completo do Destinatário deve ter pelo menos 3 caracteres.');
+                    setInlineError('withdrawError', 'O Nome Completo do Destinatário deve ter pelo menos 3 caracteres.');
+                    animateButton(button, 'error');
                     return;
                 }
                 if (recipientPhoneNumber.length !== 9 || !/^\d{9}$/.test(recipientPhoneNumber)) {
-                    setActionMessage('withdrawForm', 'O Número do Destinatário deve ter exatamente 9 dígitos numéricos.');
+                    setInlineError('withdrawError', 'O Número do Destinatário deve ter exatamente 9 dígitos numéricos.');
+                    animateButton(button, 'error');
                     return;
                 }
-                // Validação de horário (para desabilitar o botão se estiver fora)
                 if (button.disabled && button.textContent.includes("Horário")) {
-                     setActionMessage('withdrawForm', "Saque fora do horário permitido. Aguarde o horário de abertura.", 'error');
+                     setInlineError('withdrawError', "Saque fora do horário permitido. Aguarde o horário de abertura.");
+                     animateButton(button, 'error');
                      return;
                 }
-                
                 // --- FIM DA VALIDAÇÃO DE FRONT-END ---
 
-                button.disabled = true;
-                button.textContent = 'Enviando...';
-
-                // Junta os dados no formato esperado pelo campo 'walletAddress' do backend
+                animateButton(button, 'loading');
                 const walletAddressDetails = `Método: ${paymentMethod}, Nome: ${recipientName}, Telefone: ${recipientPhoneNumber}`;
 
                 try {
@@ -586,31 +835,33 @@
 
 
                     if (response.ok) {
-                        setActionMessage('withdrawForm', translations[currentLang].withdrawSuccess, 'success');
+                        animateButton(button, 'success');
+                        showSuccessModal('Withdraw');
+                        
+                        // Atualiza o saldo local e o DOM
                         currentAvailableBalance -= amount;
                         document.getElementById('mainBalance').textContent = `${currentAvailableBalance.toFixed(2)} MT`;
                         form.reset(); 
                     } else if (response.status === 401 || response.status === 403) {
                         throw new Error("sessionExpired");
                     } else {
-                        // Erro de backend (incluindo erro de horário/limite do backend)
                         throw new Error(data.message || translations[currentLang].requestFailed);
                     }
 
                 } catch (error) {
+                    animateButton(button, 'error');
                     if (error.message.includes("sessionExpired")) {
-                        setActionMessage('withdrawForm', translations[currentLang].sessionExpired, 'error');
+                        showToast(translations[currentLang].sessionExpired, 'error');
                         localStorage.removeItem('token');
-                        setTimeout(() => navigateTo('login.html'), 2000);
+                        setTimeout(() => navigateTo('login.html'), 1500);
                     } else {
-                        setActionMessage('withdrawForm', `${translations[currentLang].requestFailed} ${error.message}`);
+                        setInlineError('withdrawError', `${translations[currentLang].requestFailed} ${error.message}`);
                     }
                 } finally {
-                    button.disabled = false;
-                    button.textContent = translations[currentLang].withdrawButton;
+                    // O botão volta ao normal dentro de animateButton(button, 'error') ou 'success'
                 }
             }
-        })(); // Fim da IIFE
+        })(); 
     </script>
 </body>
 </html>
