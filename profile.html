@@ -1,3 +1,5 @@
+--- START OF FILE profile.html ---
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -344,7 +346,7 @@
                     <span class="label" data-translate-key="availableBalance">Saldo Disponível:</span>
                     <span class="value" id="profileBalance">--.-- MT</span>
                 </div>
-                <!-- REMOVIDO: Saldo de Bônus -->
+                <!-- REMOVIDO: Saldo Bônus (Conforme solicitação) -->
                 <div class="profile-detail-item">
                     <span class="label" data-translate-key="accountStatus">Status da Conta:</span>
                     <span class="value" id="profileStatus">--.--</span>
@@ -520,7 +522,7 @@
             });
         }
 
-        // --- Lógica de Carregamento do Perfil do Usuário ---
+        // --- Lógica de Carregamento do Perfil do Usuário (AJUSTADA para Saldo Único) ---
         async function fetchUserProfile() {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -550,9 +552,10 @@
                     const data = await response.json();
                     const user = data.user;
 
-                    // Preenche os detalhes do perfil (removido bonusBalance)
+                    // Preenche os detalhes do perfil
                     document.getElementById('profilePhoneNumber').textContent = user.phoneNumber || translations[currentLang].noInviter;
-                    document.getElementById('profileBalance').textContent = `${user.balance ? user.balance.toFixed(2) : '0.00'} MT`;
+                    // Saldo Único
+                    document.getElementById('profileBalance').textContent = `${user.balance ? user.balance.toFixed(2) : '0.00'} MT`; 
                     
                     const statusElem = document.getElementById('profileStatus');
                     if (statusElem) {
@@ -599,7 +602,7 @@
             const pageMap = {
                 'home': 'dashboard.html', 'wallet': 'wallet.html', 'profile': 'profile.html', 'pool': 'pool.html', 'income': 'income.html',
                 'deposit-history': 'deposit-history.html', 'withdrawal-history': 'withdrawal-history.html', 
-                'investment-history': 'holding.html', // Usando holding.html como histórico de investimento
+                'investment-history': 'holding.html', 
                 'referred-users': 'referred-users.html',
             };
 

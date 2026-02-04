@@ -1,3 +1,5 @@
+--- START OF FILE dashboard.html ---
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -128,7 +130,7 @@
         .main-card h3 { font-size: 1.6em; font-weight: 600; margin-bottom: 5px; }
         .main-card p { font-size: 0.9em; color: rgba(255,255,255,0.7); margin-bottom: 8px; }
 
-        /* CORREÇÃO CRÍTICA DO CSS: Alinhamento para Label + Valor */
+        /* Alinhamento para Label + Valor */
         .main-card .detail-item { 
             display: flex; 
             justify-content: space-between; 
@@ -143,7 +145,6 @@
             font-weight: 600; 
             text-align: right; 
         }
-        /* FIM DA CORREÇÃO CRÍTICA */
         
         .main-card .earn-text { color: var(--success-green); font-weight: 600; display: block; margin-bottom: 10px; }
         .main-card .safe-reliable-btn { background-color: rgba(255,255,255,0.15); color: var(--white); border: none; padding: 8px 15px; border-radius: 20px; font-size: 0.8em; cursor: pointer; transition: background-color 0.2s ease; display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; }
@@ -158,8 +159,6 @@
         .icon-app { background-color: var(--icon-bg-green); } .icon-task { background-color: var(--icon-bg-orange); } .icon-invite { background-color: var(--icon-bg-blue); } .icon-team { background-color: var(--icon-bg-purple); } .icon-about { background-color: var(--icon-bg-teal); } .icon-holding { background-color: var(--icon-bg-red); } .icon-wallet { background-color: var(--icon-bg-blue); } .icon-support { background-color: var(--icon-bg-green); }
         .action-item span { font-size: 0.8em; color: var(--text-medium); font-weight: 500; }
 
-        /* Banner "Invite friends, earn coins" (REMOVIDO DO HTML FINAL) */
-        
         /* Seção de Mercados */
         .markets-section { margin-bottom: 20px; }
         .markets-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
@@ -301,7 +300,7 @@
                 <p id="profileLoadMessage" class="dashboard-error hidden">Falha ao carregar os dados.</p>
                 <!-- Fim dos campos de dados do usuário -->
 
-                <button class="safe-reliable-btn" data-translate-key="safeAndReliable"><i class="fas fa-shield-alt"></i> Seguro e Confiável</button>
+                <button class="safe-reliable-btn" onclick="navigateTo('about');" data-translate-key="safeAndReliable"><i class="fas fa-shield-alt"></i> Seguro e Confiável</button>
                 <div class="large-icon">
                     <i class="fas fa-coins"></i>
                 </div>
@@ -342,8 +341,6 @@
                     <span data-translate-key="actionSupport">Suporte</span>
                 </div>
             </section>
-
-            <!-- REMOVIDO: Banner "Invite friends, earn coins" -->
 
             <!-- Seção de Mercados (dados reais CoinGecko) -->
             <section class="markets-section">
@@ -397,7 +394,7 @@
 
     </div> <!-- Fim do dashboard-wrapper -->
 
-    <!-- Script para lógica do Dashboard (Atualizado com Toast e sem bônus) -->
+    <!-- Script para lógica do Dashboard (Atualizado com Saldo Único) -->
     <script>
         // *** PONTO CRÍTICO: VERIFIQUE ESTA URL! ***
         const BACKEND_URL = 'https://backend-cjl7.onrender.com'; 
@@ -414,15 +411,27 @@
         };
 
         let currentLang = 'pt';
-        // Removida: let dailyCommissionRate = 0; 
 
         document.addEventListener('DOMContentLoaded', () => {
+            checkAuthentication(); // Nova verificação de autenticação
             loadLanguagePreference();
             applyTranslations(currentLang);
-            fetchUserProfile(); // Apenas Perfil, sem Admin Data de Bônus
+            fetchUserProfile(); 
             fetchMarketData();
         });
         
+        // --- NOVO: Função para verificar autenticação antes de tudo ---
+        function checkAuthentication() {
+             const token = localStorage.getItem('token');
+             if (!token) {
+                 showToast(translations[currentLang].notLoggedIn, 'error');
+                 setTimeout(() => window.location.href = 'login.html', 1500);
+                 return;
+             }
+        }
+        // --- FIM NOVO: Função para verificar autenticação antes de tudo ---
+
+
         // --- NOVO: Função para exibir Toast ---
         function showToast(message, type = 'info') {
             const toastElement = document.getElementById('appToast');
@@ -518,10 +527,7 @@
             }
         }
         
-        // Removida: fetchInitialData e fetchAdminData
-        // Removida: updateInviteBannerText
-
-        // --- Lógica de Carregamento do Perfil do Usuário (AJUSTADA) ---
+        // --- Lógica de Carregamento do Perfil do Usuário (AJUSTADA para Saldo Único) ---
         async function fetchUserProfile() {
             const token = localStorage.getItem('token');
             const userPhoneNumberElem = document.getElementById('userPhoneNumber');
@@ -565,7 +571,7 @@
                     const tel = user.phoneNumber || 'N/A';
                     if (userPhoneNumberElem) userPhoneNumberElem.textContent = tel;
                     
-                    // 2. Saldo Disponível
+                    // 2. Saldo Disponível (Saldo Principal + Comissões)
                     const balanceValue = user.balance !== undefined && user.balance !== null ? user.balance : 0;
                     const balanceText = `${balanceValue.toFixed(2)} MT`; 
                     if (userBalanceElem) userBalanceElem.textContent = balanceText; 
@@ -668,7 +674,7 @@
                 'invest': 'pool.html', 
                 'app': 'app.html',
                 'task': 'task.html',
-                'team': 'referred-users.html', // Corrigido para a página de usuários referidos
+                'team': 'referred-users.html', 
                 'about': 'about.html',
                 'holding': 'holding.html',
                 'support': 'support.html'

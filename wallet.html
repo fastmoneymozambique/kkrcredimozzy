@@ -1,3 +1,5 @@
+--- START OF FILE wallet.html ---
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -586,7 +588,7 @@
                 }
             }
 
-            // --- NOVO: Busca saldo E Configuração de Saque ---
+            // --- Busca saldo E Configuração de Saque ---
             async function fetchInitialData() {
                  await Promise.all([
                     fetchUserBalance(),
@@ -596,7 +598,7 @@
                  });
             }
 
-            // --- 1. Busca Saldo do Usuário ---
+            // --- 1. Busca Saldo do Usuário (AJUSTADO para Saldo Único) ---
             async function fetchUserBalance() {
                 const token = localStorage.getItem('token');
                 const loadingMessage = document.getElementById('loadingMessage');
@@ -620,6 +622,7 @@
                     
                     const data = await response.json();
                     
+                    // Saldo Único (Principal + Comissões)
                     currentAvailableBalance = data.user.balance || 0;
 
                     document.getElementById('mainBalance').textContent = `${currentAvailableBalance.toFixed(2)} MT`;
